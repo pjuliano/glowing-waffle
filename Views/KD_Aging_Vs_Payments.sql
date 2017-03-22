@@ -38,7 +38,7 @@ From
       Then '3'
       When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) Between 91 And 120
       Then '4'
-      When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date)Between 121 And 150
+      When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) Between 121 And 150
       Then '5'
       When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) >= 151
       Then '6'
@@ -48,10 +48,9 @@ From
     Kd_Ar_Aging_Stmt_V2_New 
   Where
     --Due_Date Is Not Null And
-    Company = '100' And
-    Identity = 'A25423')
+    Company = '100')
 Pivot
-( Sum(Bucket_Value) For Bucket In (0 As "Current",1 As "0-30",2 As "31-60",3 As "61-90",4 As "91-120",5 As "121-150",6 As "151+");
+( Sum(Bucket_Value) For Bucket In (0 As "Current",1 As "0-30",2 As "31-60",3 As "61-90",4 As "91-120",5 As "121-150",6 As "151+"));
 --End Change 03202017
 
 Create or Replace View KD_Customer_Payments As
