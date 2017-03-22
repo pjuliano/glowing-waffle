@@ -1,6 +1,6 @@
 --Begin Change 03202017
 --Buckets by IFS don't account for "current" dollars. Change per Mike Nealon.
-Create or Replace View KD_Customer_Aging_Buckets As
+Create Or Replace View Kd_Customer_Aging_Buckets As
 --Select
 --  *
 --From 
@@ -28,29 +28,30 @@ From
     Customer_Info_Api.Get_Name(Identity) As Name,
     Identity_Invoice_Info_Api.Get_Group_Id(Company, Identity, Customer_Info_Api.Get_Party_Type(Identity)) As Group_Id,
     Case 
-      When Trunc(Sysdate) - Due_Date <= 0 
+      When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) <= 0 
       Then '0'
-      When Trunc(Sysdate) - Due_Date Between 0 And 30
+      When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) Between 0 And 30
       Then '1'
-      When Trunc(Sysdate) - Due_Date Between 31 And 60
+      When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) Between 31 And 60
       Then '2'
-      When Trunc(Sysdate) - Due_Date Between 61 And 90
+      When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) Between 61 And 90
       Then '3'
-      When Trunc(Sysdate) - Due_Date Between 91 And 120
+      When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) Between 91 And 120
       Then '4'
-      When Trunc(Sysdate) - Due_Date Between 121 And 150
+      When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date)Between 121 And 150
       Then '5'
-      When Trunc(Sysdate) - Due_Date >= 151
+      When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) >= 151
       Then '6'
     End As Bucket,
   Open_Dom_Amount As Bucket_Value
   From
     Kd_Ar_Aging_Stmt_V2_New 
   Where
-    Due_Date Is Not Null And
-    Company = '100')
+    --Due_Date Is Not Null And
+    Company = '100' And
+    Identity = 'A25423')
 Pivot
-( Sum(Bucket_Value) For Bucket In (0 As "Current",1 As "0-30",2 As "31-60",3 As "61-90",4 As "91-120",5 As "121-150",6 As "151+"));
+( Sum(Bucket_Value) For Bucket In (0 As "Current",1 As "0-30",2 As "31-60",3 As "61-90",4 As "91-120",5 As "121-150",6 As "151+");
 --End Change 03202017
 
 Create or Replace View KD_Customer_Payments As
@@ -85,6 +86,7 @@ Select
   A."91-120",
   A."121-150",
   A."151+",
+  A."Undated",
   Decode(A."0-30",Null,0,A."0-30") + Decode(A."31-60",Null,0,A."31-60") + Decode(A."61-90",Null,0,A."61-90") + Decode(A."91-120",Null,0,A."91-120") + Decode(A."121-150",Null,0,A."121-150") + Decode(A."151+",Null,0,A."151+") As TOTAL_Past_Due,
   B.Jan,
   B.Feb,
