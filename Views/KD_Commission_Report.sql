@@ -224,4 +224,4 @@ Group By
   A.Customer_No,
   A.Customer_Name,
   A.Invoicedate,
-  A.Order_No
+  A.Order_No;
