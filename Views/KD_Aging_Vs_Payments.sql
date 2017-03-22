@@ -40,7 +40,7 @@ From
       Then '4'
       When Trunc(Sysdate) - Due_Date Between 121 And 150
       Then '5'
-      When Trunc(Sysdate) - Due_Date > 151
+      When Trunc(Sysdate) - Due_Date >= 151
       Then '6'
     End As Bucket,
   Open_Dom_Amount As Bucket_Value
