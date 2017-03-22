@@ -86,7 +86,6 @@ Select
   A."91-120",
   A."121-150",
   A."151+",
-  A."Undated",
   Decode(A."0-30",Null,0,A."0-30") + Decode(A."31-60",Null,0,A."31-60") + Decode(A."61-90",Null,0,A."61-90") + Decode(A."91-120",Null,0,A."91-120") + Decode(A."121-150",Null,0,A."121-150") + Decode(A."151+",Null,0,A."151+") As TOTAL_Past_Due,
   B.Jan,
   B.Feb,
