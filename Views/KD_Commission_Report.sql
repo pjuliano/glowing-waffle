@@ -21,7 +21,7 @@ Select
           A.Part_Product_Code Not In ('LIT','REGEN')
         Then
           --Begin Change 03172017
-          --Show 80% of commission for reps with a JR rep.
+          --Show 80% of commission for reps with a JR rep
           --Round((A.Allamounts * 0.0975) * .5,2)
           Round((A.Allamounts * 0.0975) * .5,2) * (Decode((Select Count(1) From Kd_Jr_Rep_Assignments Z Where A.Salesman_Code = Z.Rep_Assignment),1,.8,1))
           --End Change 03172017
