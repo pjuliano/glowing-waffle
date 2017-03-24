@@ -2,14 +2,13 @@
 Select
   *
 From
-  Kd_Sales_Data A
+  Kd_Sales_Data_Test A
 Where
-  Extract(Year From A.Invoicedate) = 2010 And
-  Extract(Month From A.InvoiceDate) = 1 And
+  Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
   Not Exists(Select
                Null
              From
-               Kd_Sales_Data_Test B
+               Kd_Sales_Data_Request B
              Where
                ((A.Site = B.Site)                                 Or (A.Site Is Null And B.Site Is Null)) And
                ((A.Invoice_Id = B.Invoice_Id)                     Or (A.Invoice_Id Is Null And B.Invoice_Id Is Null)) And
@@ -75,7 +74,4 @@ Where
                ((A.Delivzip = B.Delivzip)                         Or (A.Delivzip Is Null And B.Delivzip Is Null)) And
                ((A.Delivcountry = B.Delivcountry)                 Or (A.Delivcountry Is Null And B.Delivcountry Is Null)) And
                ((A.Delivcounty = B.Delivcounty)                   Or (A.Delivcounty Is Null And B.Delivcounty Is Null)) And
-               Extract(Year From A.Invoicedate) = 2010 And
-               Extract(Month From A.Invoicedate) = 1); --And
-  --Rownum <= 50 And
-  --A.InvoiceDate != Trunc(Sysdate);
+               Extract(Year From A.Invoicedate) = Extract(Year From Sysdate));
