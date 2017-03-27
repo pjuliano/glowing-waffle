@@ -1,4 +1,4 @@
---Create Or Replace View KD_Commission_Report As
+Create Or Replace View KD_Commission_Report As
 Select
   A.Salesman_Code,
   B.Name As Salesman_Name,
@@ -20,7 +20,7 @@ Select
         When
           A.Part_Product_Code Not In ('LIT','REGEN')
         Then
-          Round((A.Allamounts * 0.0975) * .5,2) * (Decode((Select Count(1) From Kd_Jr_Rep_Assignments Z Where A.Salesman_Code = Z.Rep_Assignment),1,.8,1))
+          Round((A.Allamounts * 0.0975) * .5,2) * Decode(D.Jr_Rep_Pct,Null,1,1-D.Jr_Rep_Pct)
         Else
           0
       End) As Implant_Commission,
@@ -36,7 +36,7 @@ Select
         When
           A.Part_Product_Code = 'REGEN'
         Then
-          Round((A.Allamounts * 0.06) * .5,2) * (Decode((Select Count(1) From Kd_Jr_Rep_Assignments Z Where A.Salesman_Code = Z.Rep_Assignment),1,.8,1))
+          Round((A.Allamounts * 0.06) * .5,2) * Decode(D.Jr_Rep_Pct,Null,1,1-D.Jr_Rep_Pct)
         Else
           0
       End) As Bio_Commission,
@@ -52,12 +52,13 @@ Select
         When
           A.Part_Product_Code != 'LIT'
         Then
-          Round(((A.Allamounts - (Decode(A.Cost,Null,0,A.Cost) * A.Invoiced_Qty)) * .146) * .5,2) *(Decode((Select Count(1) From Kd_Jr_Rep_Assignments Z Where A.Salesman_Code = Z.Rep_Assignment),1,.8,1))
+          Round(((A.Allamounts - (Decode(A.Cost,Null,0,A.Cost) * A.Invoiced_Qty)) * .146) * .5,2) * Decode(D.Jr_Rep_Pct,Null,1,1-D.Jr_Rep_Pct)
         Else
           0
       End) As Gross_Margin_Commission
 From
-  Kd_Sales_Data_Request A,
+  Kd_Sales_Data_Request A Left Join Kd_Jr_Rep_Assignments D
+    On A.Salesman_Code = D.Rep_Assignment,
   Person_Info B,
   Srrepquota C
 Where
@@ -100,7 +101,7 @@ Select
         When
           A.Part_Product_Code Not In ('LIT','REGEN')
         Then
-          Round((A.Allamounts * 0.0975) * .5,2) * (Decode((Select Count(1) From Kd_Jr_Rep_Assignments Z Where A.Salesman_Code = Z.Rep_Assignment),1,.2,1))
+          Round((A.Allamounts * 0.0975) * .5,2) * Decode(B.Jr_Rep_Pct,Null,1,B.Jr_Rep_Pct)
         Else
           0
       End) As Implant_Commission,
@@ -116,7 +117,7 @@ Select
         When
           A.Part_Product_Code = 'REGEN'
         Then
-          Round((A.Allamounts * 0.06) * .5,2) * (Decode((Select Count(1) From Kd_Jr_Rep_Assignments Z Where A.Salesman_Code = Z.Rep_Assignment),1,.2,1))
+          Round((A.Allamounts * 0.06) * .5,2) * Decode(B.Jr_Rep_Pct,Null,1,B.Jr_Rep_Pct)
         Else
           0
       End) As Bio_Commission,
@@ -132,7 +133,7 @@ Select
         When
           A.Part_Product_Code != 'LIT'
         Then
-          Round(((A.Allamounts - (Decode(A.Cost,Null,0,A.Cost) * A.Invoiced_Qty)) * .146) * .5,2) * (Decode((Select Count(1) From Kd_Jr_Rep_Assignments Z Where A.Salesman_Code = Z.Rep_Assignment),1,.2,1))
+          Round(((A.Allamounts - (Decode(A.Cost,Null,0,A.Cost) * A.Invoiced_Qty)) * .146) * .5,2) * Decode(B.Jr_Rep_Pct,Null,1,B.Jr_Rep_Pct)
         Else
           0
       End) As Gross_Margin_Commission
