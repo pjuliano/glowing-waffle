@@ -65,8 +65,5 @@ Where
   A.Corporate_Form = 'DOMDIR' And
   ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or A.Order_No Is Null) And
-  --Begin Change 03202017
-  --Exclude accounts that only receive free product per Kevin Munroe.
   A.Customer_No Not In ('A86088','A35173') And
-  --End Change 03202017
   A.Salesman_Code = B.Person_Id

@@ -79,7 +79,6 @@ Group By
   A.Invoicedate,
   A.Order_No
 Union All
---This section calculates commissions for junior reps.
 Select
   B.Person_ID As Salesman_Code,
   B.Name As Salesman_Name,

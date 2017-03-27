@@ -12,24 +12,7 @@ Select
           A.Allamounts
         Else
           0
-      --Begin Change 02152017.1
-      --Renamed column for clarity
-      --End) As PY_Trilobe_Sales
       End) As P2y_Trilobe_Sales,
-      --End Change 02152017.1
-    --Begin Change 02152017.2
-    --Column unneeded after removal of corresponding HAVING condition.
-    --Sum(Case
-    --      When
-    --        Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
-    --        A.Part_Product_Code = 'IMPL' And
-    --        A.Part_Product_Family In ('TRINX','OCT','EXHEX')
-    --      Then
-    --        A.Allamounts
-    --      Else
-    --        0
-    --    End) As Cy_Trilobe_Sales,
-    --End Change 02152017.2
   Sum(Case
         When
           Extract (Year From A.Invoicedate) = Extract(Year From Sysdate) And
@@ -162,19 +145,6 @@ Having
         Else
           0
       End) >= 5000 And
-    --Begin Change 01172017
-    --Removed clause per Kevin Munroe.
-      --Sum(Case
-    --      When
-    --        Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
-    --        A.Part_Product_Code = 'IMPL' And
-    --        A.Part_Product_Family In ('TRINX','OCT','EXHEX')
-    --      Then
-    --        A.Allamounts
-    --      Else
-    --        0
-    --    End) <= 1000 And
-    --End Change 01172017
   Sum(Case
         When
           Extract (Year From A.Invoicedate) = Extract(Year From Sysdate) And

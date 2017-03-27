@@ -5,13 +5,11 @@ Select
   A.This_Quarter,
   A.Qtr_Quota,
   Round((A.This_Quarter  /Sum(B.Daily_Quota)) * 100,2) As Qtd_Quota_Pct,
-  --Round((A.This_Quarter / ((A.Qtr_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Qtd_Quota_Pct, 2/20/17: Reworked to QTD by Month formula.
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2) As Quarter_Quota_Pct,
   A.Qtr_Quota - A.This_Quarter As Quarter_Remaining
 From
   Kd_Svq_This_Quarter A,
   Kd_Daily_Quota_By_Month B
-  --Kd_Work_Days_This_Quarter B 2/20/17: No longer needed after change to QTD by Month formula.
 Where
   A.Salesman_Code = B.Salesman_Code And
   B.Qtr = Case
@@ -46,13 +44,11 @@ Select
   A.Region,
   A.This_Year,
   Round((A.This_Year / Sum(B.Daily_Quota)) * 100,2) As Ytd_Quota_Pct,
-  --Round((A.This_Year / ((A.Year_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Ytd_Quota_Pct, 2/20/17: Reworked to YTD by Month formula.
   Round((A.This_Year / A.Year_Quota) * 100,2) As Year_Quota_Pct,
   A.Year_Quota - A.This_Year As Year_Remaining
 From
   Kd_Svq_This_Year A,
   KD_Daily_Quota_By_Month B
-  --KD_Work_Days_This_Year B; 2/20/17 No longer needed after change to YTD by Month formula.
 Where
   A.Salesman_Code = B.Salesman_Code
 Group By
@@ -67,12 +63,10 @@ Select
   A.Region,
   A.This_Quarter,
   Round((A.This_Quarter / Sum(B.Daily_Quota)) * 100,2) As Qtd_Quota_Pct_Reg,
-  --Round((A.This_Quarter / ((A.Qtr_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Qtd_Quota_Pct_Reg, 2/20/17: Reworked to QTD by Month formula.
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2) As Quarter_Quota_Pct_Reg
 From
   Kd_Svq_This_Quarter_Reg A,
   KD_Daily_Quota_By_Month B
-  --Kd_Work_Days_This_Quarter B 2/20/17: No longer needed after change to QTD by Month formula.
 Where
   A.Region = B.Region And
   B.Qtr = Case
@@ -102,11 +96,9 @@ Select
   A.Region,
   A.This_Year,
   Round((A.This_Year/Sum(B.Daily_Quota)) * 100,2) As YTD_Quota_PCT_Reg,
-  --Round((A.This_Year / ((A.Year_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Ytd_Quota_Pct_Reg, 2/20/17: Changed to YTD by Month calculation.
   Round((A.This_Year / A.Year_Quota) * 100,2) As Year_Quota_Pct_Reg
 From
   Kd_Svq_This_Year_Reg A,
-  --Kd_Work_Days_This_Year B 2/20/17: No longer needed after change to YTD Quota by Month calculation
   KD_Daily_Quota_By_Month B
 Where
   A.Region = B.Region
@@ -115,21 +107,6 @@ Group By
   A.This_Year,
   Round((A.This_Year / A.Year_Quota) * 100,2);
   
---Create Or Replace View Kd_Svq_Totals_Td As
---Select
---  Round((A.This_Year_Total / ((A.Year_Quota_Total / D.Total_Sales_Days) * D.Elapsed_Work_Days)) * 100,2) As Ytd_Quota_Pct_Total,
---  Round((A.This_Year_Total / A.Year_Quota_Total) * 100,2) As Year_Quota_Pct_Total,
---  Round((A.This_Quarter_Total / ((A.Quarter_Quota_Total / C.Total_Sales_Days) * C.Elapsed_Work_Days)) * 100,2) As Qtd_Quota_Pct_Total,
---  Round((A.This_Quarter_Total / A.Quarter_Quota_Total) * 100,2) As Quarter_Quota_Pct_Total,
---  Round((A.This_Month_Total / ((A.Month_Quota_Total / B.Total_Sales_Days) * B.Elapsed_Work_Days)) *100,2) As Mtd_Quota_Pct_Total,
---  Round((A.This_Month_Total / A.Month_Quota_Total) * 100,2) As Month_Quota_Pct_Total
---From
---  Kd_Svq_Totals A,
---  Kd_Work_Days_This_Month B,
---  Kd_Work_Days_This_Quarter C,
---  KD_Work_Days_This_Year D;
-  
---Total Rewrite of KD_SVQ_Totals_TD_Alt
 Create or Replace View KD_SVQ_Totals_TD_Alt As
 With Qtr_Total_Quota As (
 Select 
@@ -191,7 +168,7 @@ Select
   C.This_Month,
   C.This_Month_Implants,
   C.This_Month_Bio,
-  C.This_Month_Gross_Margin, --2/14/2017: Added per RMs.
+  C.This_Month_Gross_Margin,
   C.Month_Quota_Pct,
   C.Mtd_Quota_Pct,
   C.Month_Remaining,

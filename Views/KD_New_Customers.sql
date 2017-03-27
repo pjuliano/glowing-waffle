@@ -1,11 +1,7 @@
 Create Or Replace View KD_New_Customers As
 Select
     A.Salesman_Code,
-    --Begin Change 02152017.1
-    --Removed API call in favor of table join.
-    --Person_Info_Api.Get_Name(A.Salesman_Code)
     C.Name As Salesman_Name,
-    --End Change 02152017.1
     B.Customer_Id,
     B.Name,
     B.Creation_Date,
@@ -25,8 +21,6 @@ Select
           Else
             0
         End) As Current_Year_Sales,
-  --Begin Change 02152017.3
-  --Added case statement to display the quarter in which the customer became new.
   Case
     When
       Sum(Case
@@ -115,7 +109,6 @@ Select
     Then
       'QTR4'
   End As Qtr
-  --End Change 02152017.3
 From
   Customer_Info B Left Join Kd_Sales_Data_Request A
     On B.Customer_Id = A.Customer_No,
@@ -127,11 +120,7 @@ Where
   A.Salesman_Code = C.Person_Id
 Group By
   A.Salesman_Code,
-  --Change 02152017.1
-  --Removed API call in favor of table join.
-  --Person_Info_Api.Get_Name(A.Salesman_Code)
   C.Name,
-  --End Change 02152017.1
   B.Customer_Id,
   B.Name,
   B.Creation_Date
@@ -161,16 +150,3 @@ Having
         Else
           0
       End) >= 3750;
-  --Begin Change 02152017.2
-  --Removed order by clause.
-  --Order By
-  --  A.Salesman_Code,
-  --  Sum(Case 
-  --        When
-  --          Extract (Year From A.Invoicedate) = Extract(Year From Sysdate) -1
-  --        Then
-  --          A.Allamounts
-  --        Else
-  --          0
-  --      End) Desc
-  --End Change 02152017.2

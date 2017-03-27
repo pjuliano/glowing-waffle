@@ -7,14 +7,10 @@ From
 Where
   A.Invoicedate = Trunc(Sysdate) And
   A.Charge_Type = 'Parts' And
-  --Begin Change 03072017
-  --Now excluding W and X orders so sales totals will match Daily Commissions per M. Nealon
-  --A.Corporate_Form = 'DOMDIR'
   A.Corporate_Form = 'DOMDIR' And
   ((A.Order_No Not Like 'W%' And
     A.Order_No Not Like 'X%') Or
     A.Order_No Is Null)
-  --End Change 03072017
 Group By
   A.Salesman_Code;
   
@@ -24,11 +20,7 @@ Select
   Sum(A.Allamounts) As This_Month,
   Sum(Case
         When
-          --Begin Change 02142017.1
-          --Changed case statement to include "other" as in the Daily Commissions report per Kevin Munroe.
-          --In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED') 
           A.Part_Product_Code Not In ('LIT','REGEN')
-          --End change 02142017.1
         Then
           A.Allamounts
         Else
@@ -42,8 +34,6 @@ Select
         Else
           0
       End) As This_Month_Bio,
-  --Begin Change 02142017.2
-  --Added This_Month_Gross_Margin per RMs.
   Sum(Case
         When
           A.Part_Product_Code != 'LIT' And 
@@ -52,7 +42,6 @@ Select
         Then
           Round((A.Allamounts - (A.Cost * A.Invoiced_Qty)),2)
       End) As This_Month_Gross_Margin,
-  --End Change 02142017.2
   Case
     When
       Extract(Month From Sysdate) = 1
@@ -113,14 +102,10 @@ Where
   Extract(Month From A.Invoicedate) = Extract(Month From Sysdate) And
   Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
   A.Charge_Type = 'Parts' And
-  --Begin Change 03072017
-  --Now excluding W and X orders so sales totals will match Daily Commissions per M. Nealon
-  --A.Corporate_Form = 'DOMDIR'
   A.Corporate_Form = 'DOMDIR' And
 ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
   A.Order_No Is Null)
-  --End Change 03072017
 Group By
   A.Salesman_Code,
   Case
@@ -183,10 +168,7 @@ Select
   A.This_Month,
   A.This_Month_Implants,
   A.This_Month_Bio,
-  --Begin Change 02142017.2
-  --Grouping entry for new column.
   A.This_Month_Gross_Margin,
-  --End Change 02142017.2
   Round((A.This_Month / ((A.Month_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Mtd_Quota_Pct,
   Round((A.This_Month / A.Month_Quota) * 100,2) As Month_Quota_Pct,
   A.Month_Quota - A.This_Month As Month_Remaining
@@ -241,14 +223,10 @@ Where
                  End And
   Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
   A.Charge_Type = 'Parts' And
-  --Begin Change 03072017
-  --Now excluding W and X orders so sales totals will match Daily Commissions per M. Nealon
-  --A.Corporate_Form = 'DOMDIR'
   A.Corporate_Form = 'DOMDIR' And
 ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
   A.Order_No Is Null)
-  --End Change 03072017
 Group By
   A.Salesman_Code,
   Case
@@ -276,18 +254,11 @@ Select
   A.Salesman_Code,
   A.This_Quarter,
   A.Qtr_Quota,
-  --Begin Change 03012017.1
-  --Reworked calculation to account for unevenly distributed quota (QTD by Month).
-  --Round((A.This_Quarter / ((A.Qtr_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Qtd_Quota_Pct,
   Round((A.This_Quarter  /Sum(B.Daily_Quota)) * 100,2) As Qtd_Quota_Pct,
-  --End Change 03012017.1
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2) As Quarter_Quota_Pct,
   A.Qtr_Quota - A.This_Quarter As Quarter_Remaining
 From
   Kd_Svq_This_Quarter A,
-  --Begin Change 03012017.1
-  --Using new table for QTD by Month formula.
-  --Kd_Work_Days_This_Quarter B;
   Kd_Daily_Quota_By_Month B
 Where
   A.Salesman_Code = B.Salesman_Code And
@@ -316,7 +287,6 @@ Group By
   A.Qtr_Quota,
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2),
   A.Qtr_Quota - A.This_Quarter;
---End Change 03012017.1
   
 Create Or Replace View KD_SVQ_This_Year As
 Select
@@ -330,12 +300,9 @@ From
 Where
   A.Charge_Type = 'Parts' And
   A.Corporate_Form = 'DOMDIR' And
-  --Begin Change 03072017
-  --Now excluding W and X orders so sales totals will match Daily Commissions per M. Nealon  
 ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
   A.Order_No Is Null) And
-  --End Change 03072017
   Extract(Year From A.InvoiceDate) = Extract(Year From Sysdate)
 Group By
   A.Salesman_Code,
@@ -347,18 +314,11 @@ Select
   A.Salesman_Code,
   A.Region,
   A.This_Year,
-  --Begin Change 03012017.2
-  --Reworked calculation to account for unevenly distributed quota (YTD by Month).
-  --Round((A.This_Year / ((A.Year_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Ytd_Quota_Pct,
   Round((A.This_Year / Sum(B.Daily_Quota)) * 100,2) As Ytd_Quota_Pct,
-  --End Change 03012017.2
   Round((A.This_Year / A.Year_Quota) * 100,2) As Year_Quota_Pct,
   A.Year_Quota - A.This_Year As Year_Remaining
 From
   Kd_Svq_This_Year A,
-  --Begin Change 03012017.2
-  --Using new table for YTD by Month formula.
-  --KD_Work_Days_This_Year B;
   Kd_Daily_Quota_By_Month B
 Where
   A.Salesman_Code = B.Salesman_Code
@@ -368,7 +328,6 @@ Group By
   A.This_Year,
   Round((A.This_Year / A.Year_Quota) * 100,2),
   A.Year_Quota - A.This_Year;
-  --End Change 03012017.2
 
 Create Or Replace View KD_SVQ As
 Select
@@ -379,10 +338,7 @@ Select
   C.This_Month,
   C.This_Month_Implants,
   C.This_Month_Bio,
-  --Begin Change 02142017.2
-  --Added column from KD_SVQ_MTD per RMs.
   C.This_Month_Gross_Margin,
-  --End Change 02142017.2
   C.Month_Quota_Pct,
   C.Mtd_Quota_Pct,
   C.Month_Remaining,
@@ -467,17 +423,10 @@ Create Or Replace View Kd_Svq_Qtd_Reg As
 Select
   A.Region,
   A.This_Quarter,
-  --Begin Change 03012017.3
-  --Reworked calculation to account for unevenly distributed quota (QTD by Month).
-  --Round((A.This_Quarter / ((A.Qtr_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Qtd_Quota_Pct_Reg,
   Round((A.This_Quarter / Sum(B.Daily_Quota)) * 100,2) As Qtd_Quota_Pct_Reg,
-  --End Change 03012017.3
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2) As Quarter_Quota_Pct_Reg
 From
   Kd_Svq_This_Quarter_Reg A,
-  --Begin Change 03012017.3
-  --Using new table for QTD by Month formula
-  --Kd_Work_Days_This_Quarter B;
   Kd_Daily_Quota_By_Month B
 Where
   A.Region = B.Region And
@@ -503,22 +452,15 @@ Group By
   A.Region,
   A.This_Quarter,
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2);
-  --End Change 03012017.3
   
 Create Or Replace View Kd_Svq_Ytd_Reg As
 Select
   A.Region,
   A.This_Year,
-  --Begin Change 03012017.4
-  --Reworked calculation to account for unevenly distributed quota (YTD by Month).
-  --Round((A.This_Year / ((A.Year_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Ytd_Quota_Pct_Reg,
   Round((A.This_Year/Sum(B.Daily_Quota)) * 100,2) As YTD_Quota_PCT_Reg,
   Round((A.This_Year / A.Year_Quota) * 100,2) As Year_Quota_Pct_Reg
 From
   Kd_Svq_This_Year_Reg A,
-  --Begin Change 03012017.4
-  --Using new table for YTD by Month Formula.
-  --Kd_Work_Days_This_Year B;
   Kd_Daily_Quota_By_Month B
 Where
   A.Region = B.Region
@@ -526,7 +468,6 @@ Group By
   A.Region,
   A.This_Year,
   Round((A.This_Year / A.Year_Quota) * 100,2);
-  --End Change 03042017.4
 
 
 Create Or Replace View Kd_Svq_Totals As
@@ -543,21 +484,7 @@ From
                      Left Join Kd_Svq_This_Month_Reg C
     On A.Region = C.Region;
 
---Begin Change 03012017.5 
---Total rewrite of view to reflect new calculation method
 Create Or Replace View Kd_Svq_Totals_Td As
---Select
---  Round((A.This_Year_Total / ((A.Year_Quota_Total / D.Total_Sales_Days) * D.Elapsed_Work_Days)) * 100,2) As Ytd_Quota_Pct_Total,
---  Round((A.This_Year_Total / A.Year_Quota_Total) * 100,2) As Year_Quota_Pct_Total,
---  Round((A.This_Quarter_Total / ((A.Quarter_Quota_Total / C.Total_Sales_Days) * C.Elapsed_Work_Days)) * 100,2) As Qtd_Quota_Pct_Total,
---  Round((A.This_Quarter_Total / A.Quarter_Quota_Total) * 100,2) As Quarter_Quota_Pct_Total,
---  Round((A.This_Month_Total / ((A.Month_Quota_Total / B.Total_Sales_Days) * B.Elapsed_Work_Days)) *100,2) As Mtd_Quota_Pct_Total,
---  Round((A.This_Month_Total / A.Month_Quota_Total) * 100,2) As Month_Quota_Pct_Total
---From
---  Kd_Svq_Totals A,
---  Kd_Work_Days_This_Month B,
---  Kd_Work_Days_This_Quarter C,
---  Kd_Work_Days_This_Year D;
 With Qtr_Total_Quota As (
 Select 
   Sum(Daily_Quota) As Qtr_Total_Quota
@@ -608,7 +535,6 @@ Group By
   Round((A.This_Quarter_Total / A.Quarter_Quota_Total) * 100,2),
   Round((A.This_Month_Total / D.Month_Total_Quota) * 100,2),
   Round((A.This_Month_Total / A.Month_Quota_Total) * 100,2);
---End Change 03012017.5
   
 Create or Replace View KD_SVQ_CY_MARGIN As
 Select A.Salesman_Code,
@@ -646,15 +572,9 @@ From
 Where 
   A.Charge_Type  = 'Parts' And
   A.Corporate_Form = 'DOMDIR' And
-    --Begin Change 03072017
-  --Now excluding W and X orders so sales totals will match Daily Commissions per M. Nealon
-  --A.Corporate_Form = 'DOMDIR'
-  --A.Order_No Not Like 'W%' And
-  --A.Order_No Not Like 'X%' And
 ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
   A.Order_No Is Null) And
-  --End Change 03072017
   Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)
 Group By A.Salesman_Code,
   B.Region;

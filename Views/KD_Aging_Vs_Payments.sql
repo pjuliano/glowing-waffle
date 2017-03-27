@@ -1,25 +1,4 @@
---Begin Change 03202017
---Buckets by IFS don't account for "current" dollars. Change per Mike Nealon.
 Create Or Replace View Kd_Customer_Aging_Buckets As
---Select
---  *
---From 
---( Select 
---    A.Identity,
---    B.Name,
---    C.Group_ID,
---    A.Bucket,
---    A.Bucket_Value
---  From
---    Buckets_Qry A,
---    Customer_Info B,
---    Identity_Invoice_Info C
---  Where
---    A.Identity = B.Customer_Id And
---    A.Company = '100' And
---    B.Customer_ID = C.Identity)
---Pivot
---( Sum(Bucket_Value) For Bucket In (1 As "0-30",2 As "31-60",3 As "61-90",4 As "91-120",5 As "121-150",6 As "151+"));
 Select
   *
 From
@@ -47,11 +26,9 @@ From
   From
     Kd_Ar_Aging_Stmt_V2_New 
   Where
-    --Due_Date Is Not Null And
     Company = '100')
 Pivot
 ( Sum(Bucket_Value) For Bucket In (0 As "Current",1 As "0-30",2 As "31-60",3 As "61-90",4 As "91-120",5 As "121-150",6 As "151+"));
---End Change 03202017
 
 Create or Replace View KD_Customer_Payments As
 Select

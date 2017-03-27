@@ -7,14 +7,10 @@ From
 Where
   A.Invoicedate = Trunc(Sysdate) And
   A.Charge_Type = 'Parts' And
-  --Begin Change 03092017.1
-  --Now Excluding W and X orders so sales totals will match Daily Commissions per M. Nealon.
-  --A.Corporate_Form = 'DOMDIR'
   A.Corporate_Form = 'DOMDIR' And
   ((A.Order_No Not Like 'W%' And
     A.Order_No Not Like 'X%') Or
     A.Order_No Is Null)
-  --End Change 03092017.1
 Group By
   A.Commission_Receiver;
   
@@ -98,14 +94,10 @@ Where
   Extract(Month From A.Invoicedate) = Extract(Month From Sysdate) And
   Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
   A.Charge_Type = 'Parts' And
-  --Begin Change 03092017.1
-  --Now excluding W and X orders so sales totals will match Daily Commissions per M. Nealon.
-  --A.Corporate_Form = 'DOMDIR'
   A.Corporate_Form = 'DOMDIR' And
   ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
   A.Order_No Is Null)
-  --End Change 03092017.1
 Group By
   A.Commission_Receiver,
   Case
