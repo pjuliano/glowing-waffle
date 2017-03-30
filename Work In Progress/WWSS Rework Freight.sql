@@ -1,4 +1,4 @@
-Create View KD_WWSS_Freight As
+Create Or Replace View KD_WWSS_Freight As
 With Quota_Dist As (
   Select
     A.F1,
@@ -165,7 +165,7 @@ Round((Sum(Case When Extract(Year From A.InvoiceDate) = Extract(Year From Sysdat
                  Else 0
             End)) * 100,2) As Prior_YTD_Pct   
 From
-  Quota_Dist B Left Join Kd_Sales_Data_Request A
+  Quota_Dist B Full Outer Join Kd_Sales_Data_Request A
     On B.F1 = A.Corporate_Form,
   Kd_Monthly_Calendar C,
   KD_Quarterly_Calendar D

@@ -1,4 +1,4 @@
-Create View Kd_WWSS_NADirect As
+Create Or Replace View Kd_WWSS_NADirect As
 With Quota_Na As (
   Select
     A.Region,
@@ -165,7 +165,7 @@ Round((Sum(Case When Extract(Year From A.InvoiceDate) = Extract(Year From Sysdat
                  Else 0
             End)) * 100,2) As Prior_YTD_Pct   
 From
-  Quota_Na B Left Join Kd_Sales_Data_Request A
+  Quota_Na B Full Outer Join Kd_Sales_Data_Request A
     On B.Region = A.Region_Code,
   Kd_Monthly_Calendar C,
   KD_Quarterly_Calendar D
