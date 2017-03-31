@@ -156,14 +156,14 @@ Select
                  Then A.Allamounts
                  Else 0
             End),2) As Prior_Ytd_Sales,
-Round((Sum(Case When Extract(Year From A.InvoiceDate) = Extract(Year From Sysdate)
-                Then A.Allamounts
-                Else 0
-           End) / NullIf(
-       Sum(Case When A.Invoicedate <= To_Date(Extract(Month From Sysdate) || '/' || Extract(Day From Sysdate) || '/' || (Extract(Year From Sysdate) -1) ,'MM/DD/YYYY')
-                 Then A.Allamounts
-                 Else 0
-            End),0)) * 100,2) As Prior_YTD_Pct   
+  Round((Sum(Case When Extract(Year From A.InvoiceDate) = Extract(Year From Sysdate)
+                  Then A.Allamounts
+                  Else 0
+             End) / NullIf(
+         Sum(Case When A.Invoicedate <= To_Date(Extract(Month From Sysdate) || '/' || Extract(Day From Sysdate) || '/' || (Extract(Year From Sysdate) -1) ,'MM/DD/YYYY')
+                  Then A.Allamounts
+                  Else 0
+             End),0)) * 100,2) As Prior_YTD_Pct   
 From
   Quota_Na B Full Outer Join Kd_Sales_Data_Request A
     On B.Region = A.Region_Code,
