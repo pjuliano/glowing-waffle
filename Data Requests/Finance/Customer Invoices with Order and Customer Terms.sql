@@ -19,11 +19,12 @@ Select
        Then 'OTHER'
   End As Product_Type,
   Customer_Order_Api.Get_Pay_Term_Id(A.Order_No) As Order_Terms,
-  Identity_Invoice_Info_Api.Get_Pay_Term_Id(A.Site,A.Customer_No,'CUSTOMER') As Customer_Terms
+  Identity_Invoice_Info_Api.Get_Pay_Term_Id(A.Site,A.Customer_No,'CUSTOMER') As Customer_Terms,
+  Decode(Customer_Order_Api.Get_Pay_Term_Id(A.Order_No),Identity_Invoice_Info_Api.Get_Pay_Term_Id(A.Site,A.Customer_No,'CUSTOMER'),Null,'OVERRIDE') AS Override_Check
 From
   Kd_Sales_Data_Nightly A
 Where
-  A.Invoicedate >= To_Date('01/01/2015','MM/DD/YYYY') And
+  A.Invoicedate Between To_Date('01/01/2015','MM/DD/YYYY') and To_Date('03/31/2017','MM/DD/YYYY') And
   A.Corporate_Form = 'DOMDIR' And
   A.Charge_Type = 'Parts'
 Group By
