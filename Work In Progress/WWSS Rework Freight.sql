@@ -113,7 +113,9 @@ Select
                       Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)
                  Then A.Allamounts
             End),2) As Prior_Qtr_Sales,
-  Round((Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)
+  Round((Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
+                       Decode(Extract(Month From Sysdate),1,'QTR1',2,'QTR1',3,'QTR1',4,'QTR2',5,'QTR2',6,'QTR2',7,'QTR3',8,'QTR3',9,'QTR3',10,'QTR4',11,'QTR4',12,'QTR4') =
+                       Decode(Extract(Month From A.InvoiceDate),1,'QTR1',2,'QTR1',3,'QTR1',4,'QTR2',5,'QTR2',6,'QTR2',7,'QTR3',8,'QTR3',9,'QTR3',10,'QTR4',11,'QTR4',12,'QTR4')
                   Then A.Allamounts
                   Else 0
              End) / NullIf(
