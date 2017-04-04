@@ -66,4 +66,5 @@ Where
   ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or A.Order_No Is Null) And
   A.Customer_No Not In ('A86088','A35173') And
-  A.Salesman_Code = B.Person_Id
+  A.Salesman_Code = B.Person_Id And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)

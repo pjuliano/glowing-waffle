@@ -10,7 +10,8 @@ Where
   A.Corporate_Form = 'DOMDIR' And
   ((A.Order_No Not Like 'W%' And
     A.Order_No Not Like 'X%') Or
-    A.Order_No Is Null)
+    A.Order_No Is Null) And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
 Group By
   A.Commission_Receiver;
   
@@ -97,7 +98,8 @@ Where
   A.Corporate_Form = 'DOMDIR' And
   ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
-  A.Order_No Is Null)
+  A.Order_No Is Null) And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
 Group By
   A.Commission_Receiver,
   Case
@@ -214,14 +216,11 @@ Where
                  End And
   Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
   A.Charge_Type = 'Parts' And
-  --Begin Change 03092017.1
-  --Now excluding W and X Orders so sales totals will match Daily Commissions per M. Nealon.
-  --A.Corporate_Form = 'DOMDIR'
   A.Corporate_Form = 'DOMDIR' And
   ((A.Order_No Not Like 'W%' And
     A.Order_No Not Like 'X%') Or
-    A.Order_No Is Null)
-  --End Change 03092017.1
+    A.Order_No Is Null) And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
 Group By
   A.Commission_Receiver,
   Case
@@ -302,13 +301,11 @@ From
 Where
   A.Charge_Type = 'Parts' And
   A.Corporate_Form = 'DOMDIR' And
-  --Begin Change 03092017.1
-  --Now excluding W and X orders so sales totals will match Daily Commissions per M. Nealon.
 ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
   A.Order_No Is Null) And
-  --End Change 03072017
-  Extract(Year From A.InvoiceDate) = Extract(Year From Sysdate)
+  Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
 Group By
   A.Commission_Receiver,
   B.Year,
@@ -319,18 +316,11 @@ Select
   A.Salesman_Code,
   A.Region,
   A.This_Year,
-  --Begin Change 03092017.2
-  --Reworked calculation to account for unevenly distributed quota (YTD by Month).
-  --Round((A.This_Year / ((A.Year_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Ytd_Quota_Pct,
   Round((A.This_Year / Sum(B.Daily_Quota)) * 100,2) As Ytd_Quota_Pct,
-  --End Change 03092017.2
   Round((A.This_Year / A.Year_Quota) * 100,2) As Year_Quota_Pct,
   A.Year_Quota - A.This_Year As Year_Remaining
 From
   Kd_Svq_Is_This_Year A,
-  --Begin Change 03092017.2
-  --Using new table for YTD by Month formula.
-  --Kd_Work_Days_This_Year B
   Kd_Daily_Quota_By_Month_Is B
 Where
   A.Salesman_Code = B.Region
@@ -340,7 +330,6 @@ Group By
   A.This_Year,
   Round((A.This_Year / A.Year_Quota) * 100,2),
   A.Year_Quota - A.This_Year;
-  --End Change 03092017.2
   
 Create Or Replace View KD_SVQ_IS As
 Select

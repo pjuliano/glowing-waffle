@@ -69,7 +69,8 @@ Where
   ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or A.Order_No Is Null) And
   Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
-  A.Salesman_Code = C.Repnumber
+  A.Salesman_Code = C.Repnumber And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
 Group By
   A.Salesman_Code,
   B.Name,
@@ -148,7 +149,8 @@ Where
   ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or A.Order_No Is Null) And
   Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
-  A.Salesman_Code = C.Repnumber
+  A.Salesman_Code = C.Repnumber And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
 Group By
   B.Person_ID,
   B.Name,

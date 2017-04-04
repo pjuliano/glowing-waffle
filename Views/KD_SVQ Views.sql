@@ -10,7 +10,8 @@ Where
   A.Corporate_Form = 'DOMDIR' And
   ((A.Order_No Not Like 'W%' And
     A.Order_No Not Like 'X%') Or
-    A.Order_No Is Null)
+    A.Order_No Is Null) And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
 Group By
   A.Salesman_Code;
   
@@ -105,7 +106,8 @@ Where
   A.Corporate_Form = 'DOMDIR' And
 ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
-  A.Order_No Is Null)
+  A.Order_No Is Null) And
+ (A.Market_Code != 'PREPOST' or A.Market_Code Is Null)
 Group By
   A.Salesman_Code,
   Case
@@ -226,7 +228,8 @@ Where
   A.Corporate_Form = 'DOMDIR' And
 ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
-  A.Order_No Is Null)
+  A.Order_No Is Null) And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
 Group By
   A.Salesman_Code,
   Case
@@ -303,7 +306,8 @@ Where
 ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
   A.Order_No Is Null) And
-  Extract(Year From A.InvoiceDate) = Extract(Year From Sysdate)
+  Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
 Group By
   A.Salesman_Code,
   B.Year,
@@ -575,6 +579,7 @@ Where
 ((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
   A.Order_No Is Null) And
-  Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)
+  Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
 Group By A.Salesman_Code,
   B.Region;
