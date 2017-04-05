@@ -424,17 +424,10 @@ Create Or Replace View Kd_Svq_IS_Qtd_Reg As
 Select
   A.Region,
   A.This_Quarter,
-  --Begin Change 03092017.2
-  --Reworked calculation to account for unevenly distributed quota (QTD by Month).
-  --Round((A.This_Quarter / ((A.Qtr_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Qtd_Quota_Pct_Reg,
   Round((A.This_Quarter / Sum(B.Daily_Quota)) * 100,2) As Qtd_Quota_Pct_Reg,
-  --End Change 03092017.2
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2) As Quarter_Quota_Pct_Reg
 From
   Kd_Svq_Is_This_Quarter_Reg A,
-  --Begin Change 03092017.2
-  --Using new table for QTD by Month formula
-  --Kd_Work_Days_This_Quarter B;
   Kd_Daily_Quota_By_Month_IS B
 Where
   A.Region = B.Region And
@@ -466,17 +459,10 @@ Create Or Replace View Kd_Svq_IS_Ytd_Reg As
 Select
   A.Region,
   A.This_Year,
-  --Begin Change 03092017.2
-  --Reworked calculation to account for unevenly distributed quota (YTD by Month).
-  --Round((A.This_Year / ((A.Year_Quota / B.Total_Sales_Days) * B.Elapsed_Work_Days)) * 100,2) As Ytd_Quota_Pct_Reg,
   Round((A.This_Year/Sum(B.Daily_Quota)) * 100,2) As Ytd_Quota_Pct_Reg,
-  --End Change 03092017.2
   Round((A.This_Year / A.Year_Quota) * 100,2) As Year_Quota_Pct_Reg
 From
   Kd_Svq_Is_This_Year_Reg A,
-  --Begin Change 03092017.2
-  --Using new table for YTD by Month Formula.
-  --Kd_Work_Days_This_Year B;
   Kd_Daily_Quota_By_Month_IS B
 Where
   A.Region = B.Region
@@ -503,18 +489,6 @@ From
 --Begin Change 03092017.2
 --Total rewrite of view to reflect new calculation method.
 Create Or Replace View Kd_Svq_IS_Totals_Td As
---Select
---  Round((A.This_Year_Total / ((A.Year_Quota_Total / D.Total_Sales_Days) * D.Elapsed_Work_Days)) * 100,2) As Ytd_Quota_Pct_Total,
---  Round((A.This_Year_Total / A.Year_Quota_Total) * 100,2) As Year_Quota_Pct_Total,
---  Round((A.This_Quarter_Total / ((A.Quarter_Quota_Total / C.Total_Sales_Days) * C.Elapsed_Work_Days)) * 100,2) As Qtd_Quota_Pct_Total,
---  Round((A.This_Quarter_Total / A.Quarter_Quota_Total) * 100,2) As Quarter_Quota_Pct_Total,
---  Round((A.This_Month_Total / ((A.Month_Quota_Total / B.Total_Sales_Days) * B.Elapsed_Work_Days)) *100,2) As Mtd_Quota_Pct_Total,
---  Round((A.This_Month_Total / A.Month_Quota_Total) * 100,2) As Month_Quota_Pct_Total
---From
---  Kd_Svq_IS_Totals A,
---  Kd_Work_Days_This_Month B,
---  Kd_Work_Days_This_Quarter C,
---  Kd_Work_Days_This_Year D;
 With Qtr_Total_Quota As (
 Select 
   Sum(Daily_Quota) As Qtr_Total_Quota
