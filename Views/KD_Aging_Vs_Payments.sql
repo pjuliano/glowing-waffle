@@ -78,7 +78,5 @@ Select
 From
   Kd_Customer_Aging_Buckets A Left Join Kd_Customer_Payments B
     On A.Identity = B.Identity
-Where
-  Decode(A."0-30",Null,0,A."0-30") + Decode(A."31-60",Null,0,A."31-60") + Decode(A."61-90",Null,0,A."61-90") + Decode(A."91-120",Null,0,A."91-120") + Decode(A."121-150",Null,0,A."121-150") + Decode(A."151+",Null,0,A."151+") != 0
 Order By
   A.Identity;
