@@ -5,7 +5,6 @@ From
 ( Select
     Identity,
     Customer_Info_Api.Get_Name(Identity) As Name,
-    Cust_Ord_Customer_Api.Get_Salesman_Code(Identity) As Salesman_Code,
     Identity_Invoice_Info_Api.Get_Group_Id(Company, Identity, Customer_Info_Api.Get_Party_Type(Identity)) As Group_Id,
     Case 
       When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) <= 0 
