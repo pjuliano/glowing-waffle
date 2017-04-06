@@ -16,4 +16,5 @@ Where
   Trunc(B.Date_Entered) = Trunc(Sysdate)
 Order By
   A.Authorize_Code,
-  A.Order_No
+  A.Order_No,
+  A.Line_No
