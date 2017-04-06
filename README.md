@@ -1,2 +1,2 @@
 # glowing-waffle
-SQL from Keystone
+SQL from Keystone Dental, Inc.
