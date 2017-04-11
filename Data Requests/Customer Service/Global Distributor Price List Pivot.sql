@@ -5,10 +5,11 @@ From
       A.Customer_No,
       B.Catalog_No As Part_No,
       Sales_Part_Api.Get_Catalog_Desc(A.Contract,B.Catalog_No) As Part_Desc,
+      Decode(Inventory_Part_Api.Get_Part_Product_Family(A.Contract,B.Catalog_No),'CALFO','SI','CALMA','SI','CAPSE','SI','CYTOP','SI','EXHEX','SI','EXORL','SI','OCT','SI','PRSFT','SI','TEFGE','SI','TRINX','SI','ZMAX','SI','KD') As Company,
       Inventory_Part_Api.Get_Part_Product_Family(A.Contract,B.Catalog_No) As Product_Family,
       Inventory_Part_Api.Get_Part_Product_Code(A.Contract,B.Catalog_No) As Product_Code,
       Sales_Part_Api.Get_List_Price(A.Contract,B.Catalog_No) As List_Price,
-      Inventory_Part_Unit_Cost_Api.Get_Inventory_Value_By_Method(A.Contract,B.Catalog_No,'*',Null,Null) As Kd_Cost,
+      Round(Inventory_Part_Unit_Cost_Api.Get_Inventory_Value_By_Method(A.Contract,B.Catalog_No,'*',Null,Null),2) As Kd_Cost,
       Sales_Part_Api.Get_List_Price(A.Contract,B.Catalog_No) As KD_List,
       B.Deal_Price
     From
@@ -16,6 +17,8 @@ From
       Agreement_Sales_Part_Deal B
     Where
       A.Agreement_Id = B.Agreement_Id And
+      Inventory_Part_Api.Get_Part_Product_Code(A.Contract,B.Catalog_No) != 'LIT' And
+      Sales_Part_Api.Get_ActiveInd(A.Contract,B.Catalog_No) != 'Inactive part' And
       A.Customer_No In ('B1391',
                         'B1351',
                         'B2054',
@@ -35,10 +38,17 @@ From
                         'B3584',
                         'B2492',
                         'B1420',
-                        'A19435'))
+                        'A19435',
+                        'B2967',
+                        'B2968',
+                        'B2966',
+                        'B2971',
+                        'B2970',
+                        'B3114',
+                        'B3730'))
 Pivot
-  (Max(Deal_Price) As Deal_Price,
-   Max(100-Round((Deal_Price/Nullif(List_Price,0))*100,2)) As Discount   For Customer_No In ('B1391' As "B1391",
+  (Max(Round(Deal_Price,2)) As Deal_Price,
+   Max(100-Round((Deal_Price/Nullif(List_Price,0))*100,0)) As Discount   For Customer_No In ('B1391' As "B1391",
                                                                                              'B1351' As "B1351",
                                                                                              'B2054' As "B2054",
                                                                                              'B2668' As "B2668",
@@ -57,4 +67,11 @@ Pivot
                                                                                              'B3584' As "B3584",
                                                                                              'B2492' As "B2492",
                                                                                              'B1420' As "B1420",
-                                                                                             'A19435' As "A19435"))
+                                                                                             'A19435' As "A19435",
+                                                                                             'B2967' As "B2967",
+                                                                                             'B2968' As "B2968",
+                                                                                             'B2966' As "B2966",
+                                                                                             'B2971' As "B2971",
+                                                                                             'B2970' As "B2970",
+                                                                                             'B3114' As "B3114",
+                                                                                             'B3730' As "B3730"))
