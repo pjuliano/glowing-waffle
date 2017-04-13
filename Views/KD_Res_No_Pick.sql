@@ -7,7 +7,8 @@ Select
 From
   Customer_Order A
 Where
-  A.State = 'Reserved' And (
+  A.State = 'Reserved' And 
+  A.BackOrder_Option_DB != 'NO PARTIAL DELIVERIES ALLOWED' And (
   Select
     Count(Z.Order_No)
   From
