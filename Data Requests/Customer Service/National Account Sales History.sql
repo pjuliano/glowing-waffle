@@ -1,5 +1,8 @@
 Select
   A.Customer_Name,
+  A.Delivadd1,
+  A.Delivadd2,
+  A.Delivcity,
   A.Invoicedate,
   A.Catalog_No,
   A.Catalog_Desc,
