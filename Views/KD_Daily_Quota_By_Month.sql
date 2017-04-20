@@ -1,4 +1,3 @@
-Create Or Replace View KD_Daily_Quota_By_Month_IS As
 Select
   A.Repnumber As Salesman_Code,
   A.Region,
@@ -72,7 +71,7 @@ Select
       (A.Dec / B.Total_Sales_Days) * B.Elapsed_Work_Days
   End As Daily_Quota
 From
-  Srrepquotainside A,
+  Srrepquota A,
   Kd_Monthly_Calendar B
 Order By
   A.Repnumber,
