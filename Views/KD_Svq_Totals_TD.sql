@@ -33,7 +33,7 @@ Where
 Select
   Round((A.This_Year_Total / Sum(B.Daily_Quota)) * 100,2) As Ytd_Quota_Pct_Total,
   Round((A.This_Year_Total / A.Year_Quota_Total) * 100,2) As Year_Quota_Pct_Total,
-  Round((A.This_Year_Total / C.Qtr_Total_Quota) * 100,2) As Qtd_Quota_Pct_Total,
+  Round((A.This_Quarter_Total / C.Qtr_Total_Quota) * 100,2) As Qtd_Quota_Pct_Total,
   Round((A.This_Quarter_Total / A.Quarter_Quota_Total) * 100,2) As Quarter_Quota_Pct_Total,
   Round((A.This_Month_Total / D.Month_Total_Quota) * 100,2) As Mtd_Quota_Pct_Total,
   Round((A.This_Month_Total / A.Month_Quota_Total) * 100,2) As Month_Quota_PCT_Total
@@ -46,6 +46,7 @@ Group By
   A.This_Year_Total,
   Round((A.This_Year_Total / A.Year_Quota_Total) * 100,2),
   Round((A.This_Year_Total / C.Qtr_Total_Quota) * 100,2),
+  Round((A.This_Quarter_Total / C.Qtr_Total_Quota) * 100,2),
   Round((A.This_Quarter_Total / A.Quarter_Quota_Total) * 100,2),
   Round((A.This_Month_Total / D.Month_Total_Quota) * 100,2),
   Round((A.This_Month_Total / A.Month_Quota_Total) * 100,2);
