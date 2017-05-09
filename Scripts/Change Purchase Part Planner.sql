@@ -18,7 +18,7 @@ BEGIN
                                 Purchase_Part_Supplier A
                               Where
                                 A.Contract = '100' And
-                                A.Vendor_No In ('MICMAT','53781','JMNEY')) And
+                                A.Vendor_No In ('BOBINC')) And
                 A.Contract = '100')
   Loop
     A_ := '';
