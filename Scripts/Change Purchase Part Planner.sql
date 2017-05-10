@@ -18,13 +18,14 @@ BEGIN
                                 Purchase_Part_Supplier A
                               Where
                                 A.Contract = '100' And
-                                A.Vendor_No In ('BOBINC')) And
+                                A.Vendor_No In ('BOBINC') And
+                                A.Primary_Vendor != 'Primary supplier') And
                 A.Contract = '100')
   Loop
     A_ := '';
     B_ := Cur.Objid;
     C_ := Cur.Objversion;
-    D_ := 'BUYER_CODE'||Chr(31)||'LGRAY'||Chr(30);
+    D_ := 'BUYER_CODE'||Chr(31)||'RMOREAU'||Chr(30);
     E_ := 'DO'; 
     Ifsapp.Purchase_Part_Api.Modify__( A_ , B_ , C_ , D_ , E_ );
   End Loop;
