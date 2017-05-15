@@ -1,5 +1,5 @@
 --Find the account.
-Select * From Customer_Info A Where A.Name Like '%Weaks%';
+Select * From Customer_Info A Where A.Name Like '%Tweaks%';
 --Check last year's sales in Implant product families is <= 1000.
 Select
   Sum(A.Allamounts) 
