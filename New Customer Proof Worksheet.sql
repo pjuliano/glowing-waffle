@@ -1,4 +1,4 @@
---Find the account.
+--Find the account(s).
 Select * From Customer_Info A Where A.Name Like '%Tweaks%';
 --Check last year's sales in Implant product families is <= 1000.
 Select
