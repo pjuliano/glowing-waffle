@@ -1,0 +1,83 @@
+Select
+  *
+From 
+  (
+  Select
+    A.Delivcountry,
+    A.Catalog_No,
+    A.Invoiced_Qty
+  From
+    Kd_Sales_Data_Request A
+  Where
+    A.Delivcountry In ('AUSTRIA',
+                       'BELGIUM',
+                       'BULGARIA',
+                       'CROATIA',
+                       'CYPRUS',
+                       'CZECH REPUBLIC',
+                       'DENMARK',
+                       'ESTONIA',
+                       'FINLAND',
+                       'FRANCE',
+                       'GERMANY',
+                       'GREECE',
+                       'HUNGARY',
+                       'IRELAND',
+                       'ITALY',
+                       'LATVIA',
+                       'LITHUANIA',
+                       'LUXEMBOURG',
+                       'MALTA',
+                       'NETHERLANDS',
+                       'POLAND',
+                       'PORTUGAL',
+                       'ROMANIA',
+                       'SLOVAKIA',
+                       'SPAIN',
+                       'SWEDEN',
+                       'UNITED KINGDOM',
+                       'UNITED STATES',
+                       'JAMAICA',
+                       'CAYMAN ISLANDS') And
+    A.Catalog_No In ('45809K',
+                     '45810K',
+                     '45811K',
+                     '45812K',
+                     '45813K',
+                     '45814K',
+                     '45007K',
+                     '45008K',
+                     '45009K') And
+    A.Invoicedate Between To_Date('05/01/2013','MM/DD/YYYY') And To_Date('05/31/2017','MM/DD/YYYY'))
+Pivot
+  (
+  Sum(Invoiced_Qty) For DelivCountry In ('AUSTRIA',
+                                         'BELGIUM',
+                                         'BULGARIA',
+                                         'CROATIA',
+                                         'CYPRUS',
+                                         'CZECH REPUBLIC',
+                                         'DENMARK',
+                                         'ESTONIA',
+                                         'FINLAND',
+                                         'FRANCE',
+                                         'GERMANY',
+                                         'GREECE',
+                                         'HUNGARY',
+                                         'IRELAND',
+                                         'ITALY',
+                                         'LATVIA',
+                                         'LITHUANIA',
+                                         'LUXEMBOURG',
+                                         'MALTA',
+                                         'NETHERLANDS',
+                                         'POLAND',
+                                         'PORTUGAL',
+                                         'ROMANIA',
+                                         'SLOVAKIA',
+                                         'SPAIN',
+                                         'SWEDEN',
+                                         'UNITED KINGDOM',
+                                         'UNITED STATES',
+                                         'JAMAICA',
+                                         'CAYMAN ISLANDS'))
