@@ -1,5 +1,7 @@
 Create or Replace View KD_Aging_Vs_Payments As  
 Select
+  D.Name As Rep_Name,
+  E.Region,
   A.Identity As Customer_ID,
   A.Name,
   A.Group_Id,
@@ -26,5 +28,11 @@ Select
 From
   Kd_Customer_Aging_Buckets A Left Join Kd_Customer_Payments B
     On A.Identity = B.Identity
+                              Left Join Cust_Ord_Customer_Ent C
+    On A.Identity = C.Customer_Id,
+  Person_Info D Left Join Srrepquota E
+    On D.Person_Id = E.Repnumber
+Where
+  C.Salesman_Code = D.Person_Id
 Order By
   A.Identity;
