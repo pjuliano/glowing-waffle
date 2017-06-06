@@ -6,7 +6,11 @@ Select
   A.Customer_No,
   A.Customer_Name,
   A.Order_No,
-  A.Invoicedate,
+  Customer_Order_Api.Get_Order_Id(A.Order_No) As Order_Id,
+  Case When A.Invoicedate = Trunc(sysdate) 
+       Then 'TODAY'
+       Else 'HISTORY'
+  End As Today_Or_Hist,
   E.Last_Activity_Date,
   Sum(A.Allamounts) As Total,
   Sum(Case When A.Part_Product_Code Not In ('LIT','REGEN')
@@ -56,10 +60,13 @@ Group By
   A.Customer_No,
   A.Customer_Name,
   A.Order_No,
-  A.Invoicedate,
+  Customer_Order_Api.Get_Order_Id(A.Order_No),
+  Case When A.Invoicedate = Trunc(Sysdate) 
+       Then 'TODAY'
+       Else 'HISTORY'
+  End,
   E.Last_Activity_Date
 Order By
-  A.InvoiceDate Desc,
   C.Region,
   B.Name,
   A.Customer_Name,
