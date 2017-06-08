@@ -1,4 +1,4 @@
-Create or Replace View KD_TODAYS_EU_VOUCHERS As
+Create or Replace View KD_TODAYS_US_VOUCHERS As
 Select
   A.Company,
   A.Voucher_Date,
@@ -15,5 +15,5 @@ Select
 From
   Gen_Led_Voucher_Row_Union_Qry A
 Where
-  A.Company != '100' And
+  A.Company = '100' And
   A.Voucher_Date = Trunc(Sysdate);
