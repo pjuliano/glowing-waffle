@@ -2,6 +2,7 @@ Create or Replace View KD_Aging_Vs_Payments As
 Select
   D.Name As Rep_Name,
   E.Region,
+  Customer_Info_Address_Api.Get_State(A.Identity,Customer_Info_Address_Api.Get_Default_Address(A.Identity,'Delivery')) As Deliv_State,
   A.Identity As Customer_ID,
   A.Name,
   A.Group_Id,
