@@ -45,7 +45,13 @@ From
                         'B2971',
                         'B2970',
                         'B3114',
-                        'B3730'))
+                        'B3730',
+                        'B2960',
+                        'B3055',
+                        'B2963',
+                        'B2962',
+                        'B3568',
+                        'B2958'))
 Pivot
   (Max(Round(Deal_Price,2)) As Deal_Price,
    Max(100-Round((Deal_Price/Nullif(List_Price,0))*100,0)) As Discount   For Customer_No In ('B1391' As "B1391",
@@ -74,4 +80,10 @@ Pivot
                                                                                              'B2971' As "B2971",
                                                                                              'B2970' As "B2970",
                                                                                              'B3114' As "B3114",
-                                                                                             'B3730' As "B3730"))
+                                                                                             'B3730' As "B3730",
+                                                                                             'B2960' As "B2960",
+                                                                                             'B3055' As "B3055",
+                                                                                             'B2963' As "B2963",
+                                                                                             'B2962' As "B2962",
+                                                                                             'B3568' As "B3568",
+                                                                                             'B2958' As "B2958"))
