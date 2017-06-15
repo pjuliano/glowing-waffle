@@ -6,6 +6,7 @@ From
   Select
     A.Identity As Customer_No,
     B.Name As Customer_Name,
+    Identity_Invoice_Info_Api.Get_Group_Id(A.Company, Identity, Customer_Info_Api.Get_Party_Type(A.Identity)) as Group_ID,
     D.Rep_Name,
     D.Region,
     Customer_Info_Address_Api.Get_State(A.Identity,Customer_Info_Address_Api.Get_Default_Address(A.Identity,'Delivery')) As State,
