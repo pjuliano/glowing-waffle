@@ -231,7 +231,8 @@ Where
   A.Salesman_Code = C.Person_Id And
   A.Charge_Type = 'Parts' And
   A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED') And
-  A.Corporate_Form = 'DOMDIR'
+  A.Corporate_Form = 'DOMDIR' And
+  A.Catalog_No Not Like 'LODI%'
 Group By
   A.Salesman_Code,
   C.Name,

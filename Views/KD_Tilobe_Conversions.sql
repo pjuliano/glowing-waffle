@@ -239,7 +239,8 @@ From
   Person_Info B
 Where
   A.Salesman_Code = B.Person_Id And
-  A.Charge_Type = 'Parts'
+  A.Charge_Type = 'Parts' And
+  A.Catalog_No Not Like 'LODI%'
 Having
   Case When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
                            A.Part_Product_Family In ('PRIMA','GNSIS')
