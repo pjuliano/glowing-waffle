@@ -33,6 +33,7 @@ Select
   B.Eff_Phase_Out_Date,
   B.Eng_Chg_Level,
   B.Eng_Revision,
+  B.Eng_Revision_Desc,
   C.Last_Sale_Date,
   D.Onhand_Qty
 From
