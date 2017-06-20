@@ -74,7 +74,7 @@ Select
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR1'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
                         A.Part_Product_Family In ('PRIMA','GNSIS')
@@ -122,7 +122,7 @@ Select
                                                     A.Part_Product_Code != 'LIT'
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR2'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
                         A.Part_Product_Family In ('PRIMA','GNSIS')
@@ -176,7 +176,7 @@ Select
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR3'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
                         A.Part_Product_Family In ('PRIMA','GNSIS')
@@ -230,7 +230,7 @@ Select
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR4'
     Else 'N/A'
   End As Qtr
@@ -294,7 +294,7 @@ Having
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR1'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
                         A.Part_Product_Family In ('PRIMA','GNSIS')
@@ -342,7 +342,7 @@ Having
                                                     A.Part_Product_Code != 'LIT'
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR2'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
                         A.Part_Product_Family In ('PRIMA','GNSIS')
@@ -396,7 +396,7 @@ Having
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR3'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
                         A.Part_Product_Family In ('PRIMA','GNSIS')
@@ -450,7 +450,7 @@ Having
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR4'
     Else 'N/A'
   End != 'N/A' And

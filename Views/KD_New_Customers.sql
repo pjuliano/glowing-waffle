@@ -66,7 +66,7 @@ Select
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR1'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)
                       Then A.Allamounts
@@ -113,7 +113,7 @@ Select
                                                     A.Part_Product_Code != 'LIT'
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR2'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)
                       Then A.Allamounts
@@ -166,7 +166,7 @@ Select
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR3'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)
                       Then A.Allamounts
@@ -219,7 +219,7 @@ Select
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR4'
     Else 'N/A'
   End As Qtr
@@ -297,7 +297,7 @@ Having
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR1'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)
                       Then A.Allamounts
@@ -344,7 +344,7 @@ Having
                                                     A.Part_Product_Code != 'LIT'
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR2'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)
                       Then A.Allamounts
@@ -397,7 +397,7 @@ Having
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR3'
     When (Sum(Case When Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)
                       Then A.Allamounts
@@ -450,7 +450,7 @@ Having
                                                     Or A.Market_Code Is Null)
                                                Then A.Allamounts
                                                Else 0
-                                          End)),2)) * 100 >= 50
+                                          End)),4)) * 100 >= 50
     Then 'QTR4'
     Else 'N/A'
   End != 'N/A'
