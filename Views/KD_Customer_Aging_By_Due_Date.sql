@@ -47,7 +47,8 @@ From
     A.Identity = B.Customer_Id And
     B.Customer_Id = C.Customer_Id And
     A.Fully_Paid = 'FALSE' And
-    A.Due_Date <= Last_Day(Sysdate)
+    A.Due_Date <= Last_Day(Sysdate) And
+    A.Company = '100'
   )
 Pivot
   (Sum(Open_Amount) For Due_Month In (1 "JAN",2 "FEB",3 "MAR",4 "APR",5 "MAY",6 "JUN",7 "JUL",8 "AUG",9 "SEP",10 "OCT",11 "NOV",12 "DEC",0 "OTHER"))
