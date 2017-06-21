@@ -41,13 +41,13 @@ From
     Ledger_Item_Cu_Qry A Left Join Current_Payments E
       On A.Identity = E.Identity,
     Customer_Info B,
-    Cust_Ord_Customer_Ent C,
-    Srrepquota D
+    Cust_Ord_Customer_Ent C Left Join Srrepquota D
+      On C.Salesman_Code = D.RepNumber
   Where
     A.Identity = B.Customer_Id And
     B.Customer_Id = C.Customer_Id And
-    C.Salesman_Code = D.RepNumber And
-    A.Fully_Paid = 'FALSE'
+    A.Fully_Paid = 'FALSE' And
+    A.Due_Date <= Last_Day(Sysdate)
   )
 Pivot
   (Sum(Open_Amount) For Due_Month In (1 "JAN",2 "FEB",3 "MAR",4 "APR",5 "MAY",6 "JUN",7 "JUL",8 "AUG",9 "SEP",10 "OCT",11 "NOV",12 "DEC",0 "OTHER"))
