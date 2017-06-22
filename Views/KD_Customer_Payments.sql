@@ -10,7 +10,6 @@ From
   From
     Pay_Doc_Followup_Qry
   Where
-    Party_Type = 'Customer' And
   ((Extract(Year From Payment_Date) = Extract(Year From Sysdate)) Or
    (Extract(Month From Payment_Date) > Extract(Month From Sysdate) And 
     Extract(Year From Payment_Date) = Extract(Year From Sysdate) - 1)) And
