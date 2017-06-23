@@ -2,6 +2,7 @@ Create Or Replace View KD_Payments_VS_Aging As
 Select
   A.Identity As Customer_No,
   A.Name,
+  Identity_Invoice_Info_Api.Get_Group_Id('100', A.Identity, Customer_Info_Api.Get_Party_Type(A.Identity)) As Group_Id,
   Cust_Ord_Customer_Api.Get_Salesman_Code(A.Identity) As Salesman_Code,
   Person_Info_Api.Get_Name(Cust_Ord_Customer_Api.Get_Salesman_Code(A.Identity)) As Salesman_Name,
   D.Region,
@@ -13,6 +14,8 @@ Select
   C."91-120",
   C."121-150",
   C."151+",
+  Decode(C."0-30",Null,0,C."0-30") + Decode(C."31-60",Null,0,C."31-60") + Decode(C."61-90",Null,0,C."61-90") + Decode(C."91-120",Null,0,C."91-120") + Decode(C."121-150",Null,0,C."121-150") + Decode(C."151+",Null,0,C."151+") As Total_Past_Due,
+  Decode(C."0-30",Null,0,C."0-30") + Decode(C."31-60",Null,0,C."31-60") + Decode(C."61-90",Null,0,C."61-90") + Decode(C."91-120",Null,0,C."91-120") + Decode(C."121-150",Null,0,C."121-150") + Decode(C."151+",Null,0,C."151+") + Decode(C."Current",Null,0,C."Current") As Total_Balance,
   A.Jan,
   A.Feb,
   A.Mar,
