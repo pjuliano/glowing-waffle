@@ -16,4 +16,8 @@ From
   Gen_Led_Voucher_Row_Union_Qry A
 Where
   A.Company != '100' And
-  A.Voucher_Date = Trunc(Sysdate);
+  Extract(Month From A.Voucher_Date) = Extract(Month From Sysdate) And
+  Extract(Year From A.Voucher_Date) = Extract(Year From Sysdate)
+Order By
+  A.Voucher_Date,
+  A.Company;
