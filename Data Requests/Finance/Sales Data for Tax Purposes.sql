@@ -30,7 +30,8 @@ Select
   Customer_Info_Address_Api.Get_City(A.Identity,Customer_Info_Address_Api.Get_Default_Address(A.Identity,'Delivery')) As Cust_Def_City,
   Customer_Info_Address_Api.Get_State(A.Identity,Customer_Info_Address_Api.Get_Default_Address(A.Identity,'Delivery')) As Cust_Def_State,
   Customer_Info_Address_Api.Get_Zip_Code(A.Identity,Customer_Info_Address_Api.Get_Default_Address(A.Identity,'Delivery')) As Cust_Def_Zip,
-  Customer_Info_Address_Api.Get_County(A.Identity,Customer_Info_Address_Api.Get_Default_Address(A.Identity,'Delivery')) As Cust_Def_County
+  Customer_Info_Address_Api.Get_County(A.Identity,Customer_Info_Address_Api.Get_Default_Address(A.Identity,'Delivery')) As Cust_Def_County,
+  Customer_Info_Address_Api.Get_Jurisdiction_Code(A.Identity,Customer_Info_Address_Api.Get_Default_Address(A.Identity,'Delivery')) As Cust_Def_Jurisdiction_Code
 From
   Customer_Order_Inv_Join A
 Where
