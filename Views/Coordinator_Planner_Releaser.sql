@@ -1,95 +1,40 @@
-
-  CREATE OR REPLACE FORCE VIEW "IFSAPP"."COORDINATOR_PLANNER_RELEASER" ("ORDER_NO", "INVOICE_ID", "INVOICEDATE", "YEAR", "QUARTER", "MONTH", "PRODUCT_TYPE", "REGION_CODE", "REP_NAME", "ALLAMOUNTS", "COORDINATOR", "PLANNER", "RELEASER") AS 
-  SELECT A.ORDER_NO,
-       A.INVOICE_ID,
-			 A.INVOICEDATE,
-       EXTRACT (YEAR FROM A.INVOICEDATE) AS YEAR,
-       A.INVOICEQTR AS QUARTER,
-EXTRACT (MONTH FROM A.INVOICEDATE) AS MONTH,
-CASE
-WHEN A.PART_PRODUCT_CODE IN ('EGSW',
-'EGHW',
-'EGSVC',
-'MOTOR',
-'IFU',
-'PROMO',
-'LIT',
-'MARKE',
-'SUPP',
-'SPECS',
-'PKG',
-'LABEL',
-'MODEL')
-THEN 'OTHER'
-   WHEN A.PART_PRODUCT_CODE IN ('PROS',
-'ORCAN',
-'TLNG',
-'IMPL',
-'KITSI',
-'KITPR',
-'KTIPI',
-'INSTR',
-'PROST')
-THEN 'IMPL'
-     WHEN A.PART_PRODUCT_CODE IN ('REGEN',
-'RSMPL')
-THEN 'REGEN'
-END AS PRODUCT_TYPE,
-A.REGION_CODE,
-PERSON_INFO_API.GET_NAME(A.SALESMAN_CODE) AS REP_NAME,
-SUM(A.ALLAMOUNTS) AS ALLAMOUNTS,
-A.AUTHORIZE_CODE AS COORDINATOR,
-B.USERID AS PLANNER,
-(SELECT Z.USERID
-    FROM CUSTOMER_ORDER_HISTORY Z
-WHERE Z.STATE = 'Released'
-   AND ROWNUM = 1
-AND A.ORDER_NO = Z.ORDER_NO) AS RELEASER
-  FROM KD_SALES_DATA_REQUEST A,
-     CUSTOMER_ORDER_HISTORY B
-WHERE
-A.CORPORATE_FORM = 'DOMDIR'
-AND A.ORDER_NO = B.ORDER_NO
-AND B.STATE = 'Planned'
-AND B.MESSAGE_TEXT NOT LIKE 'Pro Forma%'
-GROUP BY A.ORDER_NO,
-       A.INVOICE_ID,
-			 A.INVOICEDATE,
-       EXTRACT (YEAR FROM A.INVOICEDATE),
-A.INVOICEQTR,
-EXTRACT (MONTH FROM A.INVOICEDATE),
-CASE
-WHEN A.PART_PRODUCT_CODE IN ('EGSW',
-'EGHW',
-'EGSVC',
-'MOTOR',
-'IFU',
-'PROMO',
-'LIT',
-'MARKE',
-'SUPP',
-'SPECS',
-'PKG',
-'LABEL',
-'MODEL')
-THEN 'OTHER'
-   WHEN A.PART_PRODUCT_CODE IN ('PROS',
-'ORCAN',
-'TLNG',
-'IMPL',
-'KITSI',
-'KITPR',
-'KTIPI',
-'INSTR',
-'PROST')
-THEN 'IMPL'
-     WHEN A.PART_PRODUCT_CODE IN ('REGEN',
-'RSMPL')
-THEN 'REGEN'
-END,
-A.REGION_CODE,
-PERSON_INFO_API.GET_NAME(A.SALESMAN_CODE),
-A.AUTHORIZE_CODE,
-B.USERID
-ORDER BY A.ORDER_NO,
-       A.Invoice_Id;
+Select
+  A.Order_No,
+  A.Invoice_Id,
+  A.Invoicedate,
+  Extract(Year From A.Invoicedate) As Year,
+  A.Invoiceqtr,
+  Extract(Month From A.Invoicedate) As Month,
+  Case When A.Part_Product_Code In ('PROS','ORCAN','TLNG','IMPL','KITSI','KITPR','KTIPI','INSTR','PROST')
+       Then 'IMPL'
+       When A.Part_Product_Code In ('REGEN','RSMPL') 
+       Then 'REGEN'
+       Else 'OTHER'
+  End As Product_Type,
+  A.Region_Code,
+  Person_Info_Api.Get_Name(A.Salesman_Code) As Rep_Name,
+  A.Authorize_Code As Coordinator,
+  Max(Person_Info_Api.Get_Name((Select Userid From Customer_Order_History Z Where A.Order_No = Z.Order_No And Z.State = 'Planned' And Z.Message_Text = 'Planned'))) As Planner,
+  Max(Person_Info_Api.Get_Name((Select Y.Userid From Customer_Order_History Y Where Y.State = 'Released' And Y.Message_Text = 'Released' And Y.Order_No = A.Order_No And (Select Max(X.Objversion) From Customer_Order_History X Where X.State = 'Released' And X.Message_Text = 'Released' And X.Order_No = A.Order_No) = Y.Objversion))) As Releaser,
+  Sum(A.Allamounts) As Total
+From
+  Kd_Sales_Data A
+Where
+  A.Charge_Type = 'Parts' And
+  A.Corporate_Form In ('CAN','DOMDIR') And A.InvoiceMthyr = '06/2017'
+Group By
+  A.Order_No,
+  A.Invoice_Id,
+  A.Invoicedate,
+  Extract(Year From A.Invoicedate),
+  A.Invoiceqtr,
+  Extract(Month From A.Invoicedate),
+  Case When A.Part_Product_Code In ('PROS','ORCAN','TLNG','IMPL','KITSI','KITPR','KTIPI','INSTR','PROST')
+       Then 'IMPL'
+       When A.Part_Product_Code In ('REGEN','RSMPL') 
+       Then 'REGEN'
+       Else 'OTHER'
+  End,
+  A.Region_Code,
+  Person_Info_Api.Get_Name(A.Salesman_Code),
+  A.Authorize_Code
