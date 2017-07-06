@@ -1,0 +1,46 @@
+Create or Replace View KD_Inv_Scrap_Trans As
+Select 
+  A.Transaction_Code,
+  A.Reject_Code,
+  A.Date_Created,
+  A.Cost
+From
+  Inventory_Transaction_Hist A
+Where
+  A.Transaction_Code In ( 'OERET-SPNC',
+                          'OERET-SPNC',
+                          'OERET-SCP',
+                          'OERET-SPNO',
+                          'INVSCRAP',
+                          'OPFEED-SCP',
+                          'TO4-OPREP',
+                          'PICKSCRAP',
+                          'INVSCPCOR',
+                          'PSSCRAP',
+                          'RPSSCRAP',
+                          'SODSPSCP',
+                          'UNOPFDSCP',
+                          'UNSODSPSCP',
+                          'CO-SCRAP',
+                          'CO-PCKSCRP',
+                          'CO-SCRPCOR',
+                          'NINVSCRAP',
+                          'NINVSCPCOR',
+                          'OERET-SINT',
+                          'REP-SCRAP',
+                          'UNREPSCRAP',
+                          'OERET-SPEX',
+                          'NINSCPINT',
+                          'NISCPCORIN',
+                          'SCPCREDIT',
+                          'NSCPCREDIT',
+                          'CO-SCPCRED',
+                          'SCPCREDCOR',
+                          'NSCPCRECOR',
+                          'CO-SCPCREC',
+                          'OERET-SPNC',
+                          'NREC',
+                          'NISS',
+                          'COUNT-IN',
+                          'COUNT-OUT') And
+  A.Contract = '100';
