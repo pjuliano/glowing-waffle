@@ -4,7 +4,7 @@ Select
   A.Invoice_Id,
   A.Invoicedate,
   Extract(Year From A.Invoicedate) As Year,
-  A.Invoiceqtr,
+  A.Invoiceqtr As Quarter,
   Extract(Month From A.Invoicedate) As Month,
   Case When A.Part_Product_Code In ('PROS','ORCAN','TLNG','IMPL','KITSI','KITPR','KTIPI','INSTR','PROST')
        Then 'IMPL'
@@ -17,7 +17,7 @@ Select
   A.Authorize_Code As Coordinator,
   Max(Person_Info_Api.Get_Name((Select Userid From Customer_Order_History Z Where A.Order_No = Z.Order_No And Z.State = 'Planned' And Z.Message_Text = 'Planned'))) As Planner,
   Max(Person_Info_Api.Get_Name((Select Y.Userid From Customer_Order_History Y Where Y.State = 'Released' And Y.Message_Text = 'Released' And Y.Order_No = A.Order_No And (Select Max(X.Objversion) From Customer_Order_History X Where X.State = 'Released' And X.Message_Text = 'Released' And X.Order_No = A.Order_No) = Y.Objversion))) As Releaser,
-  Sum(A.Allamounts) As Total
+  Sum(A.Allamounts) As AllAmounts
 From
   Kd_Sales_Data A
 Where
