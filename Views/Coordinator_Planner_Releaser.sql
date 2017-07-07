@@ -1,3 +1,4 @@
+Create Or Replace View Coordinator_Planner_Releaser As
 Select
   A.Order_No,
   A.Invoice_Id,
