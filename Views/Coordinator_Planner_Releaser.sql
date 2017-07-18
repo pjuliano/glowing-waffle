@@ -22,7 +22,7 @@ From
   Kd_Sales_Data A
 Where
   A.Charge_Type = 'Parts' And
-  A.Corporate_Form In ('CAN','DOMDIR') And A.InvoiceMthyr = '06/2017'
+  A.Corporate_Form In ('CAN','DOMDIR')
 Group By
   A.Order_No,
   A.Invoice_Id,
