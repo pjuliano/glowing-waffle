@@ -30,6 +30,8 @@ With Latest_Price_List_Line As
 Select
   B.Price_List_No,
   B.Catalog_No,
+  Sales_Part_Api.Get_Catalog_Desc(B.Base_Price_Site,B.Catalog_No) As Description,  
+  Sales_Part_Api.Get_List_Price(B.Base_Price_Site,B.Catalog_No) As Real_List_Price,
   B.Base_Price,
   B.Sales_Price,
   Round(Case 
@@ -48,4 +50,5 @@ Where
   B.Price_List_No = C.Price_List_No And 
   B.Catalog_No = C.Catalog_No And
   B.State = 'Active' And
-  Sales_Part_Api.Get_ActiveInD('100',B.Catalog_No) != 'Inactive Part';
+  Sales_Part_Api.Get_Activeind('100',B.Catalog_No) != 'Inactive Part' And
+  B.Price_List_No In ('N1013SI','N1013T','10% W' || chr(38) || 'H');
