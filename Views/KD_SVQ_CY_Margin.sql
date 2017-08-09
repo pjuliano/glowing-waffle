@@ -21,13 +21,14 @@ Select A.Salesman_Code,
               Then
                 A.Invoiced_Qty * A.Cost
               End)) / 
+          NullIf(
           Sum(Case
               When
                 Extract(Month From A.Invoicedate) = Extract(Month From Sysdate)
               Then
                 A.Allamounts
-              End) * 100,2) As MTD_Margin,
-  Round((Sum(A.Allamounts) - Sum(A.Invoiced_Qty * A.Cost)) / Sum(A.Allamounts) * 100,2) As Cy_Margin
+              End),0) * 100,2) As Mtd_Margin,
+  Round((Sum(A.Allamounts) - Sum(A.Invoiced_Qty * A.Cost)) / NullIf(Sum(A.Allamounts),0) * 100,2) As Cy_Margin
 From 
   Kd_Sales_Data_Request A Left Join Srrepquota B
     On A.Salesman_Code   = B.Repnumber
