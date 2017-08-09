@@ -19,7 +19,7 @@ From
 Where
   A.Accounting_Id = B.Accounting_Id And
   B.Part_No = C.Part_No And
-  A.Str_Code In ('M57','M152') And
+  A.Str_Code In ('M57','M152') and
   A.Date_Applied Between To_Date('01/01/2017','MM/DD/YYYY') And To_Date('07/31/2017','MM/DD/YYYY')
 Order By
   Purchase_Order_Api.Get_Vendor_No(B.Order_No)
