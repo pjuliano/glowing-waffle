@@ -4,7 +4,7 @@ Select
   E.Name,
   A.Region,
   D.Today,
-  C.This_Month,
+  Nullif(C.This_Month,0) As This_Month,
   C.This_Month_Implants,
   C.This_Month_Bio,
   C.This_Month_Gross_Margin,
