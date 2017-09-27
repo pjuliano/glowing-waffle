@@ -13,8 +13,7 @@ Select
   C.City,
   C.State,
   C.Zip_Code,
-  C.Country,
-  Sum(A.Open_Amount) As "Sum(Open_Amount)"
+  C.Country
 From 
   Ledger_Item_Cu_Qry A, 
   Customer_Info B,
@@ -43,5 +42,3 @@ Group By
   C.State,
   C.Zip_Code,
   C.Country
-Having
-  Sum(A.Open_Amount) < 0 

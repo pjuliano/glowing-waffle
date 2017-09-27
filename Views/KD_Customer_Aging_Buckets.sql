@@ -22,7 +22,7 @@ From
       When Trunc(Sysdate) - Decode(Due_Date,Null,Ledger_Date,Due_Date) >= 151
       Then '6'
     End As Bucket,
-  Open_Dom_Amount As Bucket_Value
+    Open_Dom_Amount As Bucket_Value
   From
     Kd_Ar_Aging_Stmt_V2_New 
   Where
