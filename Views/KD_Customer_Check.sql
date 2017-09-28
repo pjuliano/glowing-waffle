@@ -127,4 +127,17 @@ Where
   M.Customer_Id = N.Customer_Id And
   Upper(Ifsapp.Person_Info_Api.Get_Name(N.Salesman_Code)) Like 'DO NOT%' And
 	M.Customer_Id Not In ('TEMPLATE','INTL','FRTEMP','SETEMP','DETEMP','ITTEMP','BETEMP','CATEMP','UKTEMP') And
-  M.Customer_Id Not Like 'DE%';
+  M.Customer_Id Not Like 'DE%'
+Union All
+--Check to make sure there actually is a salesman code.
+Select 
+  M.Customer_Id,
+  'This account has no salesman code.'
+From 
+  Customer_Info M,
+	Cust_Ord_Customer_Ent N
+Where 
+  M.Customer_Id = N.Customer_Id And
+  Upper(Ifsapp.Person_Info_Api.Get_Name(N.Salesman_Code)) Is Null And
+	M.Customer_Id Not In ('TEMPLATE','INTL','FRTEMP','SETEMP','DETEMP','ITTEMP','BETEMP','CATEMP','UKTEMP') And
+  M.Customer_Id Not Like 'DE%' And M.Customer_ID Not Like 'FR%' And M.Customer_ID Not Like 'IT%';
