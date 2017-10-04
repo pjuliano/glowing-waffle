@@ -1,4 +1,4 @@
-Create or Replace View KD_Aging_Vs_Payments As  
+Create or Replace View KD_Aging_Vs_Payments As
 Select
   D.Name As Rep_Name,
   E.Region,
