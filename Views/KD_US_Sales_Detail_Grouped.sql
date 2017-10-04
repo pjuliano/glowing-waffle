@@ -17,7 +17,7 @@ Select
   A.Second_Commodity,
   A.Invoiced_Qty,
   Sum(A.Sale_Unit_Price) As Sale_Unit_Price,
-  Sum(A.Allamounts) As Allamounts,
+  Sum(A.Allamounts) As SalesPriceFC,
   Sum(C.Inventoryvalueus * A.Invoiced_Qty) As Cost_Value,
   Sum(A.Truelocalamt) As Truelocalamt,
   A.Association_No,
@@ -29,17 +29,18 @@ Select
        Then 'NADIRECT'
        When A.Corporate_Form In ('GER','BENELUX','FRA','ITL','SWE')
        Then 'EUROPE'
-       When A.Corporate_Form In ('ASIA','AT','EUR','SPA','CAN','DOMDIS')
-       Then 'GLOBALDIST'
+       When A.Corporate_Form In ('ASIA','LA','EUR','SPA','CAN','DOMDIS')
+       Then 'GLOBLDIST'
   End As Segment,
   A.Corporate_Form,
   A.Source,
   A.Type_Designation,
-  Case When A.Part_Product_Family In ('DYNAC','DYNAG','DYNAM','DYNAB','CONNX','CYTOP','BVINE','SYNTH','MFT')
+  Case When A.Part_Product_Family In ('DYNAC','DYNAG','DYNAB','DYNAM','CONNX','CYTOP','BVINE','SYNTH','MTF')
        Then 'BIOMATERIALS'
        When A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED')
        Then 'IMPLANTS'
-       Else 'OTHER'
+       When A.Part_Product_Family In ('EG','CUSAB','OTHER','EDU','MOTOR','ODYSS','LEGACY','DEVELOP')
+       Then 'OTHER'
   End As Product_Type,
   Sum(B.List_Price) As List_Price
 From
@@ -74,7 +75,7 @@ Group By
   A.Part_Product_Code,
   A.Second_Commodity,
   A.Invoiced_Qty,
-    A.Association_No,
+  A.Association_No,
   A.District_Code,
   A.Cust_Grp,
   A.Market_Code,
@@ -83,15 +84,16 @@ Group By
        Then 'NADIRECT'
        When A.Corporate_Form In ('GER','BENELUX','FRA','ITL','SWE')
        Then 'EUROPE'
-       When A.Corporate_Form In ('ASIA','AT','EUR','SPA','CAN','DOMDIS')
-       Then 'GLOBALDIST'
+       When A.Corporate_Form In ('ASIA','LA','EUR','SPA','CAN','DOMDIS')
+       Then 'GLOBLDIST'
   End,
   A.Corporate_Form,
   A.Source,
   A.Type_Designation,
-  Case When A.Part_Product_Family In ('DYNAC','DYNAG','DYNAM','DYNAB','CONNX','CYTOP','BVINE','SYNTH','MFT')
+  Case When A.Part_Product_Family In ('DYNAC','DYNAG','DYNAB','DYNAM','CONNX','CYTOP','BVINE','SYNTH','MTF')
        Then 'BIOMATERIALS'
        When A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED')
        Then 'IMPLANTS'
-       Else 'OTHER'
+       When A.Part_Product_Family In ('EG','CUSAB','OTHER','EDU','MOTOR','ODYSS','LEGACY','DEVELOP')
+       Then 'OTHER'
   End
