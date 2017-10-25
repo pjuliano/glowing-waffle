@@ -19,7 +19,7 @@ Declare
    R_ Varchar2(32000) := 'N'; --p17
    S_ Float := Null; --p18
 Begin
-  For Inv In (Select * From Kd_Inv_Move A Where A.Comments Not In ('FAILED','MOVED'))
+  For Inv In (Select * From Kd_Inv_Move A Where A.Comments Not In ('FAILED','MOVED') or A.Comments Is Null)
   Loop
     Update Kd_Inv_Move A Set A.Comments = 'FAILED' Where Inv.Part_No = A.Part_No And Inv.Lot_Batch_No = A.Lot_Batch_No And Inv.From_Location_No = A.From_Location_No;
     Commit;
