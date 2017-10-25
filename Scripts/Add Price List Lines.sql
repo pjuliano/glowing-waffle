@@ -22,7 +22,7 @@ Begin
                 Where
                   A.Status Is Null)
 		Loop
-      Update Kd_Price_List_Upload A Set A.Status = 'FAILED' Where A.Catalog_No = Cur.Catalog_No;
+      Update Kd_Price_List_Upload A Set A.Status = 'FAILED' Where A.Catalog_No = Cur.Catalog_No And A.Price_List_No = Cur.Price_List_No;
       Commit;
 		  D_ := 'CATALOG_NO' || Chr(31) || Cur.Catalog_No || Chr(30) || 'BASE_PRICE_SITE' || Chr(31) || Cur.Site || Chr(30) || 'BASE_PRICE' || Chr(31) || Cur.Base_Price || Chr(30) || 'MIN_QUANTITY' || Chr(31) || Cur.Minimum_Qty || Chr(30) || 'VALID_FROM_DATE' || Chr(31) || Cur.Valid_From_Date || Chr(30) || 'PERCENTAGE_OFFSET' || Chr(31) || Cur.Percentage_Offset || Chr(30) || 'AMOUNT_OFFSET' || Chr(31) || Cur.Amount_Offset || Chr(30) || 'SALES_PRICE' || Chr(31) || Cur.Sales_Price || Chr(30) || 'ROUNDING' || Chr(31) || Cur.Rounding || Chr(30) || 'BASE_PRICE' || Chr(31) || Cur.Base_Price || Chr(30) || 'PRICE_LIST_NO' || Chr(31) || Cur.Price_List_No || Chr(30) || '';
 	    Ifsapp.Sales_Price_List_Part_Api.New__( A_, B_, C_, D_, E_ );
