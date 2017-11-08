@@ -1,4 +1,4 @@
-Create Or Replace View Kd_Udis As 
+Create or Replace View KD_UDIs As 
 Select
   --Build UDI Code
   '+' || --Data identifier
@@ -69,4 +69,5 @@ Select
 From
   Inventory_Transaction_Hist
 Where
-  Transaction_Code = 'OESHIP' And Lot_Batch_No != '*'
+  Transaction_Code = 'OESHIP' And Lot_Batch_No != '*' And
+  Expiration_Date >= To_Date('01/01/2015','MM/DD/YYYY')
