@@ -22,4 +22,3 @@ Group By
   A.Catalog_No,
   A.Catalog_Desc,
   Sales_Part_Api.Get_List_Price('100',A.Catalog_No)
---Adding some stuff for the branch.
