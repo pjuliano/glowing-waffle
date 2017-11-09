@@ -1,3 +1,3 @@
 # glowing-waffle
-SQL from Keystone Dental, Inc.
+SQL
 Authored by Paul Juliano.
