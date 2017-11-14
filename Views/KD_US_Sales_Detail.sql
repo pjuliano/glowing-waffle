@@ -50,7 +50,8 @@ Select
        Then 'OTHER'
   End As Product_Type,
   A.Customer_Name As Assocname,
-  Sales_Part_Api.Get_List_Price(A.Site,A.Catalog_No) As Current_List,
+  E.List_Price As Current_List,
+  E.Catalog_Group As Sales_Group,
   B.Total_Tax 
 From
   Kd_Sales_Data_Request A Left Join KD_Total_Invoice_Taxes B
@@ -61,3 +62,7 @@ From
                           Left Join Customer_Order D
     On A.Order_No = D.Order_No And
        A.Customer_No = D.Customer_No
+                          Left Join Sales_Part E
+    On A.Site = E.Contract And
+       A.Catalog_No = E.Catalog_No
+  
