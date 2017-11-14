@@ -65,4 +65,3 @@ From
                           Left Join Sales_Part E
     On A.Site = E.Contract And
        A.Catalog_No = E.Catalog_No
-  
