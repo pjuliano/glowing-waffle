@@ -30,6 +30,7 @@ Select
   A.Cust_Grp As Spec,
   A.Market_Code,
   A.Site,
+  A.Corporate_Form,
   Case When A.Corporate_Form = 'DOMDIR'
        Then 'NADIRECT'
        When A.Corporate_Form In ('GER','BENELUX','FRA','ITL','SWE')
@@ -42,6 +43,7 @@ Select
   A.Order_No As Order#,
   D.Order_Id As Order_Type,
   A.Source,
+  A.Type_Designation,
   Case When A.Part_Product_Family In ('DYNAC','DYNAG','DYNAB','DYNAM','CONNX','CYTOP','BVINE','SYNTH','MTF')
        Then 'BIOMATERIALS'
        When A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED')
