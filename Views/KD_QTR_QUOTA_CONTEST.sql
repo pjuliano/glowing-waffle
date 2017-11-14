@@ -5,5 +5,7 @@ Select
   A.Qtd_Quota_Pct
 From
   Kd_Svq A
+Where
+  Name != 'House Account'
 Order By
   A.Qtd_Quota_Pct Desc
