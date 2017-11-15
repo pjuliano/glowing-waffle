@@ -1,34 +1,31 @@
 Select
-       IFSAPP.CUST_ORD_CUSTOMER.CUSTOMER_NO,
-       IFSAPP.CUSTOMER_INFO.NAME,
-       IFSAPP.CUSTOMER_INFO_ADDRESS.PRIMARY_CONTACT,
-       IFSAPP.CUSTOMER_INFO_ADDRESS.SECONDARY_CONTACT,       
-       IFSAPP.CUSTOMER_INFO_ADDRESS.ADDRESS1,
-       IFSAPP.CUSTOMER_INFO_ADDRESS.ADDRESS2,
-       IFSAPP.CUSTOMER_INFO_ADDRESS.CITY,
-       IFSAPP.CUSTOMER_INFO_ADDRESS.STATE,
-       IFSAPP.CUSTOMER_INFO_ADDRESS.ZIP_CODE,
-       IFSAPP.CUSTOMER_INFO_ADDRESS.ADDRESS_ID,
-       IFSAPP.CUST_ORD_CUSTOMER.CUST_GRP,
-       IFSAPP.CUST_ORD_CUSTOMER.SALESMAN_CODE,
-       IFSAPP.CUSTOMER_INFO.association_no,
-decode(IFSAPP.CC_CUSTOMER_INFO_COMM_METHOD.method_id,'Phone',IFSAPP.CC_CUSTOMER_INFO_COMM_METHOD.VALUE) Phone,
-decode(IFSAPP.CC_CUSTOMER_INFO_COMM_METHOD.method_id,'Fax',IFSAPP.CC_CUSTOMER_INFO_COMM_METHOD.VALUE) Fax
-  FROM ((IFSAPP.CUST_ORD_CUSTOMER INNER JOIN IFSAPP.CUSTOMER_INFO_ADDRESS ON
-        IFSAPP.CUST_ORD_CUSTOMER.CUSTOMER_NO =
-        IFSAPP.CUSTOMER_INFO_ADDRESS.CUSTOMER_ID) INNER JOIN
-        IFSAPP.CUSTOMER_INFO ON IFSAPP.CUSTOMER_INFO_ADDRESS.CUSTOMER_ID =
-        IFSAPP.CUSTOMER_INFO.CUSTOMER_ID)
-          LEFT OUTER JOIN IFSAPP.CC_CUSTOMER_INFO_COMM_METHOD ON IFSAPP.CUSTOMER_INFO_ADDRESS.CUSTOMER_ID =
-                                                   IFSAPP.CC_CUSTOMER_INFO_COMM_METHOD.CUSTOMER_ID
-  WHERE UPPER(IFSAPP.CUSTOMER_INFO.NAME) LIKE UPPER('&NAME') OR
-        IFSAPP.CUST_ORD_CUSTOMER.CUSTOMER_NO = '&CUSTOMER_NO'   OR
-        IFSAPP.CUSTOMER_INFO_ADDRESS.ZIP_CODE = '&ZIP'  OR
-        UPPER(IFSAPP.CUST_ORD_CUSTOMER.salesman_code)  LIKE UPPER('&SALESMAN')  
-OR
-       UPPER(IFSAPP.CUSTOMER_INFO_ADDRESS.CITY) like UPPER('&CITY') OR
-        UPPER(IFSAPP.CUSTOMER_INFO_ADDRESS.PRIMARY_CONTACT) LIKE UPPER('&PRIMARY_CONTACT') OR
-        UPPER(IFSAPP.CUSTOMER_INFO_ADDRESS.SECONDARY_CONTACT) LIKE UPPER('&SECONDARY_CONTACT')
-OR      UPPER(IFSAPP.CUSTOMER_INFO.association_no)='&ASSOC#'
-
-order by IFSAPP.CUSTOMER_INFO.CUSTOMER_ID
+  A.Customer_Id,
+  A.Name,
+  A.Creation_Date,
+  Customer_Info_Address_Api.Get_Primary_Contact(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) As Primary_Contact,
+  Customer_Info_Address_Api.Get_Secondary_Contact(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) As Secondary_Contact,
+  Customer_Info_Address_Api.Get_Address1(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) As Delivaddress1,
+  Customer_Info_Address_Api.Get_Address2(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) As Delivaddress2,
+  Customer_Info_Address_Api.Get_City(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) As Delivcity,
+  Customer_Info_Address_Api.Get_State(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) As Delivstate,
+  Customer_Info_Address_Api.Get_Zip_Code(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) As Delivzip,
+  Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery') As Delivaddressid,
+  Cust_Ord_Customer_Api.Get_Cust_Grp(A.Customer_Id) As Cust_Grp,
+  Cust_Ord_Customer_Api.Get_Salesman_Code(A.Customer_Id) As Salesman_Code,
+  A.Association_No,
+  Customer_Info_Comm_Method_Api.Get_Default_Phone(A.Customer_Id) As Phone,
+  Customer_Info_Comm_Method_Api.Get_Default_Fax(A.Customer_ID) as Fax
+From
+  Customer_Info A
+Where
+  Upper(A.Name) = Upper('&Name') Or
+  A.Customer_Id = '&Customer_No' Or
+  Customer_Info_Address_Api.Get_Zip_Code(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) = '&Zip' Or
+  Cust_Ord_Customer_Api.Get_Salesman_Code(A.Customer_Id) = '&Salesman_Code' Or
+  Upper(Customer_Info_Address_Api.Get_City(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery'))) = Upper('&Delivery_City') Or
+  Upper(Customer_Info_Address_Api.Get_Primary_Contact(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery'))) = Upper('&Primary_Contact') Or
+  Customer_Info_Address_Api.Get_Secondary_Contact(A.Customer_Id,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery'))= Upper('&Secondary_Contact') Or
+  Upper(A.Association_No) = Upper('$Association_No') Or
+  A.Creation_Date >= To_Date('&Created_On_Or_After','MM/DD/YYYY')
+Order By
+  A.Customer_ID
