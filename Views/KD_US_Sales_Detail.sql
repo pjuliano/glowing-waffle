@@ -36,7 +36,7 @@ Select
        When A.Corporate_Form In ('GER','BENELUX','FRA','ITL','SWE')
        Then 'EUROPE'
        When A.Corporate_Form In ('ASIA','LA','EUR','SPA','CAN','DOMDIS')
-       Then 'GLOBALDIST'
+       Then 'GLOBLDIST'
        Else Null
   End As "SEGMENT",
   A.Rma_No As Rma#,
