@@ -130,4 +130,4 @@ Where
   B.Expire_Date Is Null And
   A.Company = '100' And 
   C.Corporate_Form = 'DOMDIR' And
-  A.Identity Not In ('TEMPLATE','CATEMP');
+  A.Identity Not In ('TEMPLATE','CATEMP','A35173','22008','28331','28621','29627');
