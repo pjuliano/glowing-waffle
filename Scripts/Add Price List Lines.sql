@@ -29,14 +29,4 @@ Begin
       Update KD_Price_List_Upload A Set A.Status = 'SUCCESS' Where A.CAtalog_No = Cur.Catalog_No;
       Commit;
 	 End Loop;
-
-   -------------------------------------------
-   --- Dbms_Output Section ---
-   -------------------------------------------
-   Dbms_Output.Put_Line('a_ = ' || A_);
-   Dbms_Output.Put_Line('b_ = ' || B_);
-   Dbms_Output.Put_Line('c_ = ' || C_);
-   Dbms_Output.Put_Line('d_ = ' || D_);
-   Dbms_Output.Put_Line('e_ = ' || E_);
-   -------------------------------------------
 End;
