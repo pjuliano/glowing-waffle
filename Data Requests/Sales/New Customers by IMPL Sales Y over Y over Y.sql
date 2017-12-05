@@ -10,9 +10,9 @@ From (
   From
     KD_Sales_Data_Request A
   Where
-    (A.Invoicedate Between To_Date('01/01/2016','MM/DD/YYYY') And To_Date('11/27/2016','MM/DD/YYYY') Or
-    A.Invoicedate Between To_Date('01/01/2017','MM/DD/YYYY') And To_Date('11/27/2017','MM/DD/YYYY') Or
-    A.InvoiceDate Between To_Date('01/01/2015','MM/DD/YYYY') And To_Date('11/27/2015','MM/DD/YYYY')) And
+    (A.Invoicedate Between To_Date('01/01/2016','MM/DD/YYYY') And To_Date('12/04/2016','MM/DD/YYYY') Or
+    A.Invoicedate Between To_Date('01/01/2017','MM/DD/YYYY') And To_Date('12/04/2017','MM/DD/YYYY') Or
+    A.InvoiceDate Between To_Date('01/01/2015','MM/DD/YYYY') And To_Date('12/04/2015','MM/DD/YYYY')) And
     A.Part_Product_Code = 'IMPL' And
     A.Corporate_Form = 'DOMDIR')
 Pivot (
