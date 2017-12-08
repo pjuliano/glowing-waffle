@@ -1,12 +1,15 @@
-CREATE OR REPLACE FORCE VIEW "IFSAPP"."KD_SALES_DATA" ("SITE", "INVOICE_ID", "ITEM_ID", "INVOICEDATE", "INVOICED_QTY", "SALE_UNIT_PRICE", "DISCOUNT", "NET_CURR_AMOUNT", "GROSS_CURR_AMOUNT", "CATALOG_DESC", "CUSTOMER_NAME", "ORDER_NO", "CUSTOMER_NO", "CUST_GRP", "CATALOG_NO", "AUTHORIZE_CODE", "SALESMAN_CODE", "COMMISSION_RECEIVER", "DISTRICT_CODE", "REGION_CODE", "CREATEDATE", "PART_PRODUCT_CODE", "PART_PRODUCT_FAMILY", "SECOND_COMMODITY", "INVOICEMONTH", "INVOICEQTR", "INVOICEQTRYR", "INVOICEMTHYR", "GROUP_ID", "TYPE_DESIGNATION", "CUSTOMER_NO_PAY", "CORPORATE_FORM", "FIXEDAMOUNTS", "ALLAMOUNTS", "LOCALAMOUNT", "TRUELOCALAMT", "VAT_DOM_AMOUNT", "VAT_CODE", "COST", "CHARGE_TYPE", "SOURCE", "MARKET_CODE", "ASSOCIATION_NO", "VAT_CURR_AMOUNT", "PAY_TERM_DESCRIPTION", "KDREFERENCE", "CUSTOMERREF", "DELIVERYDATE", "SHIP_VIA", "DELIVERY_IDENTITY", "IDENTITY", "DELIVERY_ADDRESS_ID", "INVOICE_ADDRESS_ID", "CURRENCY", "RMA_NO", "INVOICEADD1", "INVOICEADD2", "INVOICECITY", "INVOICESTATE",
-  "INVOICEZIP", "INVOICECOUNTRY", "INVOICECOUNTY", "DELIVADD1", "DELIVADD2", "DELIVCITY", "DELIVSTATE", "DELIVZIP", "DELIVCOUNTRY", "DELIVCOUNTY")
-                                                 AS
+Create or Replace View Kd_Sales_Data As
   SELECT DECODE(A.Company,'241','240',A.Company) AS Site,
     B.Series_ID
     || B.Invoice_No                           AS Invoice_ID,
     TO_CHAR(A.Item_Id)                        AS Item_Id,
-    TRUNC(B.D2)                               AS InvoiceDate,
-    DECODE(B.Series_Id,'CR',(A.N2 * -1),A.N2) AS Invoiced_Qty,
+    Trunc(B.D2)                               As Invoicedate,
+    Case When B.Series_Id = 'CR' And B.N2 Is Null 
+         Then 0
+         When B.Series_Id = 'CR' And B.N2 Is Not Null 
+         Then A.N2 * -1
+         Else A.N2
+    End As Invoiced_Qty,
     A.N4                                      AS Sale_Unit_Price,
     A.N5                                      AS Discount,
     A.Net_Curr_Amount,
@@ -1163,8 +1166,13 @@ CREATE OR REPLACE FORCE VIEW "IFSAPP"."KD_SALES_DATA" ("SITE", "INVOICE_ID", "IT
     A.Series_ID
     || A.Invoice_No                           AS Invoice_ID,
     TO_CHAR(B.Item_Id)                        AS Item_Id,
-    TRUNC(A.D2)                               AS Invoicedate,
-    DECODE(A.Series_Id,'CR',(B.N2 * -1),B.N2) AS Invoiced_Qty,
+    Trunc(A.D2)                               As Invoicedate,
+    Case When A.Series_Id = 'CR' And B.N2 Is Null
+         Then 0
+         When A.Series_Id = 'CR' And B.N2 Is Not Null
+         Then B.N2 * -1
+         Else B.N2
+    End As Invoiced_Qty,
     B.N4                                      AS Sale_Unit_Price,
     B.N5                                      AS Discount,
     A.Net_Curr_Amount,
@@ -1472,8 +1480,14 @@ CREATE OR REPLACE FORCE VIEW "IFSAPP"."KD_SALES_DATA" ("SITE", "INVOICE_ID", "IT
     B.Series_ID
     || B.Invoice_No                           AS Invoice_ID,
     TO_CHAR(A.Item_ID)                        AS Item_ID,
-    TRUNC(B.D2)                               AS Invoice_Date,
-    DECODE(B.Series_Id,'CR',(A.N2 * -1),A.N2) AS Invoiced_Qty,
+    Trunc(B.D2)                               As Invoice_Date,
+    Case When B.Series_Id = 'CR' And A.N2 Is Null
+         Then 0
+         When B.Series_Id = 'CR' And A.N2 Is Not Null
+         Then A.N2 * -1
+         Else A.N2
+    End As Invoiced_Qty,
+
     A.N4                                      AS Sale_Unit_Price,
     A.N5                                      AS Discount,
     A.Net_Curr_Amount,
