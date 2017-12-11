@@ -10,9 +10,9 @@ From (
   From
     KD_Sales_Data_Request A
   Where
-    (A.Invoicedate Between To_Date('01/01/2016','MM/DD/YYYY') And To_Date('12/04/2016','MM/DD/YYYY') Or
-    A.Invoicedate Between To_Date('01/01/2017','MM/DD/YYYY') And To_Date('12/04/2017','MM/DD/YYYY') Or
-    A.InvoiceDate Between To_Date('01/01/2015','MM/DD/YYYY') And To_Date('12/04/2015','MM/DD/YYYY')) And
+    (A.Invoicedate Between To_Date('01/01/2016','MM/DD/YYYY') And To_Date('12/05/2016','MM/DD/YYYY') Or
+    A.Invoicedate Between To_Date('01/01/2017','MM/DD/YYYY') And To_Date('12/05/2017','MM/DD/YYYY') Or
+    A.InvoiceDate Between To_Date('01/01/2015','MM/DD/YYYY') And To_Date('12/05/2015','MM/DD/YYYY')) And
     A.Part_Product_Code = 'IMPL' And
     A.Corporate_Form = 'DOMDIR')
 Pivot (
@@ -119,3 +119,52 @@ Select
   End As "NEW-OTMED-2017"
 From
   Customers
+Where
+  Case When ("EXHEX-2015" <= 1000 Or "EXHEX-2015" Is Null) And "EXHEX-2016" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("EXHEX-2016" <= 1000 Or "EXHEX-2016" Is Null) And "EXHEX-2017" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("OCT-2015" <= 1000 Or "OCT-2015" Is Null) And "OCT-2016" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("OCT-2016" <= 1000 Or "OCT-2016" Is Null) And "OCT-2017" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("ZMAX-2015" <= 1000 Or "ZMAX-2015" Is Null) And "ZMAX-2016" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("ZMAX-2016" <= 1000 Or "ZMAX-2016" Is Null) And "ZMAX-2017" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("EXORL-2015" <= 1000 Or "EXORL-2015" Is Null) And "EXORL-2016" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("EXORL-2016" <= 1000 Or "EXORL-2016" Is Null) And "EXORL-2017" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("TRINX-2015" <= 1000 Or "TRINX-2015" Is Null) And "TRINX-2016" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("TRINX-2016" <= 1000 Or "TRINX-2016" Is Null) And "TRINX-2017" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("PRIMA-2015" <= 1000 Or "PRIMA-2015" Is Null) And "PRIMA-2016" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("PRIMA-2016" <= 1000 Or "PRIMA-2016" Is Null) And "PRIMA-2017" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("GNSIS-2015" <= 1000 Or "GNSIS-2015" Is Null) And "GNSIS-2016" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("GNSIS-2016" <= 1000 Or "GNSIS-2016" Is Null) And "GNSIS-2017" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("OTMED-2015" <= 1000 Or "OTMED-2015" Is Null) And "OTMED-2016" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER' Or
+  Case When ("OTMED-2016" <= 1000 Or "OTMED-2016" Is Null) And "OTMED-2017" >= 5000
+       Then 'NEW CUSTOMER'
+  End = 'NEW CUSTOMER'
