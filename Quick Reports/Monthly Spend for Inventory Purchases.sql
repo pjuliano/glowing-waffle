@@ -7,6 +7,7 @@ Select
   A.Vendor_No,
   Supplier_Info_Api.Get_Name(A.Vendor_No) As Vendor_Name,
   A.Part_No,
+  C.Part_Product_Code,
   A.Arrival_Date,
   A.Description,
   A.State,
