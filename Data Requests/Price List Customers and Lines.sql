@@ -1,5 +1,6 @@
 Select
   A.Customer_Id,
+  Customer_Info_Api.Get_Name(A.Customer_ID) As Name,
   Cust_Ord_Customer_Api.Get_Salesman_Code(A.Customer_ID) As Salesman_Code,
   Cust_Ord_Customer_Address_Api.Get_Region_Code(A.Customer_ID,Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) As Region,
   Sum(Case When Extract(Year From B.Invoicedate) = Extract(Year From Sysdate)-1
