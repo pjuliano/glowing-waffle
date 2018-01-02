@@ -16,7 +16,7 @@ Begin
                   Contract = '100' And
                   Accounting_Group = 'FG' And
                   Part_Product_Family In ('PRIMA','PRMA+','GNSIS','TLMAX') And
-                  Part_Status In ('A','O'))
+                  Part_Status In ('A','P'))
   Loop
     A_ := Null;
     B_ := Parts.Objid;
