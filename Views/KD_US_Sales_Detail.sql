@@ -46,10 +46,11 @@ Select
   A.Type_Designation,
   Case When A.Part_Product_Family In ('DYNAC','DYNAG','DYNAB','DYNAM','CONNX','CYTOP','BVINE','SYNTH','MTF')
        Then 'BIOMATERIALS'
-       When A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED')
+       When A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED','PRMA+','PCOMM','TLMAX')
        Then 'IMPLANTS'
        When A.Part_Product_Family In ('EG','CUSAB','OTHER','EDU','MOTOR','ODYSS','LEGACY','DEVELOP')
        Then 'OTHER'
+       Else 'OTHER'
   End As Product_Type,
   A.Customer_Name As Assocname,
   E.List_Price As Current_List,
