@@ -3,6 +3,9 @@ Select
   *
 From (
   Select
+    A.Salesman_Code,
+    Person_Info_Api.Get_Name(A.Salesman_Code) As Salesman_Name,
+    A.Region_Code,
     A.Customer_No,
     A.Customer_Name,
     A.Part_Product_Family || '-' || Extract(Year From A.InvoiceDate) As "Family-Year",
@@ -10,9 +13,9 @@ From (
   From
     KD_Sales_Data_Request A
   Where
-    (A.Invoicedate Between To_Date('01/01/2016','MM/DD/YYYY') And To_Date('12/20/2016','MM/DD/YYYY') Or
-    A.Invoicedate Between To_Date('01/01/2017','MM/DD/YYYY') And To_Date('12/20/2017','MM/DD/YYYY') Or
-    A.InvoiceDate Between To_Date('01/01/2015','MM/DD/YYYY') And To_Date('12/20/2015','MM/DD/YYYY')) And
+    (A.Invoicedate Between To_Date('10/01/2016','MM/DD/YYYY') And To_Date('12/31/2016','MM/DD/YYYY') Or
+    A.Invoicedate Between To_Date('10/01/2017','MM/DD/YYYY') And To_Date('12/31/2017','MM/DD/YYYY') Or
+    A.InvoiceDate Between To_Date('10/01/2015','MM/DD/YYYY') And To_Date('12/31/2015','MM/DD/YYYY')) And
     A.Part_Product_Code = 'IMPL' And
     A.Corporate_Form = 'DOMDIR')
 Pivot (
@@ -43,6 +46,9 @@ Pivot (
                         'OTMED-2017' As "OTMED-2017")))
 
 Select
+  Salesman_Code,
+  Salesman_Name,
+  Region_Code,
   Customer_No,
   Customer_Name,
   "EXHEX-2015",
