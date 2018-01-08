@@ -1,4 +1,4 @@
-Create or Replace View Kd_Sales_Data As
+Create or Replace View Kd_Sales_Data_Test As
   SELECT DECODE(A.Company,'241','240',A.Company) AS Site,
     B.Series_ID
     || B.Invoice_No                           AS Invoice_ID,
@@ -1773,7 +1773,7 @@ Create or Replace View Kd_Sales_Data As
   FROM Srcadsalesorder A
   WHERE A.Salesdate >= To_Date('01/01/2010','MM/DD/YYYY')
   UNION ALL
-  SELECT DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
+  SELECT distinct DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
     R.Invoice_No                                                                               AS Invoice_ID,
     TO_CHAR(R.Row_No)                                                                          AS Item_ID,
     TRUNC(R.Invoice_Date)                                                                      AS InvoiceDate,
@@ -1945,7 +1945,7 @@ Create or Replace View Kd_Sales_Data As
   AND R.Invoice_No NOT LIKE 'EI%'
   AND C.Corporate_Form != 'KEY'
   UNION ALL
-  SELECT DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
+  SELECT distinct DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
     R.Invoice_No                                                                               AS Invoice_ID,
     TO_CHAR(R.Row_No)                                                                          AS Item_ID,
     TRUNC(R.Invoice_Date)                                                                      AS InvoiceDate,
