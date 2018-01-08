@@ -1,4 +1,4 @@
-Create or Replace View KD_VoucherDate_Vs_InvoiceDate As
+Create Or Replace View Kd_Voucherdate_Vs_Invoicedate As 
 Select
   Cust_Ord_Customer_Api.Get_Salesman_Code(A.Identity) As Rep_Id,
   Person_Info_Api.Get_Name(Cust_Ord_Customer_Api.Get_Salesman_Code(A.Identity)) As Rep_Name,
@@ -9,7 +9,8 @@ Select
   C.Invoice_Date,
   A.Voucher_Date,
   A.Voucher_Date - C.Invoice_Date As Days,
-  C.Pay_Term_Description
+  C.Pay_Term_Description,
+  B.Curr_Amount As Amount
 From
   Check_Ledger_Item A Left Join Ledger_Transaction B
     On A.Payment_Id = B.Payment_Id And
