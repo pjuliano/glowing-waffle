@@ -1,4 +1,4 @@
-Create or Replace View Kd_Sales_Data_Test As
+Create or Replace View Kd_Sales_Data As
   SELECT DECODE(A.Company,'241','240',A.Company) AS Site,
     B.Series_ID
     || B.Invoice_No                           AS Invoice_ID,
@@ -1772,8 +1772,8 @@ Create or Replace View Kd_Sales_Data_Test As
     ' '                            AS DelivCounty
   FROM Srcadsalesorder A
   WHERE A.Salesdate >= To_Date('01/01/2010','MM/DD/YYYY')
-  UNION ALL
-  SELECT distinct DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
+  Union All
+  SELECT Distinct DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
     R.Invoice_No                                                                               AS Invoice_ID,
     TO_CHAR(R.Row_No)                                                                          AS Item_ID,
     TRUNC(R.Invoice_Date)                                                                      AS InvoiceDate,
@@ -1943,9 +1943,9 @@ Create or Replace View Kd_Sales_Data_Test As
   AND R.Row_Type      = '1'
   AND R.Object       != 'FREIGHT'
   AND R.Invoice_No NOT LIKE 'EI%'
-  AND C.Corporate_Form != 'KEY'
-  UNION ALL
-  SELECT distinct DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
+  And C.Corporate_Form != 'KEY'
+  Union All
+  SELECT Distinct DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
     R.Invoice_No                                                                               AS Invoice_ID,
     TO_CHAR(R.Row_No)                                                                          AS Item_ID,
     TRUNC(R.Invoice_Date)                                                                      AS InvoiceDate,
@@ -2111,7 +2111,7 @@ Create or Replace View Kd_Sales_Data_Test As
   AND R.Row_Type      = '1'
   AND R.Object        = 'FREIGHT'
   AND R.Invoice_No NOT LIKE 'EI%'
-  AND C.Corporate_Form != 'KEY'
+  And C.Corporate_Form != 'KEY'
   UNION ALL
   SELECT '100'            AS Site,
     A.Invoice             AS Invoice_ID,
