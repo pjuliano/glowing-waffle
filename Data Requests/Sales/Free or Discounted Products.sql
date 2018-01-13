@@ -12,6 +12,7 @@ Where
   A.Allamounts = 0
 Group By
   Person_Info_Api.Get_Name(A.Salesman_Code);
+  
 Select 
   Person_Info_Api.Get_Name(A.Salesman_Code) As Rep,
   Sum(A.Allamounts) Sales_Amount,
