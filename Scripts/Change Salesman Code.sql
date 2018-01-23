@@ -16,7 +16,7 @@ Begin
               Where
                 Customer_Info_Address_Api.Get_Zip_Code(A.Customer_Id, Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) = B.Zip_Code And
                 Cust_Ord_Customer_Api.Get_Salesman_Code(A.Customer_Id) != B.Rep_Id And
-                Cust_Ord_Customer_Api.Get_Salesman_Code(A.Customer_Id) In ('121','124','125','126','133','134','136','221','301','303','304','305','308','311','314','324','325','217'))
+                Cust_Ord_Customer_Api.Get_Salesman_Code(A.Customer_Id) In ('122','202','103'))
   Loop
     A_ := Null;
     B_ := Cur.Objid;
