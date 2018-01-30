@@ -20,10 +20,11 @@ Select
   A.Delivstate,
   A.Delivzip
 From
-  Kd_Sales_Data_Request A
+  IFSAPP.Kd_Sales_Data_Request A
 Where
   A.Part_Product_Family = 'PRMA+' And
-  A.Corporate_Form != 'KEY'
+  A.Corporate_Form != 'KEY' And
+  A.Catalog_No Not In ('MK40325','100045-EN01')
 Group By
   Customer_No,
   Customer_Name,
@@ -31,4 +32,4 @@ Group By
   A.Delivadd2,
   A.Delivcity,
   A.Delivstate,
-  A.DElivZip;
+  A.DelivZip
