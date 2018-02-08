@@ -4,7 +4,7 @@ Select
   Sum(A.Allamounts) As This_Month,
   Sum(Case
         When
-          A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED')
+          A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED','PRMA+','TLMAX','PCOMM')
         Then
           A.Allamounts
         Else
