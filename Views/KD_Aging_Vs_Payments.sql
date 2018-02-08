@@ -5,6 +5,7 @@ Select
   Customer_Info_Address_Api.Get_State(A.Identity,Customer_Info_Address_Api.Get_Default_Address(A.Identity,'Pay')) As Pay_State,
   A.Identity As Customer_ID,
   A.Name,
+  Identity_Pay_Info_Api.Get_Ar_Contact(100, A.Identity, 'Customer') As AR_Contact,
   A.Group_Id,
   A."Current", 
   A."0-30",
