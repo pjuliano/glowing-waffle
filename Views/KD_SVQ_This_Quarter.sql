@@ -2,6 +2,22 @@ Create Or Replace View KD_Svq_This_Quarter As
 Select
   A.Salesman_Code,
   Sum(A.Allamounts) As This_Quarter,
+  Sum(Case
+        When
+          A.Part_Product_Code Not In ('LIT','REGEN')
+        Then
+          A.Allamounts
+        Else
+          0
+      End) As This_Quarter_Implants,
+  Sum(Case
+        When
+          A.Part_Product_Code = 'REGEN'
+        Then
+          A.Allamounts
+        Else
+          0
+      End) As This_Quarter_Bio,
   Case
     When
       Extract(Month From Sysdate) In (1,2,3)
