@@ -12,6 +12,8 @@ Select
   C.Mtd_Quota_Pct,
   C.Month_Remaining,
   B.This_Quarter,
+  B.This_Quarter_Implants,
+  B.This_Quarter_Bio,
   B.Quarter_Quota_Pct,
   B.Qtd_Quota_Pct,
   B.Quarter_Remaining,

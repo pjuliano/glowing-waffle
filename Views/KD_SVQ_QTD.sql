@@ -2,6 +2,8 @@ Create Or Replace View KD_Svq_QTD As
 Select
   A.Salesman_Code,
   A.This_Quarter,
+  A.This_Quarter_Implants,
+  A.This_Quarter_Bio,
   A.Qtr_Quota,
   Round((A.This_Quarter  /Sum(B.Daily_Quota)) * 100,2) As Qtd_Quota_Pct,
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2) As Quarter_Quota_Pct,
@@ -33,6 +35,8 @@ Group By
   A.Salesman_Code,
   A.Region,
   A.This_Quarter,
+  A.This_Quarter_Implants,
+  A.This_Quarter_Bio,
   A.Qtr_Quota,
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2),
   A.Qtr_Quota - A.This_Quarter;
