@@ -15,12 +15,7 @@ Select
                       A.Part_Product_Code Not In ('LIT','REGEN') 
                  Then A.Allamounts
                  Else 0
-            End) * 0.09,2) - 
-  Round(Sum(Case When Extract(Month From A.Invoicedate) In (1,4,7,10) And
-                      A.Part_Product_Code Not In ('LIT','REGEN')
-                 Then A.Allamounts
-                 Else 0
-            End) * 0.08,2) As "QM1_IMP_COM+",
+            End) * 0.01,2) As "QM1_IMP_COM+",
   Sum(Case When Extract(Month From A.Invoicedate) In (1,4,7,10) And
                 A.Part_Product_Code = 'REGEN'
            Then A.Allamounts
@@ -35,12 +30,7 @@ Select
                       A.Part_Product_Code = 'REGEN' 
                  Then A.Allamounts
                  Else 0
-            End) * 0.07,2) - 
-  Round(Sum(Case When Extract(Month From A.Invoicedate) In (1,4,7,10) And
-                      A.Part_Product_Code = 'REGEN'
-                 Then A.Allamounts
-                 Else 0
-            End) * 0.06,2) As "QM1_BIO_COM+",
+            End) * 0.01,2) As "QM1_BIO_COM+",
   Sum(Case When Extract(Month From A.Invoicedate) In (2,5,8,11) And
                 A.Part_Product_Code Not In ('LIT','REGEN')
            Then A.Allamounts
@@ -55,12 +45,7 @@ Select
                       A.Part_Product_Code Not In ('LIT','REGEN') 
                  Then A.Allamounts
                  Else 0
-            End) * 0.09,2) - 
-  Round(Sum(Case When Extract(Month From A.Invoicedate) In (2,5,8,11) And
-                      A.Part_Product_Code Not In ('LIT','REGEN')
-                 Then A.Allamounts
-                 Else 0
-            End) * 0.08,2) As "QM2_IMP_COM+",
+            End) * 0.01,2) As "QM2_IMP_COM+",
   Sum(Case When Extract(Month From A.Invoicedate) In (2,5,8,11) And
                 A.Part_Product_Code = 'REGEN'
            Then A.Allamounts
@@ -75,12 +60,7 @@ Select
                       A.Part_Product_Code = 'REGEN' 
                  Then A.Allamounts
                  Else 0
-            End) * 0.07,2) - 
-  Round(Sum(Case When Extract(Month From A.Invoicedate) In (2,5,8,11) And
-                      A.Part_Product_Code = 'REGEN'
-                 Then A.Allamounts
-                 Else 0
-            End) * 0.06,2) As "QM2_BIO_COM+",
+            End) * 0.01,2) As "QM2_BIO_COM+",
   Sum(Case When Extract(Month From A.Invoicedate) In (3,6,9,12) And
                 A.Part_Product_Code Not In ('LIT','REGEN')
            Then A.Allamounts
@@ -95,12 +75,7 @@ Select
                       A.Part_Product_Code Not In ('LIT','REGEN') 
                  Then A.Allamounts
                  Else 0
-            End) * 0.09,2) - 
-  Round(Sum(Case When Extract(Month From A.Invoicedate) In (3,6,9,12) And
-                      A.Part_Product_Code Not In ('LIT','REGEN')
-                 Then A.Allamounts
-                 Else 0
-            End) * 0.08,2) As "QM3_IMP_COM+",
+            End) * 0.01,2) As "QM3_IMP_COM+",
   Sum(Case When Extract(Month From A.Invoicedate) In (3,6,9,12) And
                 A.Part_Product_Code = 'REGEN'
            Then A.Allamounts
@@ -115,12 +90,7 @@ Select
                       A.Part_Product_Code = 'REGEN' 
                  Then A.Allamounts
                  Else 0
-            End) * 0.07,2) - 
-  Round(Sum(Case When Extract(Month From A.Invoicedate) In (3,6,9,12) And
-                      A.Part_Product_Code = 'REGEN'
-                 Then A.Allamounts
-                 Else 0
-            End) * 0.06,2) As "QM3_BIO_COM+"
+            End) * 0.01,2) As "QM3_BIO_COM+"
 From
   Kd_Sales_Data_Request A Left Join Srrepquota B
     On A.Salesman_Code = B.Repnumber
