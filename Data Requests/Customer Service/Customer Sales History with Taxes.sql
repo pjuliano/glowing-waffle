@@ -4,6 +4,9 @@ Select
   A.Invoice_Id,
   A.Catalog_No,
   A.Catalog_Desc,
+  A.Part_Product_Family,
+  A.Part_Product_Code,
+  A.second_Commodity,
   A.Invoiced_Qty,
   A.Allamounts / A.Invoiced_Qty As Unitprice,
   A.Allamounts As Total,
@@ -11,6 +14,6 @@ Select
 From
   Kd_Sales_Data_Request A
 Where
-  A.Customer_No = '17639' And
-  A.Invoicedate >= To_Date('07/01/2016','MM/DD/YYYY') And
+  A.Customer_No = '20130' And
+  To_Char(A.InvoiceDate,'YYYY') = '2017' And
   A.Charge_Type = 'Parts'
