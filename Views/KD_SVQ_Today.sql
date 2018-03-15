@@ -8,6 +8,7 @@ Where
   A.Invoicedate = Trunc(Sysdate) And
   A.Charge_Type = 'Parts' And
   A.Corporate_Form = 'DOMDIR' And
+  A.Catalog_No != '3DBC-22001091' And
   ((A.Order_No Not Like 'W%' And
     A.Order_No Not Like 'X%') Or
     A.Order_No Is Null) And
