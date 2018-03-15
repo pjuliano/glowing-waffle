@@ -1,3 +1,5 @@
+Create Or Replace Procedure Kd_Phaseout_Stock As 
+Begin
 DECLARE
    a_ VARCHAR2(32000) := '100'; --p0
    b_ VARCHAR2(32000) := 'IBT 8.5'; --p1
@@ -332,4 +334,5 @@ Begin
     J_ := 'PHASEOUT'; --p9
     Ifsapp.Inventory_Part_In_Stock_Api.Modify_Availability_Control_Id( A_ , B_ , C_ , D_ , E_ , F_ , G_ , H_ , I_ , J_ );
   End Loop;
-END;
+End;
+End;
