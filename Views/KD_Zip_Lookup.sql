@@ -1,18 +1,19 @@
-CREATE OR REPLACE FORCE VIEW "IFSAPP"."KD_ZIP_LOOKUP" ("REP_ID", "REP_NAME", "REP_PHONE", "REGION", "IS_REP_ID", "IS_REP_NAME", "CITY", "STATE", "COUNTY", "ZIP_START", "ZIP_END") AS 
-SELECT        B.REP_ID,
-            B.REP_NAME,
-            B.REP_PHONE,
-            D.REGION,
-            C.IS_REP_ID,
-            C.IS_REP_NAME,
-            A.LOCNAMECITY AS CITY,
-            A.LOCNAMESTATE AS STATE,
-            A.LOCNAMECOUNTY AS COUNTY,
-            A.LOCZIPCODESTART AS ZIP_START,
-            A.LOCZIPCODEEND AS ZIP_END
-FROM          IFSAPP.GEOCODECI A LEFT JOIN
-            IFSAPP.KD_ZIP_DATA_US B ON CAST(B.ZIP_CODE AS NUMBER) BETWEEN CAST(TRIM(A.LOCZIPCODESTART) AS NUMBER) AND CAST(TRIM(A.LOCZIPCODEEND) AS NUMBER),
-            IFSAPP.KD_INSIDE_REP_ASSIGNMENTS C,
-            IFSAPP.SRREPQUOTA D
-Where         B.Rep_Id = C.Rep_Id
-AND           B.REP_ID = D.REPNUMBER
+Create Or Replace View KD_Zip_Lookup As
+Select
+  B.*,
+  D.Region,
+  C.Is_Rep_Id,
+  C.IS_Rep_Name,
+  A.LOCNAMECITY AS CITY,
+  A.LOCNAMESTATE AS STATE,
+  A.LOCNAMECOUNTY AS COUNTY,
+  A.LOCZIPCODESTART AS ZIP_START,
+  A.LOCZIPCODEEND AS ZIP_END
+From
+  Geocodeci A,
+  Kd_Zip_Data_Us B,
+  Kd_Inside_Rep_Assignments C,
+  Srrepquota D
+Where
+  B.Rep_Id = C.Rep_Id And
+  B.Rep_Id = D.Repnumber;
