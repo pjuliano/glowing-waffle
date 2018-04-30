@@ -23,6 +23,6 @@ Where
   Trunc(A.Voucher_Date) = Trunc(B.Voucher_Date) And
   A.Voucher_Type = B.Voucher_Type And
   A.Company = B.Company And
-  (Trunc(A.Voucher_Date) >= To_Date('12/01/2016','MM/DD/YYYY') And
-   Trunc(A.Voucher_Date) <= To_Date('12/31/2016','MM/DD/YYYY')) And
+  (Trunc(A.Voucher_Date) >= To_Date('11/01/2017','MM/DD/YYYY') And
+   Trunc(A.Voucher_Date) <= To_Date('11/30/2017','MM/DD/YYYY')) And
   A.Company = '100'
