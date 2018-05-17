@@ -11,7 +11,8 @@ Where
   A.Customer_No != 'B3730' And
   A.Corporate_Form != 'Freight' And
   A.Corporate_Form In ('DOMDIR','ASIA','DOMDIS') And
-  A.Invoice_Id != '0'
+  A.Invoice_Id != '0' And
+  A.InvoiceDate < To_Date('01/01/2018','MM/DD/YYYY')
 Group By
   A.Invoice_Id)
 

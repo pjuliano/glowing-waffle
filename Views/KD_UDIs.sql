@@ -70,7 +70,8 @@ From
   Inventory_transaction_Hist
 Where
   Transaction_Code = 'OESHIP' And
-  Lot_Batch_No != '*'
+  Lot_Batch_No != '*' And
+  (Expiration_Date >= To_Date('10/01/2020','MM/DD/YYYY') Or Expiration_Date Is Null)
 Group By
   Part_No,
   Expiration_Date,
