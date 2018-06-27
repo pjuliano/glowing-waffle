@@ -213,7 +213,7 @@ Begin
     A_  := Null; --p0
     B_  := Null; --p1
     C_  := Null; --p2
-    D_  := 'CATALOG_NO'||Chr(31)||Cur.Catalog_No||Chr(30)||'CONTRACT'||Chr(31)||'100'||Chr(30)||'CHARACTERISTIC_CODE'||Chr(31)||'ZA'||Chr(30)||'ATTR_VALUE_ALPHA'||Chr(31)||'OVERRIDE'||Chr(30); --p3
+    D_  := 'CATALOG_NO'||Chr(31)||Cur.Catalog_No||Chr(30)||'CONTRACT'||Chr(31)||'100'||Chr(30)||'CHARACTERISTIC_CODE'||Chr(31)||'ZA'||Chr(30)||'ATTR_VALUE_ALPHA'||Chr(31)||'RETURN TO MFG'||Chr(30); --p3
     E_  := 'DO'; --p4
     Ifsapp.Sales_Part_Characteristic_Api.New__( A_ , B_ , C_ , D_ , E_ );
   End Loop;

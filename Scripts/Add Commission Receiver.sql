@@ -5,98 +5,12 @@ DECLARE
    d_ VARCHAR2(32000) := 'CUSTOMER_NO'||chr(31)||'11408'||chr(30)||'COMMISSION_RECEIVER'||chr(31)||'INSIDE6'||chr(30); --p3
    e_ VARCHAR2(32000) := 'DO'; --p4
 Begin
-  For Cur In (Select 
-                * 
-              From 
-                Customer_Info
-              Where
-                Customer_ID In (  '28508',
-'25849',
-'25974',
-'2654',
-'17815',
-'18126',
-'18513',
-'A27059',
-'3796',
-'3935',
-'4412',
-'15243',
-'15251',
-'15338',
-'A16035',
-'A16134',
-'A18336',
-'28565',
-'29092',
-'A20092',
-'A20454',
-'5236',
-'8533',
-'8779',
-'8957',
-'9387',
-'13683',
-'14002',
-'20219',
-'22285',
-'23083',
-'23509',
-'6420',
-'7233',
-'7351',
-'7504',
-'7552',
-'7587',
-'7592',
-'7934',
-'3032',
-'A10999',
-'A11183',
-'A11506',
-'A12409',
-'A13037',
-'A13466',
-'A13671',
-'D31393',
-'25191',
-'25574',
-'25576',
-'D47798',
-'D48202',
-'D52053',
-'D52117',
-'A13988',
-'A14173',
-'21517',
-'24340',
-'D49854',
-'D50014',
-'17383',
-'17563',
-'13080',
-'27994',
-'29366',
-'26755',
-'18923',
-'16340',
-'16641',
-'16749',
-'18839',
-'18865',
-'16200',
-'16052',
-'D45616',
-'A26514',
-'A65888',
-'A65981',
-'A66041',
-'29664'))
+  For Cur In (Select Customer As Customer_No, Substr(Substr(Issue,31),1,Length(Substr(Issue,31))-1) As NEWIS From KD_Customer_Check Where Issue Like 'Commission receiver should be%')
   Loop
     A_ := Null;
     B_ := Null;
     C_ := Null;
-    D_ := 'CUSTOMER_NO'||chr(31)||Cur.Customer_ID||chr(30)||'COMMISSION_RECEIVER'||chr(31)||'INSIDE3'||chr(30);
+    D_ := 'CUSTOMER_NO'||chr(31)||Cur.Customer_No||chr(30)||'COMMISSION_RECEIVER'||chr(31)||Cur.NEWIS||chr(30);
     IFSAPP.CUST_DEF_COM_RECEIVER_API.NEW__( a_ , b_ , c_ , d_ , e_ );
 
    ----------------------------------

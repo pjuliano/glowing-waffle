@@ -21,9 +21,9 @@ Begin
                   A.Waiv_Dev_Rej_No,
                   A.Activity_Seq
                 From
-                  Inventory_Part_In_Stock A
-                Where
-                  A.Location_No = 'ITINVRETURN' )
+                  Inventory_Part_In_Stock A)
+                --Where
+                  --A.Location_No = 'ITINVRETURN' )
   Loop
     A_ := Cursor.Contract;
     B_ := Cursor.Part_No;
