@@ -66,7 +66,8 @@ From
 Where
   Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
   Extract(Month From A.Invoicedate) = Extract(Month From Sysdate) And
-  A.Charge_Type = 'Parts'
+  A.Charge_Type = 'Parts' And
+  A.Corporate_Form != 'KEY'
 Group By
   A.InvoiceDate
 Order By
