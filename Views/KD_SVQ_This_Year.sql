@@ -1,6 +1,7 @@
 Create Or Replace View KD_SVQ_This_Year As
 Select
   A.Salesman_Code,
+  Sum(Case When Extract(Month From InvoiceDate) >= 7 Then A.AllAmounts Else 0 End) As This_Year_Second_Half,
   Sum(A.Allamounts) As This_Year,
   B.Year As Year_Quota,
   B.Region

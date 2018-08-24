@@ -18,6 +18,7 @@ Select
   B.Qtd_Quota_Pct,
   B.Quarter_Remaining,
   A.This_Year,
+  A.This_Year_Second_Half,
   A.Year_Quota_Pct,
   A.Ytd_Quota_Pct,
   A.Year_Remaining,

@@ -6,12 +6,12 @@ DECLARE
    e_ VARCHAR2(32000) := 'DO'; --p4
 BEGIN
 
-  For Cur In (Select * From Customer_Info A Where A.Association_No = 'N1003')
+  For Cur In (Select * From Customer_Info A Where A.Association_No = 'N1045')
   Loop
     A_ := Null;
     B_ := Null;
     C_ := Null;
-    D_ := 'SALES_PRICE_GROUP_ID'||Chr(31)||'PROS'||Chr(30)||'CURRENCY_CODE'||Chr(31)||'USD'||Chr(30)||'PRICE_LIST_NO'||Chr(31)||'CLRCHCPROS'||Chr(30)||'CUSTOMER_ID'||Chr(31)||Cur.Customer_Id||Chr(30);
+    D_ := 'SALES_PRICE_GROUP_ID'||Chr(31)||'SIMPLNT'||Chr(30)||'CURRENCY_CODE'||Chr(31)||'USD'||Chr(30)||'PRICE_LIST_NO'||Chr(31)||'N1045S'||Chr(30)||'CUSTOMER_ID'||Chr(31)||Cur.Customer_Id||Chr(30);
     e_:= 'DO';
     Ifsapp.Customer_Pricelist_Api.New__( A_ , B_ , C_ , D_ , E_ );
   End loop;

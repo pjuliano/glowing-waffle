@@ -3,6 +3,7 @@ Select
   A.Salesman_Code,
   A.Region,
   A.This_Year,
+  A.This_Year_Second_Half,
   Round((A.This_Year / Sum(B.Daily_Quota)) * 100,2) As Ytd_Quota_Pct,
   Round((A.This_Year / A.Year_Quota) * 100,2) As Year_Quota_Pct,
   A.Year_Quota - A.This_Year As Year_Remaining
@@ -15,5 +16,6 @@ Group By
   A.Salesman_Code,
   A.Region,
   A.This_Year,
+  A.This_Year_Second_Half,
   Round((A.This_Year / A.Year_Quota) * 100,2),
   A.Year_Quota - A.This_Year;
