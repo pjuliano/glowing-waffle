@@ -12,6 +12,7 @@ Where
   ((A.Order_No Not Like 'W%' And
     A.Order_No Not Like 'X%') Or
     A.Order_No Is Null) And
-  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
+  A.Invoice_ID != 'CR1001802096' --20180904 Invoice is stuck not posted and cannot be deleted.
 Group By
   A.Salesman_Code;
