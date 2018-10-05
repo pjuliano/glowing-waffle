@@ -7,14 +7,14 @@ Select
                    Else 0
               End)-
           Sum(Case When A.Invoiceqtr = 'QTR' || To_Char(Sysdate,'Q')
-                   Then A.Cost
+                   Then A.Cost * A.Invoiced_Qty
                    Else 0
               End))/
           Nullif(Sum(Case When A.Invoiceqtr = 'QTR' || To_Char(Sysdate,'Q') 
                    Then A.Allamounts
                    Else 0
              End),0),5))*100 As Qtd_Margin,
-    (Round((Sum(A.AllAmounts)-Sum(A.Cost))/Nullif(Sum(A.AllAmounts),0),5)) * 100 As YTD_Margin
+    (Round((Sum(A.AllAmounts)-Sum(A.Cost * A.Invoiced_Qty))/Nullif(Sum(A.AllAmounts),0),5)) * 100 As YTD_Margin
 From
     Kd_Sales_Data_Request A
 Where

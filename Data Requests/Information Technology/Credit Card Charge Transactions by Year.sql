@@ -14,4 +14,4 @@ From (
     A.Card_Type,
     Extract(Year From A.Trans_Date))
 Pivot
-  (Sum(Transactions) For Year In ('2017' As "2017"))
+  (Sum(Transactions) For Year In ('2018' As "2018", '2017' As "2017"))
