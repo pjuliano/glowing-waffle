@@ -26,7 +26,7 @@ Select
 From
   Kd_Sales_Data_Request A
 Where 
-  A.InvoiceDate Between To_Date('05/01/2018','MM/DD/YYYY') And To_Date('09/30/2018','MM/DD/YYYY') And
+  A.InvoiceDate Between To_Date('05/01/2018','MM/DD/YYYY') And To_Date('12/31/2018','MM/DD/YYYY') And
   A.Corporate_Form = 'DOMDIR'
 Group By
   A.Salesman_Code,
