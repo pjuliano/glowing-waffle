@@ -3,6 +3,39 @@ With CY_ASP As (
 Select
     A.Region_Code,
     A.Salesman_Code,
+    Round(Sum(Case When Part_Product_Code = 'REGEN' Then
+                   A.AllAmounts
+                   Else 0
+              End) /
+              Decode(Sum(Case When Part_Product_Code ='REGEN' Then
+                              A.Invoiced_qty
+                              Else 0
+                         End),0,Null,Sum(Case When Part_Product_Code ='REGEN' Then
+                                              A.Invoiced_qty
+                                              Else 0
+                                         End)),2) "CY_BIO_ASP",
+    Round(Sum(Case When Part_Product_Code Not In ('LIT','REGEN') Then
+                   A.AllAmounts
+                   Else 0
+              End) /
+              Decode(Sum(Case When Part_Product_Code Not In ('LIT','REGEN') Then
+                              A.Invoiced_qty
+                              Else 0
+                         End),0,Null,Sum(Case When Part_Product_Code Not In ('LIT','REGEN') Then
+                                              A.Invoiced_qty
+                                              Else 0
+                                         End)),2) "CY_IMPLANTS_ASP",
+    Round(Sum(Case When Part_Product_Code = 'IMPL' Then
+                   A.AllAmounts
+                   Else 0
+              End) /
+              Decode(Sum(Case When Part_Product_Code = 'IMPL' Then
+                              A.Invoiced_qty
+                              Else 0
+                         End),0,Null,Sum(Case When Part_Product_Code = 'IMPL' Then
+                                              A.Invoiced_qty
+                                              Else 0
+                                         End)),2) "CY_IMPLANT_BODIES_ASP",
     Round(Sum(Case When Part_Product_Family = 'PRIMA' Then
                    A.AllAmounts
                    Else 0
@@ -145,7 +178,18 @@ Select
                        End),0,Null,Sum(Case When Part_Product_Family = 'SYNTH' Then
                                              A.Invoiced_qty
                                              Else 0
-                                        End)),2) "CY_SYNTH_ASP"
+                                        End)),2) "CY_SYNTH_ASP",
+    Round(Sum(Case When Part_Product_Family = 'MTF' Then
+                   A.AllAmounts
+                   Else 0
+              End) /
+              Decode(Sum(Case When Part_Product_Family = 'MTF' Then
+                            A.Invoiced_qty
+                            Else 0
+                       End),0,Null,Sum(Case When Part_Product_Family = 'MTF' Then
+                                             A.Invoiced_qty
+                                             Else 0
+                                        End)),2) "CY_MTF_ASP"
 From
     KD_Sales_Data_Request A
 Where
@@ -167,6 +211,39 @@ PY_ASP AS (
 Select
     A.Region_Code,
     A.Salesman_Code,
+    Round(Sum(Case When Part_Product_Code = 'REGEN' Then
+                   A.AllAmounts
+                   Else 0
+              End) /
+              Decode(Sum(Case When Part_Product_Code ='REGEN' Then
+                              A.Invoiced_qty
+                              Else 0
+                         End),0,Null,Sum(Case When Part_Product_Code ='REGEN' Then
+                                              A.Invoiced_qty
+                                              Else 0
+                                         End)),2) "PY_BIO_ASP",
+    Round(Sum(Case When Part_Product_Code Not In ('LIT','REGEN') Then
+                   A.AllAmounts
+                   Else 0
+              End) /
+              Decode(Sum(Case When Part_Product_Code Not In ('LIT','REGEN') Then
+                              A.Invoiced_qty
+                              Else 0
+                         End),0,Null,Sum(Case When Part_Product_Code Not In ('LIT','REGEN') Then
+                                              A.Invoiced_qty
+                                              Else 0
+                                         End)),2) "PY_IMPLANTS_ASP",
+    Round(Sum(Case When Part_Product_Code = 'IMPL' Then
+                   A.AllAmounts
+                   Else 0
+              End) /
+              Decode(Sum(Case When Part_Product_Code = 'IMPL' Then
+                              A.Invoiced_qty
+                              Else 0
+                         End),0,Null,Sum(Case When Part_Product_Code = 'IMPL' Then
+                                              A.Invoiced_qty
+                                              Else 0
+                                         End)),2) "PY_IMPLANT_BODIES_ASP",
     Round(Sum(Case When Part_Product_Family = 'PRIMA' Then
                    A.AllAmounts
                    Else 0
@@ -309,7 +386,18 @@ Select
                        End),0,Null,Sum(Case When Part_Product_Family = 'SYNTH' Then
                                              A.Invoiced_qty
                                              Else 0
-                                        End)),2) "PY_SYNTH_ASP"
+                                        End)),2) "PY_SYNTH_ASP",
+    Round(Sum(Case When Part_Product_Family = 'MTF' Then
+                   A.AllAmounts
+                   Else 0
+              End) /
+              Decode(Sum(Case When Part_Product_Family = 'MTF' Then
+                            A.Invoiced_qty
+                            Else 0
+                       End),0,Null,Sum(Case When Part_Product_Family = 'MTF' Then
+                                             A.Invoiced_qty
+                                             Else 0
+                                        End)),2) "PY_MTF_ASP"
 From
     KD_Sales_Data_Request A
 Where
@@ -331,6 +419,12 @@ Select
     A.Region_Code,
     A.Salesman_Code,
     Person_Info_Api.Get_Name(A.Salesman_Code) Salesman_Name,
+    Nvl(A."CY_IMPLANTS_ASP",0) "CY_IMPLANTS_ASP",
+    NVL(B."PY_IMPLANTS_ASP",0) "PY_IMPLANTS_ASP",
+    Nvl(A."CY_IMPLANTS_ASP" - B."PY_IMPLANTS_ASP",0) "IMPLANTS_ASP_DELTA",
+    Nvl(A."CY_IMPLANT_BODIES_ASP",0) "CY_IMPLANT_BODIES_ASP",
+    Nvl(B."PY_IMPLANT_BODIES_ASP",0) "PY_IMPLANT_BODIES_ASP",
+    Nvl(A."CY_IMPLANT_BODIES_ASP" - B."PY_IMPLANT_BODIES_ASP",0) "IMPLANT_BODIES_ASP",
     Nvl(A."CY_PRIMA_ASP",0) "CY_PRIMA_ASP",
     Nvl(B."PY_PRIMA_ASP",0) "PY_PRIMA_ASP",
     Nvl(A."CY_PRIMA_ASP" - B."PY_PRIMA_ASP",0) "PRIMA_ASP_DELTA",
@@ -349,6 +443,9 @@ Select
     Nvl(A."CY_COMM_ASP",0) "CY_COMM_ASP",
     Nvl(B."PY_COMM_ASP",0) "PY_COMM_ASP",
     Nvl(A."CY_COMM_ASP" - B."PY_COMM_ASP",0) "COMM_ASP_DELTA",
+    Nvl(A."CY_BIO_ASP",0) "CY_BIO_ASP",
+    Nvl(B."PY_BIO_ASP",0) "PY_BIO_ASP",
+    Nvl(A."CY_BIO_ASP" - B."PY_BIO_ASP",0) "BIO_ASP_DELTA",
     Nvl(A."CY_BVINE_ASP",0) "CY_BVINE_ASP",
     Nvl(B."PY_BVINE_ASP",0) "PY_BVINE_ASP",
     Nvl(A."CY_BVINE_ASP" - B."PY_BVINE_ASP",0) "BVINE_ASP_DELTA",
@@ -369,7 +466,10 @@ Select
     Nvl(A."CY_DYNAM_ASP" - B."PY_DYNAM_ASP",0) "DYNAM_ASP_DELTA",
     Nvl(A."CY_SYNTH_ASP",0) "CY_SYNTH_ASP",
     Nvl(B."PY_SYNTH_ASP",0) "PY_SYNTH_ASP",
-    Nvl(A."CY_SYNTH_ASP" - B."PY_SYNTH_ASP",0) "SYNTH_ASP_DELTA"
+    Nvl(A."CY_SYNTH_ASP" - B."PY_SYNTH_ASP",0) "SYNTH_ASP_DELTA",
+    Nvl(A."CY_MTF_ASP",0) "CY_MTF_ASP",
+    Nvl(B."PY_MTF_ASP",0) "PY_MTF_ASP",
+    NVL(A."CY_MTF_ASP" - B."PY_MTF_ASP",0) "MTF_ASP_DELTA"
 From
     CY_ASP A,
     PY_ASP B
@@ -378,5 +478,5 @@ Where
     (A.Salesman_Code Is Null And B.Salesman_Code Is Null And A.Region_Code = B.Region_Code) Or
     (A.Salesman_Code Is Null and B.Salesman_Code IS Null And A.Region_Code Is Null and B.Region_Code IS Null)
 Order By
-    A.Region_Code,
+    Decode(A.Region_Code,'USEC',1,'USCE',2,'USWC',3,'SECA',4,'UNASSIGNED',5),
     A.Salesman_Code
