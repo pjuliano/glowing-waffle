@@ -1,6 +1,6 @@
 Select
   A.Salesman_Code,
-  Sum(A.Allamounts) As Prior_Year_To_SD,
+  Sum(A.Allamounts) As PY_Year_SD,
   B.Region
 From
   Kd_Sales_Data_Request A Left Join Srrepquota B
