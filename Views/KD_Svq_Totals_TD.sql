@@ -36,7 +36,10 @@ Select
   Round((A.This_Quarter_Total / C.Qtr_Total_Quota) * 100,2) As Qtd_Quota_Pct_Total,
   Round((A.This_Quarter_Total / A.Quarter_Quota_Total) * 100,2) As Quarter_Quota_Pct_Total,
   Round((A.This_Month_Total / D.Month_Total_Quota) * 100,2) As Mtd_Quota_Pct_Total,
-  Round((A.This_Month_Total / A.Month_Quota_Total) * 100,2) As Month_Quota_PCT_Total
+  Round((A.This_Month_Total / A.Month_Quota_Total) * 100,2) As Month_Quota_PCT_Total,
+  Round(A.PY_Month_SD_Total,2) As PY_Month_SD_Total,
+  Round(A.PY_Quarter_SD_Total,2) As PY_Quarter_SD_Total,
+  Round(A.PY_Year_SD_Total,2) As PY_Year_SD_Total
 From
   Kd_Svq_Totals A,
   Kd_Daily_Quota_By_Month B,
@@ -49,4 +52,7 @@ Group By
   Round((A.This_Quarter_Total / C.Qtr_Total_Quota) * 100,2),
   Round((A.This_Quarter_Total / A.Quarter_Quota_Total) * 100,2),
   Round((A.This_Month_Total / D.Month_Total_Quota) * 100,2),
-  Round((A.This_Month_Total / A.Month_Quota_Total) * 100,2);
+  Round((A.This_Month_Total / A.Month_Quota_Total) * 100,2),
+  Round(A.PY_Month_SD_Total,2),
+  Round(A.PY_Quarter_SD_Total,2),
+  Round(A.PY_Year_SD_Total,2)

@@ -2,13 +2,15 @@ Create Or Replace View KD_Svq_IS_QTD As
 Select
   A.Salesman_Code,
   A.This_Quarter,
+  A.This_Quarter_Implants,
+  A.This_Quarter_Bio,
   A.Qtr_Quota,
   Round((A.This_Quarter  /Sum(B.Daily_Quota)) * 100,2) As Qtd_Quota_Pct,
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2) As Quarter_Quota_Pct,
   A.Qtr_Quota - A.This_Quarter As Quarter_Remaining
 From
-  Kd_Svq_Is_This_Quarter A,
-  KD_Daily_Quota_By_Month_IS B
+  Kd_Svq_IS_This_Quarter A,
+  Kd_Daily_Quota_By_Month_IS B
 Where
   A.Salesman_Code = B.Region And
   B.Qtr = Case
@@ -33,6 +35,8 @@ Group By
   A.Salesman_Code,
   A.Region,
   A.This_Quarter,
+  A.This_Quarter_Implants,
+  A.This_Quarter_Bio,
   A.Qtr_Quota,
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2),
   A.Qtr_Quota - A.This_Quarter;

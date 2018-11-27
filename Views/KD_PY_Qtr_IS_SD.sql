@@ -1,4 +1,4 @@
-Create Or Replace View KD_PY_Qtr_SD As
+Create Or Replace View KD_PY_Qtr_IS_SD As
 With MaxDay As (
     Select 
         Max(A.Day) As MaxDay
@@ -8,7 +8,7 @@ With MaxDay As (
         To_Char(A.Day,'Q') = To_Char(Sysdate,'Q') And
         Rownum <= KD_Get_SalesQuarter_Day(Trunc(Sysdate)))
 Select
-  A.Salesman_Code,
+  A.Commission_Receiver as Salesman_Code,
   Sum(A.Allamounts) As PY_This_Quarter_SD,
   Sum(Case
         When
@@ -28,8 +28,8 @@ Select
       End) As PY_This_Quarter_Bio_SD,
   B.Region
 From
-  Kd_Sales_Data_Request A Left Join Srrepquota B
-    On A.Salesman_Code = B.Repnumber,
+  Kd_Sales_Data_Request A Left Join Srrepquotainside B
+    On A.Commission_Receiver = B.Region,
   MaxDay C
 Where
   A.InvoiceDate <= C.MaxDay And
@@ -44,5 +44,5 @@ Where
   (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
   A.Invoice_ID != 'CR1001802096' --20180904 Invoice is stuck not posted and cannot be deleted.
 Group By
-  A.Salesman_Code,
+  A.Commission_Receiver,
   B.Region;

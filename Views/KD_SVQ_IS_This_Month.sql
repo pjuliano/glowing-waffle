@@ -4,7 +4,7 @@ Select
   Sum(A.Allamounts) As This_Month,
   Sum(Case
         When
-          A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED','PRMA+','TLMAX','PCOMM')
+          A.Part_Product_Code Not In ('LIT','REGEN')
         Then
           A.Allamounts
         Else
@@ -18,6 +18,14 @@ Select
         Else
           0
       End) As This_Month_Bio,
+  Sum(Case
+        When
+          A.Part_Product_Code != 'LIT' And 
+          A.Order_No Not Like 'W%' And
+          A.Order_No Not Like 'X%'
+        Then
+          Round((A.Allamounts - (A.Cost * A.Invoiced_Qty)),2)
+      End) As This_Month_Gross_Margin,
   Case
     When
       Extract(Month From Sysdate) = 1
@@ -79,10 +87,12 @@ Where
   Extract(Year From A.Invoicedate) = Extract(Year From Sysdate) And
   A.Charge_Type = 'Parts' And
   A.Corporate_Form = 'DOMDIR' And
-  ((A.Order_No Not Like 'W%' And
+  A.Catalog_No != '3DBC-22001091' And
+((A.Order_No Not Like 'W%' And
   A.Order_No Not Like 'X%') Or
   A.Order_No Is Null) And
-  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
+ (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
+  A.Invoice_ID != 'CR1001802096' --20180904 Invoice is stuck not posted and cannot be deleted.
 Group By
   A.Commission_Receiver,
   Case

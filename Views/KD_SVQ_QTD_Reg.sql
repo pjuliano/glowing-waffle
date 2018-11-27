@@ -3,7 +3,8 @@ Select
   A.Region,
   A.This_Quarter,
   Round((A.This_Quarter / Sum(B.Daily_Quota)) * 100,2) As Qtd_Quota_Pct_Reg,
-  Round((A.This_Quarter / A.Qtr_Quota) * 100,2) As Quarter_Quota_Pct_Reg
+  Round((A.This_Quarter / A.Qtr_Quota) * 100,2) As Quarter_Quota_Pct_Reg,
+  Round(A.PY_QTD_SD,2) As PY_QTD_SD_REG
 From
   Kd_Svq_This_Quarter_Reg A,
   Kd_Daily_Quota_By_Month B
@@ -30,4 +31,5 @@ Where
 Group By
   A.Region,
   A.This_Quarter,
-  Round((A.This_Quarter / A.Qtr_Quota) * 100,2);
+  Round((A.This_Quarter / A.Qtr_Quota) * 100,2),
+  Round(A.PY_QTD_SD,2);

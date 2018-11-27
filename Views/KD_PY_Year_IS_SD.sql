@@ -1,11 +1,11 @@
-Create Or Replace View KD_PY_Year_SD As
+Create Or Replace View KD_PY_Year_IS_SD As
 Select
-  A.Salesman_Code,
+  A.Commission_Receiver As Salesman_Code,
   Sum(A.Allamounts) As PY_Year_SD,
   B.Region
 From
-  Kd_Sales_Data_Request A Left Join Srrepquota B
-    On A.Salesman_Code = B.Repnumber,
+  Kd_Sales_Data_Request A Left Join SrrepquotaInside B
+    On A.Commission_Receiver = B.Region,
   KD_Sales_Days_CY C,
   KD_Sales_Days_PY D
 Where
@@ -22,6 +22,6 @@ Where
   (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
   A.Invoice_ID != 'CR1001802096' --20180904 Invoice is stuck not posted and cannot be deleted.
 Group By
-  A.Salesman_Code,
+  A.Commission_Receiver,
   B.Year,
   B.Region;
