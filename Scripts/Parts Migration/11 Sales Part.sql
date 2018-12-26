@@ -128,5 +128,136 @@ DECLARE
                              || Chr(30); --p3
     E_   VARCHAR2(32000) := 'DO'; --p4
 BEGIN
-    Ifsapp.Sales_Part_Api.New__(A_,B_,C_,D_,E_);
+    For Parts In (Select * From KD_Data_Migration)
+    Loop
+        A_ := Null;
+        B_ := Null;
+        C_ := Null;
+        D_ :=   'CATALOG_NO'
+                 || Chr(31)
+                 || PArts.Catalog_No
+                 || Chr(30)
+                 || 'CATALOG_DESC'
+                 || Chr(31)
+                 || Parts.Catalog_Desc
+                 || Chr(30)
+                 || 'CONTRACT'
+                 || Chr(31)
+                 || Parts.Contract
+                 || Chr(30)
+                 || 'PART_NO'
+                 || Chr(31)
+                 || Parts.Part_No
+                 || Chr(30)
+                 || 'SOURCING_OPTION'
+                 || Chr(31)
+                 || Parts.Sourcing_Option
+                 || Chr(30)
+                 || 'UNIT_MEAS'
+                 || Chr(31)
+                 || Parts.Unit_Meas
+                 || Chr(30)
+                 || 'CONV_FACTOR'
+                 || Chr(31)
+                 || PArts.Conv_Factor
+                 || Chr(30)
+                 || 'PRICE_UNIT_MEAS'
+                 || Chr(31)
+                 || Parts.Price_Unit_Meas
+                 || Chr(30)
+                 || 'PRICE_CONV_FACTOR'
+                 || Chr(31)
+                 || Parts.Price_Conv_Factor
+                 || Chr(30)
+                 || 'SALES_UNIT_MEAS'
+                 || Chr(31)
+                 || Parts.Sales_Unit_Meas
+                 || Chr(30)
+                 || 'INVERTED_CONV_FACTOR'
+                 || Chr(31)
+                 || Parts.Inverted_Conv_Factor
+                 || Chr(30)
+                 || 'SALES_PRICE_GROUP_ID'
+                 || Chr(31)
+                 || Parts.Sales_Price_Group_ID
+                 || Chr(30)
+                 || 'CATALOG_GROUP'
+                 || Chr(31)
+                 || Parts.Catalog_Group
+                 || Chr(30)
+                 || 'LIST_PRICE'
+                 || Chr(31)
+                 || Parts.List_Price2
+                 || Chr(30)
+                 || 'PRIMARY_CATALOG_DB'
+                 || Chr(31)
+                 || Upper(Parts.Primary_Catalog_Db)
+                 || Chr(30)
+                 || 'ACTIVEIND_DB'
+                 || Chr(31)
+                 || PArts.ActiveInd_Db
+                 || Chr(30)
+                 || 'TAXABLE_DB'
+                 || Chr(31)
+                 || Parts.Taxable_DB
+                 || Chr(30)
+                 || 'QUICK_REGISTERED_PART_DB'
+                 || Chr(31)
+                 || Upper(Parts.Quick_Registered_Part_DB)
+                 || Chr(30)
+                 || 'EXPORT_TO_EXTERNAL_APP_DB'
+                 || Chr(31)
+                 || Upper(Parts.Export_To_External_App_DB)
+                 || Chr(30)
+                 || 'CLOSE_TOLERANCE'
+                 || Chr(31)
+                 || Parts.Close_Tolerance
+                 || Chr(30)
+                 || 'CREATE_SM_OBJECT_OPTION_DB'
+                 || Chr(31)
+                 || Parts.Create_SM_Object_Option_DB
+                 || Chr(30)
+                 || 'USE_SITE_SPECIFIC_DB'
+                 || Chr(31)
+                 || Upper(Parts.Use_Site_Specific_DB)
+                 || Chr(30)
+                 || 'WEIGHT_NET'
+                 || Chr(31)
+                 || ''
+                 || Chr(30)
+                 || 'WEIGHT_GROSS'
+                 || Chr(31)
+                 || ''
+                 || Chr(30)
+                 || 'VOLUME'
+                 || Chr(31)
+                 || ''
+                 || Chr(30)
+                 || 'COST'
+                 || Chr(31)
+                 || Parts.Cost
+                 || Chr(30)
+                 || 'CATALOG_TYPE_DB'
+                 || Chr(31)
+                 || Parts.Catalog_Type_DB
+                 || Chr(30)
+                 || 'COMPANY'
+                 || Chr(31)
+                 || Parts.Company
+                 || Chr(30)
+                 || 'FREE_SAMPLE_DB'
+                 || Chr(31)
+                 || Parts.Free_Sample_DB
+                 || Chr(30)
+                 || 'PART_DESCRIPTION'
+                 || Chr(31)
+                 || Parts.Part_Description
+                 || Chr(30)
+                 || 'CREATE_PURCHASE_PART'
+                 || Chr(31)
+                 || Upper(Parts.Create_Purchase_Part)
+                 || Chr(30); --p3
+        E_ := 'DO';
+        Ifsapp.Sales_Part_Api.New__(A_,B_,C_,D_,E_);
+    End Loop;
 END;

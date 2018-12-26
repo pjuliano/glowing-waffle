@@ -9,15 +9,24 @@ DECLARE
                              || Chr(30); --p3
     E_   VARCHAR2(32000) := 'DO'; --p4
 BEGIN
-    Ifsapp.Inventory_Part_Api.Modify__(A_,B_,C_,D_,E_);
-
-   ----------------------------------
-   ---Dbms_Output Section---
-   ----------------------------------
-    Dbms_Output.Put_Line('a_=' || A_);
-    Dbms_Output.Put_Line('b_=' || B_);
-    Dbms_Output.Put_Line('c_=' || C_);
-    Dbms_Output.Put_Line('d_=' || D_);
-    Dbms_Output.Put_Line('e_=' || E_);
-   ----------------------------------
+    For Parts In (  Select
+                        A.ObjID,
+                        A.ObjVersion,
+                        B.Eng_Attribute
+                    From
+                        Inventory_Part A,
+                        KD_Data_Migration B
+                    Where
+                        A.PArt_No = B.Part_No)
+    Loop
+        A_ := Null;
+        B_ := Parts.ObjID;
+        C_ := Parts.ObjVersion;
+        D_ :=   'ENG_ATTRIBUTE'
+                 || Chr(31)
+                 || Parts.Eng_Attribute
+                 || Chr(30); --p3
+        E_ := 'DO';
+        Ifsapp.Inventory_Part_Api.Modify__(A_,B_,C_,D_,E_);
+    End Loop;
 END;
