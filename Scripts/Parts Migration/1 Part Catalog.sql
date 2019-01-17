@@ -107,10 +107,7 @@ BEGIN
     For Parts In (  Select
                         *
                     From
-                        KD_Data_Migration A,
-                        Part_Catalog B
-                    Where
-                        A.Part_No = B.Part_No)
+                        KD_Data_Migration A)
     Loop
         A_ := Null;
         B_ := Null;

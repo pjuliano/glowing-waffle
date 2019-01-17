@@ -1,3 +1,4 @@
+--Not needed for Paltop Migration.
 DECLARE
    a_ VARCHAR2(32000) := NULL; --p0
    b_ VARCHAR2(32000) := 'AAAURcAAIAAM28EABD'; --p1

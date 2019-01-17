@@ -26,8 +26,9 @@ SELECT
     Person_Info_Api.Get_Name(SD.Salesman_Code) AS Salesman_Name,
     SD.Region_Code,
     SD.Customer_No,
+    Customer_Info_Api.Get_Creation_Date(SD.Customer_No) As Cust_Creation_Date,
     SD.Customer_Name,
-    SD.InvoiceDate,
+    FIOD.First_Implant_Order_Date,
     SD.Invoice_ID,
     SD.Order_No,
     SD.Part_Product_Family
@@ -53,14 +54,15 @@ GROUP BY
     SD.Salesman_Code,
     Person_Info_Api.Get_Name(SD.Salesman_Code),
     SD.Region_Code,
+    Customer_Info_Api.Get_Creation_Date(SD.Customer_No),
     SD.Customer_No,
     SD.Customer_Name,
-    SD.InvoiceDate,
+    FIOD.First_Implant_Order_Date,
     SD.Invoice_ID,
     SD.Order_No,
     SD.Part_Product_Family    
 ORDER BY
-    SD.Salesman_Code,
+    SD.Salesman_Code,    
+    SD.Customer_No,
     SD.Part_Product_Family,
-    SD.InvoiceDate Asc,
-    SD.Customer_No
+    FIOD.First_Implant_Order_Date Asc
