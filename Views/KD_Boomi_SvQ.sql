@@ -1,7 +1,7 @@
-Create or Replace View KD_Boomi_SvQ As
+Create or Replace View KD_Boomi_Svq As
 Select
   Rank() Over (Order By A.YTD_Quota_Pct Desc) as Rank,
-  To_Char(Sysdate,'YYYY-MM-DD') "DATE",
+  To_Char(Sysdate,'YYYY-MM-DD') "Current_DATE",
   A.Salesman_Code,
   A.Name,
   A.Region,
@@ -68,7 +68,16 @@ Select
   Round(G.This_Month) As This_Month_Reg,
   Round(G.Month_Quota) As Month_Quota_Reg,
   Round(G.Month_Quota - G.This_Month) As Month_Remaining_Reg,
-  Round(H.This_Quarter) As This_Quarter_Reg
+  Round(H.This_Quarter) As This_Quarter_Reg,
+  A.Pymtd_Sd,
+  A.Pyqtd_Sd,
+  A.Pyytd_Sd,
+  A.Py_mtd_Sd_Reg,
+  A.Py_Qtd_Sd_Reg,
+  A.Py_Ytd_Sd_Reg,
+  A.Py_Month_Sd_Total,
+  A.Py_Quarter_Sd_Total,
+  A.Py_Year_Sd_Total
 From
   Kd_Svq A,
   Kd_Svq_This_Month B,

@@ -48,14 +48,5 @@ From
                  Left Join Kd_Customer_Pricelists D
     On A.Customer_ID = D.Customer_Id
 Where
-  A.Corporate_Form Not In ('FRA','ITL','SWE','IT','BENELUX','GER','KEY','CAN','SPA','LA') And
-  A.Customer_ID in ('5206',
-'32023',
-'19193',
-'17657',
-'27856',
-'D46082',
-'28645',
-'14687',
-'21377',
-'A71782')
+  A.Corporate_Form Not In ('FRA','ITL','SWE','IT','BENELUX','GER','KEY','CAN','SPA','LA','DOMDIS','EUR') And
+  A.Customer_ID != 'CATEMP'

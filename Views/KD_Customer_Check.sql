@@ -53,7 +53,11 @@ Where
   (A.Value Not Like '%_@_%.__%' Or A.Value Like '% %' Or
   A.Value Like '%<%' Or A.Value Like '%>%' Or A.Value Like '%(%' Or
   A.Value Like '%)%' Or A.Value Like '%[%' Or A.Value Like '%]%' Or
-  A.Value Like '%:%' Or A.Value Like '%,%' Or A.Value Like '%/%')
+  A.Value Like '%?%' Or A.Value Like '%.___.' Or 
+  A.Value LIke '%amp;%' Or A.Value Like '%@%@%' Or
+  A.Value Like '#39;' Or
+  A.Value Like '%:%' Or A.Value Like '%,%' Or A.Value Like '%/%' Or A.Value like '%''%') And
+  A.Value Not Like '%@%.___;%@%' 
 
 Union All
 --Section 3. Check if Commission Receiver is NULL.

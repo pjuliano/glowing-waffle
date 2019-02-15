@@ -20,7 +20,8 @@ Where
   A.Order_No Is Null) And
   Extract(Year From A.Invoicedate) = Extract(Year From Sysdate)-1 And
   (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
-  A.Invoice_ID != 'CR1001802096' --20180904 Invoice is stuck not posted and cannot be deleted.
+    A.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
+    A.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
 Group By
   A.Salesman_Code,
   B.Year,
