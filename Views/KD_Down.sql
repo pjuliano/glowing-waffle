@@ -1,3 +1,4 @@
+Create or Replace View KD_Down As 
 SELECT
     Case When Round(SUM(Case When SD.InvoiceDate >= Trunc(Sysdate)-90 Then SD.AllAmounts Else 0 End) /  Nullif(SUM(Case When SD.InvoiceDate Between Add_Months(Trunc(Sysdate)-90,-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End),0),4) <= .90 AND
               Round(SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-18) Then SD.AllAmounts Else 0 End) / Nullif(SUM(Case When SD.InvoiceDate Between Add_Months(Add_Months(Trunc(Sysdate),-18),-12) AND Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End),0),4) <= .90 AND
@@ -26,11 +27,12 @@ SELECT
     Sum(Case When Extract(Year From SD.InvoiceDate) = Extract(YEar From Sysdate)-2 Then Sd.AllAmounts Else 0 End) As PY2,
     Sum(Case When Extract(YEar From sD.InvoiceDate) = Extract(Year From Sysdate)-3 then SD.AllAmounts Else 0 End) As PY3,
     Sum(Case When Extract(Year From Sd.InvoiceDate) = Extract(Year From Sysdate)-4 Then SD.AllAmounts Else 0 End) As PY4,
-    SUM(Case When SD.InvoiceDate Between Add_Months(Trunc(Sysdate)-90,-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End) - SUM(Case When SD.InvoiceDate >= Trunc(Sysdate)-90 Then SD.AllAmounts Else 0 End),
-              SUM(Case When SD.InvoiceDate Between Add_Months(Add_Months(Trunc(Sysdate),-18),-12) AND Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End) - SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-18) Then SD.AllAmounts Else 0 End)
+    SUM(Case When SD.InvoiceDate Between Add_Months(Trunc(Sysdate)-90,-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End) - SUM(Case When SD.InvoiceDate >= Trunc(Sysdate)-90 Then SD.AllAmounts Else 0 End) As "90-90",
+    SUM(Case When SD.InvoiceDate Between Add_Months(Add_Months(Trunc(Sysdate),-18),-12) AND Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End) - SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-18) Then SD.AllAmounts Else 0 End) As "18-18"
 FROM
     KD_Sales_Data_Request SD
 WHERE
+    SD.Customer_No Not In (Select Customer_No From KD_Lost) And
     Extract(Year From SD.InvoiceDate) >= Extract(Year From Sysdate)-4 AND
     SD.Charge_Type = 'Parts' And
     SD.Corporate_Form = 'DOMDIR' And
@@ -47,4 +49,16 @@ GROUP BY
     --SD.Part_Product_Family
 HAVING
     SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-6) Then SD.AllAmounts Else 0 End) > 0 AND
-    SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-18) Then SD.AllAmounts Else 0 End) <> 0
+    SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-18) Then SD.AllAmounts Else 0 End) <> 0 And
+        Case When Round(SUM(Case When SD.InvoiceDate >= Trunc(Sysdate)-90 Then SD.AllAmounts Else 0 End) /  Nullif(SUM(Case When SD.InvoiceDate Between Add_Months(Trunc(Sysdate)-90,-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End),0),4) <= .90 AND
+              Round(SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-18) Then SD.AllAmounts Else 0 End) / Nullif(SUM(Case When SD.InvoiceDate Between Add_Months(Add_Months(Trunc(Sysdate),-18),-12) AND Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End),0),4) <= .90 AND
+              SUM(Case When SD.InvoiceDate Between Add_Months(Trunc(Sysdate)-90,-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End) - SUM(Case When SD.InvoiceDate >= Trunc(Sysdate)-90 Then SD.AllAmounts Else 0 End) > 1500 AND
+              SUM(Case When SD.InvoiceDate Between Add_Months(Add_Months(Trunc(Sysdate),-18),-12) AND Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End) - SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-18) Then SD.AllAmounts Else 0 End) > 1500
+         Then 'DOWN'
+         When Round(SUM(Case When SD.InvoiceDate >= Trunc(Sysdate)-90 Then SD.AllAmounts Else 0 End) /  Nullif(SUM(Case When SD.InvoiceDate Between Add_Months(Trunc(Sysdate)-90,-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End),0),4) Between .90 And 1.1 and
+              Round(SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-18) Then SD.AllAmounts Else 0 End) / Nullif(SUM(Case When SD.InvoiceDate Between Add_Months(Add_Months(Trunc(Sysdate),-18),-12) AND Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End),0),4) Between .90 and 1.1
+         Then 'FLAT'
+         When Round(SUM(Case When SD.InvoiceDate >= Trunc(Sysdate)-90 Then SD.AllAmounts Else 0 End) /  Nullif(SUM(Case When SD.InvoiceDate Between Add_Months(Trunc(Sysdate)-90,-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End),0),4)  > 1.1 and
+              Round(SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-18) Then SD.AllAmounts Else 0 End) / Nullif(SUM(Case When SD.InvoiceDate Between Add_Months(Add_Months(Trunc(Sysdate),-18),-12) AND Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End),0),4) > 1.1
+         Then 'UP'
+    End = 'DOWN'

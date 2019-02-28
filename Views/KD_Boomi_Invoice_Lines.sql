@@ -15,7 +15,7 @@ Select
   Customer_No,
   Cust_Grp,
   Case When Invoiced_Qty = 0 Then 'Manual Credit'
-       When Sales_Part_Api.Check_Exist(Site, Catalog_No) = 0 Or Inventory_Part_Api.Get_Accounting_Group(Site,Catalog_No) Not In ('FG','LIT','DEMO') Then 'Unknown Product'
+       When Sales_Part_Api.Check_Exist(Site, Catalog_No) = 0 Or Inventory_Part_Api.Get_Accounting_Group(Site,Catalog_No) Not In ('FG','LIT','DEMO') Then 'UNKNOWN'
        Else Catalog_No End As Catalog_No,
   Authorize_Code,
   Salesman_Code,
@@ -52,7 +52,7 @@ Where
   A.Charge_Type = 'Parts' And  
   A.Corporate_Form In ('DOMDIR','ASIA') And
   ((
-  A.Salesman_Code Not In ('505','506','507','508') And
+  A.Salesman_Code Not In ('505','506','507','508','318') And
   A.Customer_No != 'B3730' And
   A.Invoice_Id != '0' )
   Or

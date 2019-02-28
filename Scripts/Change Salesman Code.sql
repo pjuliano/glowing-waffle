@@ -7,21 +7,51 @@ Declare
 Begin
   For Cur In (Select
                 A.Objid,
-                A.Objversion,
-                Cust_Ord_Customer_Api.Get_Salesman_Code(A.Customer_Id) As Old_Rep,
-                B.Rep_ID As New_Rep
+                A.Objversion
               From
-                Cust_Ord_Customer_Ent A,
-                Kd_Zip_Data_Us B
+                Cust_Ord_Customer_Ent A
               Where
-                Customer_Info_Address_Api.Get_Zip_Code(A.Customer_Id, Customer_Info_Address_Api.Get_Default_Address(A.Customer_Id,'Delivery')) = B.Zip_Code And
-                Cust_Ord_Customer_Api.Get_Salesman_Code(A.Customer_Id) != B.Rep_Id And
-                Cust_Ord_Customer_Api.Get_Salesman_Code(A.Customer_Id) In ('308'))
+                Customer_ID In ('FR0079',
+'FR0480',
+'FR0485',
+'FR0225',
+'FR0526',
+'FR0533',
+'FR0491',
+'FR0438',
+'FR0692',
+'FR0555',
+'FR0661',
+'FR0156',
+'FR0700',
+'FR0790',
+'FR0186',
+'FR0200',
+'FR0420',
+'FR0640',
+'FR1279',
+'FR0944',
+'FR5059',
+'FR5175',
+'FR5016',
+'FR5308',
+'FR5394',
+'FR5520',
+'FR5630',
+'FR5675',
+'FR5701',
+'FR5756',
+'FR5746',
+'FR5707',
+'FR0957',
+'FR5598',
+'FR5277'
+))
   Loop
     A_ := Null;
     B_ := Cur.Objid;
     C_ := Cur.Objversion;
-    D_ := 'SALESMAN_CODE'||Chr(31)||Cur.New_Rep||Chr(30);
+    D_ := 'SALESMAN_CODE'||Chr(31)||'240-011'||Chr(30);
     E_ := 'DO';
     Ifsapp.Cust_Ord_Customer_Api.Modify__( A_ , B_ , C_ , D_ , E_ );
     Commit;

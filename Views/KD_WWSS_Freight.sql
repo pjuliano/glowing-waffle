@@ -175,7 +175,8 @@ Where
   C.Month = Extract(Month From Sysdate) And
   D.Quarter = Decode(Extract(Month From Sysdate),1,'QTR1',2,'QTR1',3,'QTR1',4,'QTR2',5,'QTR2',6,'QTR2',7,'QTR3',8,'QTR3',9,'QTR3',10,'QTR4',11,'QTR4',12,'QTR4') And
   Extract(Year From A.Invoicedate) >= Extract(Year From Sysdate) -1 And
-  A.Corporate_Form = 'Freight'
+  A.Corporate_Form = 'Freight' And
+  Region_Code IN ('USDI','USSC','USEC','USNC','UNASSIGNED','CANA')
 Group By
   'Freight',
   'Freight',

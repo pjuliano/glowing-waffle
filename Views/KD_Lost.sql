@@ -1,3 +1,4 @@
+Create Or Replace View KD_Lost As
 SELECT
     'LOST' As Status,
     SD.Customer_No,

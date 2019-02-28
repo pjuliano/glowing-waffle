@@ -71,7 +71,8 @@ Where
   H.Commission_Receiver Is Null And
   G.Corporate_Form = 'DOMDIR' And
   G.Customer_Id Not In ('CATEMP','TEMPLATE','5593','A29830') And
-  Cust_Ord_Customer_Api.Get_Salesman_Code(G.Customer_Id) != '999'
+  Cust_Ord_Customer_Api.Get_Salesman_Code(G.Customer_Id) != '999' And
+  Cust_Ord_Customer_Api.Get_Salesman_Code(G.Customer_ID) != '318'
 
 
 Union All
@@ -89,7 +90,8 @@ Where
   J.Customer_No = L.Customer_Id And
 	K.Rep_Id = L.Salesman_Code And
 	K.Is_Rep_Id != J.Commission_Receiver And
-  I.Customer_Id Not In ('1871','A20529','12879','16833','1244','24129','12803','16849','A53502','A22850','17013','A68001','A76095','17899','6198','10990','14308','15381','A23610','D36013','5074')
+  Cust_Ord_Customer_Api.Get_Salesman_Code(I.Customer_ID) != '318' And
+  I.Customer_Id Not In ('A27982','8563','D34057','A35979','1306')--('1871','A20529','12879','16833','1244','24129','12803','16849','A53502','A22850','17013','A68001','A76095','17899','6198','10990','14308','15381','A23610','D36013','5074')
 
 Union All
 --Check if someone used 317.
@@ -117,7 +119,7 @@ Where
   M.Customer_Id = N.Customer_Id And
   Upper(Ifsapp.Person_Info_Api.Get_Name(N.Salesman_Code)) Is Null And
 	M.Customer_Id Not In ('TEMPLATE','INTL','FRTEMP','SETEMP','DETEMP','ITTEMP','BETEMP','CATEMP','UKTEMP') And
-  M.Customer_Id Not Like 'DE%' And M.Customer_Id Not Like 'FR%' And M.Customer_Id Not Like 'IT%'
+  M.Customer_Id Not Like 'DE%' And M.Customer_Id Not Like 'FR%' And M.Customer_Id Not Like 'IT%' 
   
 Union All
 --Check to see if there is an AR Contact on the account.

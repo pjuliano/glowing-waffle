@@ -1,3 +1,4 @@
+Create Or Replace View KD_Recovered As
 Select
     SD.Customer_No,
     SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-6) Then SD.AllAmounts Else 0 End) As Rolling_6M,
@@ -6,6 +7,8 @@ Select
 From
     KD_Sales_Data_Request SD 
 Where
+    SD.Customer_No Not In (Select Customer_No From KD_Down) And
+    SD.Customer_No Not In (Select Customer_No From KD_Lost) And
     Extract(Year From SD.InvoiceDate) >= Extract(Year From Sysdate)-4 AND
     SD.Charge_Type = 'Parts' And
     SD.Corporate_Form = 'DOMDIR' And

@@ -46,7 +46,7 @@ Select
   A.Type_Designation,
   Case When A.Part_Product_Family In ('DYNAC','DYNAG','DYNAB','DYNAM','CONNX','CYTOP','BVINE','SYNTH','MTF')
        Then 'BIOMATERIALS'
-       When A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED','PRMA+','PCOMM','TLMAX')
+       When A.Part_Product_Family In ('COMM','GNSIS','PRIMA','RENOV','RESTO','STAGE','SUST','TEFGE','XP1','TRINX','EXHEX','EXORL','OCT','ZMAX','LODI','OTMED','PRMA+','PCOMM','TLMAX','ACTVE','ADVN+','DYMC','ADVNC','PTCOM')
        Then 'IMPLANTS'
        When A.Part_Product_Family In ('EG','CUSAB','OTHER','EDU','MOTOR','ODYSS','LEGACY','DEVELOP')
        Then 'OTHER'

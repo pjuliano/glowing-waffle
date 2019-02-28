@@ -48,5 +48,10 @@ From
                  Left Join Kd_Customer_Pricelists D
     On A.Customer_ID = D.Customer_Id
 Where
+  (  
   A.Corporate_Form Not In ('FRA','ITL','SWE','IT','BENELUX','GER','KEY','CAN','SPA','LA','DOMDIS','EUR') And
-  A.Customer_ID != 'CATEMP'
+  A.Salesman_Code Not In ('908','504','318') And
+  A.Customer_ID != 'CATEMP'     ) Or
+  (
+  A.Customer_ID Like 'N%' And
+  A.Salesman_Code = '999'       )

@@ -176,7 +176,7 @@ Where
   D.Quarter = Decode(Extract(Month From Sysdate),1,'QTR1',2,'QTR1',3,'QTR1',4,'QTR2',5,'QTR2',6,'QTR2',7,'QTR3',8,'QTR3',9,'QTR3',10,'QTR4',11,'QTR4',12,'QTR4') And
   A.Charge_Type = 'Parts' And
   Extract(Year From A.Invoicedate) >= Extract(Year From Sysdate) -1 And
-  A.Corporate_Form In ('ASIA','CAN','EUR','LA','DOMDIS') And
+  A.Corporate_Form In ('CAN','DOMDIS') And
   A.Region_Code != 'ITL'
 Group By
   'GlobalDist',

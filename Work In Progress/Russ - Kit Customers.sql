@@ -33,9 +33,8 @@ From
      On A.Customer_No = B.Customer_No And
     A.Part_Product_Family = B.Part_Product_Family
 Where
-
     Extract(Year From InvoiceDate) = 2019 And
-        A.Charge_Type = 'Parts' And
+    A.Charge_Type = 'Parts' And
     A.Corporate_Form = 'DOMDIR' And
     A.Catalog_No != '3DBC-22001091' And
     ((A.Order_No Not Like 'W%' And

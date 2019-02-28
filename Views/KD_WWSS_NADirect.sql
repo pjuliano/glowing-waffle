@@ -175,7 +175,14 @@ Where
   D.Quarter = Decode(Extract(Month From Sysdate),1,'QTR1',2,'QTR1',3,'QTR1',4,'QTR2',5,'QTR2',6,'QTR2',7,'QTR3',8,'QTR3',9,'QTR3',10,'QTR4',11,'QTR4',12,'QTR4') And
   A.Charge_Type = 'Parts' And
   Extract(Year From A.Invoicedate) >= Extract(Year From Sysdate) -1 And
-  A.Corporate_Form = 'DOMDIR'
+  A.Corporate_Form = 'DOMDIR' And
+  A.Catalog_No != '3DBC-22001091' And
+  ((A.Order_No Not Like 'W%' And
+  A.Order_No Not Like 'X%') Or
+  A.Order_No Is Null) And
+  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
+  A.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
+  A.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
 Group By
   'NADirect',
   A.Region_Code,

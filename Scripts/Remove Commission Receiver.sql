@@ -7,10 +7,31 @@ Begin
   For Cur In (Select 
                 * 
               From 
-                Cust_Def_Com_Receiver A,
-                (Select Customer, Substr(Substr(Issue,31),1,Length(Substr(Issue,31))-1) From KD_Customer_Check Where Issue Like 'Commission receiver should be%') B
+                Cust_Def_Com_Receiver A
               Where 
-                A.Customer_No = B.Customer)
+                A.Customer_No IN ('D44059',
+'A35515',
+'A46437',
+'19203-02',
+'15606',
+'A26924',
+'15836',
+'6958',
+'A76355',
+'7756',
+'4393',
+'A23551',
+'17941',
+'A48357',
+'15499',
+'17085',
+'12868',
+'5494',
+'A35987',
+'13567',
+'A35979',
+'8563',
+'A27982'))
   Loop
     A_ := Null;
     B_ := Cur.Objid;
