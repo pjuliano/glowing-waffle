@@ -97,5 +97,5 @@ Where
   A.Region = G.Region And
   A.Region = H.Region And 
   A.Salesman_Code = I.Salesman_Code And
-  A.Salesman_Code != '999' And
+  --A.Salesman_Code != '999' And
   A.Salesman_Code != '318'

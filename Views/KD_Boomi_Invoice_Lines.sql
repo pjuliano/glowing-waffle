@@ -2,7 +2,7 @@ Create Or Replace View KD_Boomi_Invoice_Lines As
 Select
   Site,
   Invoice_Id,
-  Item_Id,
+  Case When Source = 'SI' Then Item_Id || '-' || Authorize_Code Else Item_ID End As Item_ID,
   Invoicedate,
   Decode(Invoiced_Qty,0,1,Invoiced_Qty) As Invoiced_Qty,
   Sale_Unit_Price,
@@ -15,7 +15,7 @@ Select
   Customer_No,
   Cust_Grp,
   Case When Invoiced_Qty = 0 Then 'Manual Credit'
-       When Sales_Part_Api.Check_Exist(Site, Catalog_No) = 0 Or Inventory_Part_Api.Get_Accounting_Group(Site,Catalog_No) Not In ('FG','LIT','DEMO') Then 'UNKNOWN'
+       When Sales_Part_Api.Check_Exist(Site, Catalog_No) = 0 Or Inventory_Part_Api.Get_Accounting_Group(Site,Catalog_No) Not In ('FG','LIT','DEMO') Or catalog_No In ('PRCADJ', 'PRIPROKIT') Then 'UNKNOWN'
        Else Catalog_No End As Catalog_No,
   Authorize_Code,
   Salesman_Code,

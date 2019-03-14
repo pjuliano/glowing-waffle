@@ -16,7 +16,8 @@ Where
     A.Warehouse Not Like 'CON%' And
     Inventory_Part_Api.Get_Part_Status(A.Contract,A.Part_No) = 'A' And
     Inventory_Part_Api.Get_Accounting_Group(A.Contract,A.Part_No) In ('RM','OP','FG') And 
-    A.Contract = '100'
+    A.Contract = '100' And
+    Inventory_Part_Api.Get_Part_Cost_Group_ID(A.Contract,A.Part_No) = 'PALTP'
 Group By
     A.Contract,
     Inventory_Part_Api.Get_Accounting_Group(A.Contract,A.Part_No),
