@@ -3,8 +3,10 @@ With Forecast_Qtys As
     (
         Select
             A.RM_Part_No,
-            Sum(Case When A.FG_Part_Index = 1 Then B.Forecast_Lev0 + Forecast_Lev1 End) As Forecast_Qty_FG1,
-            Sum(Case When A.FG_Part_Index = 2 Then B.Forecast_Lev0 + Forecast_Lev1 End) As Forecast_Qty_FG2,
+            Sum(Case When A.FG_Part_Index = 1 Then B.Forecast_Lev0 + Forecast_Lev1 Else 0 End) As Forecast_Qty_FG1,
+            Sum(Case When A.FG_Part_Index = 2 Then B.Forecast_Lev0 + Forecast_Lev1 Else 0 End) As Forecast_Qty_FG2,
+            Sum(Case When A.FG_Part_Index = 3 Then B.Forecast_Lev0 + Forecast_Lev1 Else 0 End) As Forecast_Qty_FG3,
+            Sum(Case When A.FG_Part_Index = 4 Then B.Forecast_Lev0 + Forecast_Lev1 Else 0 End) As Forecast_Qty_FG4,
             Sum(Case When A.FG_Part_Index = 1 Then 1 Else 0 End) As Forecast_Count
         From 
             KD_MRP_Part_Relationships A,
@@ -19,8 +21,10 @@ With Forecast_Qtys As
 Select 
     A.RM_Part_No, 
     A.FG_Part_No,
-    Round(Case When A.FG_Part_Index = 1 Then (B.Forecast_Qty_Fg1/(Nullif((B.Forecast_Qty_FG1 + B.Forecast_Qty_FG2),0)))
-               When A.FG_Part_Index = 2 Then (B.Forecast_Qty_FG2/(Nullif((B.Forecast_Qty_FG1 + B.Forecast_Qty_FG2),0))) 
+    Round(Case When A.FG_Part_Index = 1 Then (B.Forecast_Qty_Fg1/(Nullif((B.Forecast_Qty_FG1 + B.Forecast_Qty_FG2 + B.Forecast_Qty_FG3 + B.Forecast_Qty_FG4),0)))
+               When A.FG_Part_Index = 2 Then (B.Forecast_Qty_FG2/(Nullif((B.Forecast_Qty_FG1 + B.Forecast_Qty_FG2 + B.Forecast_Qty_FG3 + B.Forecast_Qty_FG4),0)))
+               When A.FG_Part_Index = 3 Then (B.Forecast_Qty_FG3/(Nullif((B.Forecast_Qty_FG1 + B.Forecast_Qty_FG2 + B.Forecast_Qty_FG3 + B.Forecast_Qty_FG4),0)))
+               When A.FG_Part_Index = 4 Then (B.Forecast_Qty_FG4/(Nullif((B.Forecast_Qty_FG1 + B.Forecast_Qty_FG2 + B.Forecast_Qty_FG3 + B.Forecast_Qty_FG4),0)))
           End,3) As RM_Ratio,
     B.Forecast_Count
 From

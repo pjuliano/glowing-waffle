@@ -6,7 +6,7 @@ Select
 From
     KD_Boomi_Invoice_Headers A
 Where
-    Extract(Year From InvoiceDate) = 2010
+    Extract(Year From InvoiceDate) = 2013
 Group By
     Person_Info_Api.Get_Name(Salesman_Code),
     Extract(Year From A.InvoiceDate)

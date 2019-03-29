@@ -75,5 +75,5 @@ From
                      Left Join Cust_Def_Com_Receiver C 
         On B.KD_Cust_ID = C.Customer_No
 Where
-    A.CustomerNo Not IN ('Cust1002656','Cust1002260') And
+    A.CustomerNo Not IN ('Cust1002656','Cust1002260','Cust1002453','Cust1002609','Cust1002624','Cust1002028','Cust1002470','Cust1002384','Cust1002470','Cust1002461') And
     A.ItemNo Not In ('30-90054','97-90100','97-90000','85-70023','30-90004')

@@ -17,7 +17,7 @@ SELECT
     SUM(Case When SD.InvoiceDate >= Trunc(Sysdate)-90 Then SD.AllAmounts Else 0 End) As Rolling_90D,
     SUM(Case When SD.InvoiceDate Between Add_Months(Trunc(Sysdate)-90,-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End) As Rolling_90DLY,
     SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-6) Then SD.AllAmounts Else 0 End) As Rolling_6M,
-    SUM(Case When SD.InvoiceDate Between Add_Months(Trunc(Sysdate)-90,-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End) As Rolling_6MLY,
+    SUM(Case When SD.InvoiceDate Between Add_Months(Add_Months(Trunc(Sysdate),-6),-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End) As Rolling_6MLY,
     (Round(SUM(Case When SD.InvoiceDate >= Trunc(Sysdate)-90 Then SD.AllAmounts Else 0 End) / Nullif(SUM(Case When SD.InvoiceDate Between Add_Months(Trunc(Sysdate)-90,-12) And Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End),0),4)) * 100 As "CY/LY_90D",
     SUM(Case When SD.InvoiceDate >= Add_Months(Trunc(Sysdate),-18) Then SD.AllAmounts Else 0 End) As Rolling_18M,
     SUM(Case When SD.InvoiceDate Between Add_Months(Add_Months(Trunc(Sysdate),-18),-12) AND Add_Months(Trunc(Sysdate),-12) Then SD.AllAmounts Else 0 End) as Rolling_18MLY,
@@ -42,8 +42,7 @@ WHERE
     SD.Order_No Is Null) And
     (SD.Market_Code != 'PREPOST' Or SD.Market_Code Is Null) And
     SD.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-    SD.Order_No != 'C512921' And
-    SD.Source != 'PTUSAXLSX'--Kevin Stack's order/return that spanned years.
+    SD.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
 GROUP BY
     SD.Customer_No--,
     --SD.Part_Product_Family

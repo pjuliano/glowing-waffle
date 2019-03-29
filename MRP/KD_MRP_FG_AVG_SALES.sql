@@ -5,8 +5,8 @@ Select
     Round((Sysdate - B.Date_Entered) / 30) As Active_Months,
     C.Units_Sold_12m,
     Case When Round((Sysdate - B.Date_Entered) / 30) < 12
-         Then Round(C.Units_Sold_12M / Round((Sysdate - B.Date_Entered) / 30))
-         Else Round(C.Units_Sold_12M / 12)
+         Then Round(C.Units_Sold_12M / Round((Sysdate - B.Date_Entered) / 30),1)
+         Else Round(C.Units_Sold_12M / 12,1)
     End As Avg_Monthly_Sales
 From
     KD_MRP_Part_Relationships A Left Join Sales_Part B

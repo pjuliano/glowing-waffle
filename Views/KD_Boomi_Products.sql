@@ -21,12 +21,11 @@ Select
 From 
   Sales_Part A Left Join Inventory_Part B On 
     A.Part_No = B.Part_No And 
-      A.Contract=B.Contract
+      A.Contract=B.Contract And 
+      A.Contract='100' And
+      B.Accounting_Group In ('FG','LIT','DEMO')
                Left Join Inventory_Part_Unit_Cost_Sum C On
       A.Contract = C.Contract And
       A.Part_No = C.Part_No
-Where 
-  A.Contract='100' And
-  B.Accounting_Group In ('FG','LIT','DEMO')
 Order By
-  A.Part_No
+  A.Catalog_No

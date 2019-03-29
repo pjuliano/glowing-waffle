@@ -73,7 +73,8 @@ Where
         'B6782',
         'B3730',
         'B2848',
-        'B6684')
+        'B6684',
+        '1639')
         )) And
     A.Currency in ('USD','CAD')
 Group By

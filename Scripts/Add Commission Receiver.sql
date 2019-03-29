@@ -8,7 +8,6 @@ Begin
   For Cur In (Select Customer_ID From Customer_Info Where Customer_ID In ('D44059',
 'A35515',
 'A46437',
-'19203-02',
 '15606',
 'A26924',
 '15836',

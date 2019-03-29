@@ -15,7 +15,7 @@ Select
   Customer_No,
   Cust_Grp,
   Case When Invoiced_Qty = 0 Then 'Manual Credit'
-       When Sales_Part_Api.Check_Exist(Site, Catalog_No) = 0 Or Inventory_Part_Api.Get_Accounting_Group(Site,Catalog_No) Not In ('FG','LIT','DEMO') Or catalog_No In ('PRCADJ', 'PRIPROKIT') Then 'UNKNOWN'
+       When Sales_Part_Api.Check_Exist(Site, Catalog_No) = 0 Or Inventory_Part_Api.Get_Accounting_Group(Site,Catalog_No) Not In ('FG','LIT','DEMO') Or catalog_No In ('PRCADJ','PRIPROKIT','UPGRFEE','PROCFEE') Then 'UNKNOWN'
        Else Catalog_No End As Catalog_No,
   Authorize_Code,
   Salesman_Code,
@@ -69,6 +69,7 @@ Where
         'B6782',
         'B3730',
         'B2848',
-        'B6684')
+        'B6684',
+        '1639')
         )) And
     A.Currency in ('USD','CAD')
