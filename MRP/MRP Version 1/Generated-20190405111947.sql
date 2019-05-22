@@ -1,0 +1,47 @@
+--------------------------------------------------------
+--  File created - Friday-April-05-2019   
+--------------------------------------------------------
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_AVAIL.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_AVG_FORECAST.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_AVG_SALES.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_FORECAST_QTY.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_ON_HAND.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_OPEN_SO.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_SALES_QTY.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_MOH_FORECAST.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_MOH_SALES.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_PROC_AVAIL.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_PROC_ON_HAND.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_PROC_OPEN_PO.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_PROC_OPEN_SO.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RAW_OPEN_PO.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_AVAIL_FORECAST.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_AVAIL_SALES.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_ON_HAND.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_OPEN_PO.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_QTYS.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_RATIO_FORECAST.sql
+@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_RATIO_SALES.sql
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_AVAIL_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_AVG_FORECAST_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_AVG_SALES_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_FORECAST_QTY_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_ON_HAND_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_OPEN_SO_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_FG_SALES_QTY_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_MOH_FORECAST_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_MOH_SALES_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_PROC_AVAIL_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_PROC_ON_HAND_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_PROC_OPEN_PO_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_PROC_OPEN_SO_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RAW_OPEN_PO_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_AVAIL_FORECAST_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_AVAIL_SALES_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_ON_HAND_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_OPEN_PO_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_QTYS_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_RATIO_FORECAST_DATA_VIEW.xlsx
+--@C:\Users\pjuliano\OneDrive - Keystone Dental\Desktop\MRP Version 1\KD_MRP_RM_RATIO_SALES_DATA_VIEW.xlsx

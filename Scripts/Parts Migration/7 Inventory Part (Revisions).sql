@@ -1,4 +1,3 @@
---Modify existing.
 DECLARE
     A_   VARCHAR2(32000) := NULL; --p0
     B_   VARCHAR2(32000) := 'AAAUVBAAIAAMmFhAA0'; --p1

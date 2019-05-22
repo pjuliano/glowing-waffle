@@ -5,14 +5,16 @@ Select
     A.Line_Item_No As Item_ID,
     To_Date(A.InvoiceDate,'MM/DD/YYYY') As InvoiceDate,
     A.Qty As Invoiced_Qty,
-    A.Amt/A.Qty As Sale_Unit_Price,
+    A.Amt/Nullif(A.Qty,0) As Sale_Unit_Price,
     0 as Discount,
     0 As Net_Curr_Amount,
     0 As Gross_Curr_Amount,
-    Case When A.ItemNo = '97-00001' Then 'PTUSA Freight' Else Sales_Part_Api.Get_Catalog_Desc('100',A.ItemNo) End As Catalog_Desc,
-    Customer_Info_Api.Get_Name(B.KD_Cust_ID) As Customer_Name,
+    Case When A.ItemNo = '97-00001' Then 'PTUSA Freight'
+         When A.ItemNo = '97-90100' Then 'PTUSA Misc. Charge'
+         Else Nvl(Sales_Part_Api.Get_Catalog_Desc('100',A.ItemNo),A.Item) End As Catalog_Desc,
+    Nvl(Customer_Info_Api.Get_Name(B.KD_Cust_ID),A.Customer) As Customer_Name,
     'P' || SubStr(A.Invoiceno,3,7) As Order_No,
-    B.KD_Cust_ID As Customer_No,
+    Nvl(B.KD_Cust_ID,A.CustomerNo) As Customer_No,
     Cust_Ord_Customer_Api.Get_Cust_Grp(B.KD_Cust_ID) As Cust_Grp,
     Decode(A.ItemNo,'97-00001','PTFREIGHT',A.ItemNo) As Catalog_No,
     'PTUSA' as Authorize_Code,
@@ -21,8 +23,8 @@ Select
     Cust_Ord_Customer_Address_Api.Get_District_Code(B.KD_Cust_ID,99) As District_Code,
     Cust_Ord_Customer_Address_Api.Get_Region_Code(B.KD_Cust_ID,99) As Region_Code,
     To_Date(A.InvoiceDate,'MM/DD/YYYY') As CreateDate,
-    Inventory_Part_Api.Get_Part_Product_Code('100',A.ItemNo) as Part_Product_Code,
-    Inventory_Part_Api.Get_Part_Product_Family('100',A.ItemNo) as Part_Product_Family,
+    Nvl(Inventory_Part_Api.Get_Part_Product_Code('100',A.ItemNo),'OTHER') as Part_Product_Code,
+    Nvl(Inventory_Part_Api.Get_Part_Product_Family('100',A.ItemNo),'OTHER') as Part_Product_Family,
     Inventory_Part_Api.Get_Second_Commodity('100',A.ItemNo) As Second_Commodity,
     InitCap(To_Char(To_Date(A.InvoiceDate,'MM/DD/YYYY'),'MONTH')) As InvoiceMonth,
     'QTR' || To_Char(To_Date(A.InvoiceDate,'MM/DD/YYYY'),'Q') As InvoiceQtr,
@@ -30,7 +32,7 @@ Select
     To_Char(To_Date(A.InvoiceDate,'MM/DD/YYYY'),'MM/YYYY') As InvoiceMthYr,
     '0' as GroupID,
     Case When A.ItemNo = '97-00001' Then 'Freight' Else 'Target' End as Type_Designation,
-    B.KD_Cust_ID As Customer_No_Pay,
+    Nvl(B.KD_Cust_ID,A.CustomerNo) As Customer_No_Pay,
     Case When A.ItemNo = '97-00001' Then 'Freight' Else KD_Get_Corporate_Form(B.KD_Cust_ID) End As Corporate_Form,
     Amt As FixedAmounts,
     Amt As AllAmounts,
@@ -74,6 +76,3 @@ From
         On A.CustomerNo = B.PT_Cust_ID
                      Left Join Cust_Def_Com_Receiver C 
         On B.KD_Cust_ID = C.Customer_No
-Where
-    A.CustomerNo Not IN ('Cust1002656','Cust1002260','Cust1002453','Cust1002609','Cust1002624','Cust1002028','Cust1002470','Cust1002384','Cust1002470','Cust1002461') And
-    A.ItemNo Not In ('30-90054','97-90100','97-90000','85-70023','30-90004')

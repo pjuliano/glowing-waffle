@@ -1,4 +1,3 @@
---Add Inventory Part Characteristic template
 DECLARE
     A_   VARCHAR2(32000) := NULL; --p0
     B_   VARCHAR2(32000) := 'AAAUN9AARAAAt3zAAA'; --p1

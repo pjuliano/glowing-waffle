@@ -1,6 +1,3 @@
---Create Inventory Part General, Acquisition, Misc. Part Info
---MUST Create new Product Families ADVNC, ADVN+, ACTVT, CONCL, DYMIC, PTCOM
---MUST Create Parts Cost Group ID PALTP
 DECLARE
     A_   VARCHAR2(32000) := NULL; --p0
     B_   VARCHAR2(32000) := NULL; --p1

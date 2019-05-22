@@ -21,7 +21,7 @@ Select
                       A.Order_No Is Null) And
                       (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
                       A.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-                      A.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
+(A.Order_No != 'C512921' Or A.Order_No Is Null) --Kevin Stack's order/return that spanned years.
                  Then A.Allamounts
                  Else 0
             End)/1000) As USEC,
@@ -33,7 +33,7 @@ Select
                       A.Order_No Is Null) And
                       (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
                       A.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-                      A.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
+(A.Order_No != 'C512921' Or A.Order_No Is Null) --Kevin Stack's order/return that spanned years.
                  Then A.Allamounts
                  Else 0
             End)/1000) As USSC,
@@ -45,7 +45,7 @@ Select
                       A.Order_No Is Null) And
                       (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
                       A.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-                      A.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
+(A.Order_No != 'C512921' Or A.Order_No Is Null) --Kevin Stack's order/return that spanned years.
                  Then A.Allamounts
                  Else 0
             End)/1000) As USWC,
@@ -57,7 +57,7 @@ Select
                       A.Order_No Is Null) And
                       (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
                       A.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-                      A.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
+(A.Order_No != 'C512921' Or A.Order_No Is Null) --Kevin Stack's order/return that spanned years.
                  Then A.Allamounts
                  Else 0
             End)/1000) As Unassigned_Na,
@@ -69,7 +69,7 @@ Select
                       A.Order_No Is Null) And
                       (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
                       A.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-                      A.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
+(A.Order_No != 'C512921' Or A.Order_No Is Null) --Kevin Stack's order/return that spanned years.
                  Then A.Allamounts
                  Else 0
             End)/1000) As Total_Na,
@@ -111,7 +111,7 @@ Select
                       A.Order_No Is Null) And
                       (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
                       A.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-                      A.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
+(A.Order_No != 'C512921' Or A.Order_No Is Null) --Kevin Stack's order/return that spanned years.
                  Then A.Allamounts
                  Else 0
             End)/1000) + 

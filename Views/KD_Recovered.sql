@@ -18,7 +18,7 @@ Where
     SD.Order_No Is Null) And
     (SD.Market_Code != 'PREPOST' Or SD.Market_Code Is Null) And
     SD.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-    SD.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
+(SD.Order_No != 'C512921' Or SD.Order_No Is Null) --Kevin Stack's order/return that spanned years.
 Group By
     SD.Customer_No
 Having

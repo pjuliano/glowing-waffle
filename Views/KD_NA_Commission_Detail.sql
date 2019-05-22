@@ -61,10 +61,14 @@ From
        A.Customer_No = C.Customer_No,
   Person_Info B
 Where
-  A.Charge_Type = 'Parts' And
-  A.Corporate_Form = 'DOMDIR' And
-  ((A.Order_No Not Like 'W%' And
-  A.Order_No Not Like 'X%') Or A.Order_No Is Null) And
-  A.Customer_No Not In ('A86088','A35173') And
-  A.Salesman_Code = B.Person_Id And
-  (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null)
+    a.charge_type = 'Parts' AND
+    a.corporate_form = 'DOMDIR' AND
+    ((a.order_no NOT LIKE 'W%' AND
+    a.order_no NOT LIKE 'X%') OR a.order_no IS NULL) AND
+    a.catalog_no != '3DBC-22001091' AND
+    a.customer_no NOT IN ('A86088','A35173') AND
+    a.salesman_code = b.person_id AND
+    (a.market_code != 'PREPOST' OR a.market_code IS NULL) AND
+    a.invoice_id != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
+    (a.order_no != 'C512921' OR a.order_No Is Null) AND --Kevin Stack's order/return that spanned years.
+    a.Salesman_code != '318'

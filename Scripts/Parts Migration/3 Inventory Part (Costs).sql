@@ -1,4 +1,3 @@
---Add Inventory Part Costs
 DECLARE
     A_   VARCHAR2(32000) := ''; --p0
     B_   VARCHAR2(32000) := 'AAAUNvAAIAAM2p9AAW'; --p1

@@ -1,4 +1,4 @@
-Create or Replace View Kd_Sales_Data As
+--Create or Replace View Kd_Sales_Data As
     SELECT
         DECODE(A.Company,'241','240',A.Company) AS Site,
         B.Series_Id || B.Invoice_No AS Invoice_Id,

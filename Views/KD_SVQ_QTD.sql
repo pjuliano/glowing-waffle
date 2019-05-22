@@ -5,9 +5,17 @@ Select
   A.This_Quarter_Implants,
   A.This_Quarter_Bio,
   A.Qtr_Quota,
-  Round((A.This_Quarter  /Sum(B.Daily_Quota)) * 100,2) As Qtd_Quota_Pct,
-  Round((A.This_Quarter / A.Qtr_Quota) * 100,2) As Quarter_Quota_Pct,
-  A.Qtr_Quota - A.This_Quarter As Quarter_Remaining
+  A.Qtr_Quota_Impl,
+  A.Qtr_Quota_Bio,
+  Round((A.This_Quarter / NullIF(Sum(B.Daily_Quota),0)) * 100,2) As Qtd_Quota_Pct,
+  Round((A.This_Quarter_Implants / NullIF(Sum(B.Daily_Quota_Impl),0)) * 100,2) As QTD_Quota_Pct_IMPL,
+  Round((A.This_Quarter_Bio / NullIF(Sum(B.Daily_Quota_Bio),0)) * 100,2) As QTD_Quota_Pct_Bio,
+  Round((A.This_Quarter / NullIF(A.Qtr_Quota,0)) * 100,2) As Quarter_Quota_Pct,
+  Round((A.This_Quarter_Implants / NullIF(A.Qtr_Quota_Impl,0)) * 100,2) As Quarter_Quota_Pct_Impl,
+  Round((A.This_Quarter_Implants / NullIF(A.Qtr_Quota_Bio,0)) * 100,2) As Quarter_Quota_Pct_Bio,
+  A.Qtr_Quota - A.This_Quarter As Quarter_Remaining,
+  A.Qtr_Quota_Impl - A.This_Quarter_Implants As Quarter_Remaining_Impl,
+  A.Qtr_Quota_Bio - A.This_Quarter_Bio as Quarter_Remaining_Bio
 From
   Kd_Svq_This_Quarter A,
   Kd_Daily_Quota_By_Month B
@@ -38,5 +46,7 @@ Group By
   A.This_Quarter_Implants,
   A.This_Quarter_Bio,
   A.Qtr_Quota,
+  A.Qtr_Quota_Impl,
+  A.Qtr_Quota_Bio,
   Round((A.This_Quarter / A.Qtr_Quota) * 100,2),
   A.Qtr_Quota - A.This_Quarter;

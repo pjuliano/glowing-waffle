@@ -47,7 +47,7 @@ Where
     A.Order_No Is Null) And
   (A.Market_Code != 'PREPOST' Or A.Market_Code Is Null) And
     A.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-    A.Order_No != 'C512921' And --Kevin Stack's order/return that spanned years.
+    (A.Order_No != 'C512921' Or A.Order_No Is Null) And --Kevin Stack's order/return that spanned years.
     Site = '100' And
   A.Charge_Type = 'Parts' And  
   A.Corporate_Form In ('DOMDIR','ASIA') And

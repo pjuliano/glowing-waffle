@@ -38,6 +38,6 @@ CREATE OR REPLACE FORCE VIEW "IFSAPP"."KD_CY_SALES" (
             A.Market_Code IS NULL
         ) AND
         A.Invoice_Id != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-        A.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
+(A.Order_No != 'C512921' Or A.Order_No Is Null) --Kevin Stack's order/return that spanned years.
     GROUP BY
         Customer_No;

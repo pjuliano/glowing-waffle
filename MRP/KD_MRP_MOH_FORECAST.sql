@@ -1,6 +1,8 @@
 Create Or Replace View KD_MRP_MOH_FORECAST As
 Select
     A.Rm_Part_No,
+    A.Production_Family,
+    A.Cover_Screw_Part_No,
     B.On_Hand_RM,
     B.Open_PO_RM,
     B.RM_Ratio,
