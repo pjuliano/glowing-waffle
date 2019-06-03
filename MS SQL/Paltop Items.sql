@@ -1,0 +1,24 @@
+SELECT			iig.ITEMGROUPID,
+				iig.NAME,
+				iig.PSGFAMILYOFITEM,
+				CASE
+					WHEN iig.PSGFAMILYOFITEM = 0 THEN 'Implant'
+					WHEN iig.PSGFAMILYOFITEM = 1 THEN 'Prosthetic'
+					WHEN iig.PSGFAMILYOFITEM = 2 THEN 'Tools'
+					WHEN iig.PSGFAMILYOFITEM = 3 THEN 'Augmentation'
+					WHEN iig.PSGFAMILYOFITEM = 4 THEN 'Other'
+					WHEN iig.PSGFAMILYOFITEM = 5 THEN 'Digital'
+					WHEN iig.PSGFAMILYOFITEM = 6 THEN 'OEM'
+				END AS PSGFAMILY_DESC,
+				it.ITEMTYPE,
+				CASE
+					WHEN it.ITEMTYPE = 0 THEN 'Item'
+					WHEN it.ITEMTYPE = 1 THEN 'BOM'
+					WHEN it.ITEMTYPE = 2 THEN 'Service'
+				END AS ITEMTYPE_DESC,
+				it.ITEMID,
+				it.ITEMNAME,
+				it.*
+FROM			Paltop_ax09_Live_db.dbo.INVENTTABLE it
+				LEFT JOIN Paltop_ax09_Live_db.dbo.INVENTITEMGROUP iig ON
+					it.ITEMGROUPID = iig.ITEMGROUPID

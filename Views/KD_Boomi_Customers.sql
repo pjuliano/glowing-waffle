@@ -32,7 +32,7 @@ Select
       A.Deliv_Zip_Code,
       A.Deliv_Country,
       A.Currency_Code,
-      A.Salesman_Code,
+      DECODE(A.Salesman_Code,'501','999',A.Salesman_Code) as Salesman_Code,
       A.Corporate_Form,
       Decode(A.Association_No,Null,' ',A.Association_No) As Association_No,
       A.Primary_Contact,
@@ -67,10 +67,22 @@ From
                      Left Join Status E
         On A.Customer_Id = E.Customer_No
 Where
-      (  
-      A.Corporate_Form Not In ('FRA','ITL','SWE','IT','BENELUX','GER','KEY','CAN','SPA','LA','DOMDIS','EUR') And
-      A.Salesman_Code Not In ('908','504','318') And
-      A.Customer_ID != 'CATEMP'     ) Or
-      (
-      A.Customer_ID Like 'N%' And
-      A.Salesman_Code = '999'       )
+        (
+        A.Corporate_Form Not In ('FRA','ITL','SWE','IT','BENELUX','GER','KEY') And
+        A.Salesman_Code Not In ('908','504') And --Removed 318 per Brian and Ilona.
+        A.Customer_ID != 'CATEMP' AND 
+        Salesman_Code Not In 
+        (
+            '210-001',
+            '210-098',
+            '220-160',
+            '220-140',
+            '220-600',
+            '220-100',
+            '*'
+        ))
+        OR
+        (
+            A.Customer_ID Like 'N%' And
+            A.Salesman_Code = '999'    
+        )

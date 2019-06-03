@@ -48,5 +48,5 @@ Group By
   A.Qtr_Quota,
   A.Qtr_Quota_Impl,
   A.Qtr_Quota_Bio,
-  Round((A.This_Quarter / A.Qtr_Quota) * 100,2),
+  Round((A.This_Quarter / Nullif(A.Qtr_Quota,0)) * 100,2),
   A.Qtr_Quota - A.This_Quarter;

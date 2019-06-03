@@ -52,7 +52,7 @@ Where
   A.Charge_Type = 'Parts' And  
   A.Corporate_Form In ('DOMDIR','ASIA') And
   ((
-  A.Salesman_Code Not In ('505','506','507','508','318') And
+  A.Salesman_Code Not In ('505','506','507','508') And
   A.Customer_No != 'B3730' And
   A.Invoice_Id != '0' )
   Or

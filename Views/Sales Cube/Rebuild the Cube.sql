@@ -53,18 +53,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                     ELSE 'OTHER'
                 END AS segment,
                 custinfo.corporate_form,
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                    Added field product_type which is a custom field linked to inventory_product_family table. 
-                    Added joins as well (see below).
-                */
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
-                /*
-                2019-05-16
-                Requested by: Kevin Munroe
-                    Added field Product Set, with custom logic described by Kevin.
-                */
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
                     THEN 'REGEN'
@@ -186,11 +175,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
     LEFT JOIN   sales_charge_type_tab salchar
            ON   invitem.c5 = salchar.charge_type
           AND   DECODE(invitem.company, '241', '240', invitem.company) = salchar.company
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                Necessary tables (prodfam and prodfamcft) to include product family type custom field.
-                */
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
@@ -233,18 +217,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                     ELSE 'OTHER'
                 END AS segment,
                 custinfo.corporate_form,
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                    Added field product_type which is a custom field linked to inventory_product_family table. 
-                    Added joins as well (see below).
-                */
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
-                /*
-                2019-05-16
-                Requested by: Kevin Munroe
-                    Added field Product Set, with custom logic described by Kevin.
-                */
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
                     THEN 'REGEN'
@@ -371,11 +344,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
     LEFT JOIN   sales_charge_type_tab salchar
            ON   invitem.c5 = salchar.charge_type
           AND   DECODE(invitem.c5, NULL, iidetail.object, invitem.c5) = salchar.company
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                Necessary tables (prodfam and prodfamcft) to include product family type custom field.
-                */
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
@@ -430,18 +398,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                 'ROW' AS sales_market,
                 'DIRECT' AS segment,
                 'FRA' AS corporate_form,
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                    Added field product_type which is a custom field linked to inventory_product_family table. 
-                    Added joins as well (see below).
-                */
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
-                /*
-                2019-05-16
-                Requested by: Kevin Munroe
-                    Added field Product Set, with custom logic described by Kevin.
-                */
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
                     THEN 'REGEN'
@@ -532,11 +489,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
           AND   currate.currency_type = '4'
           AND   currate.company = '99'
           AND   currate.currency_code = 'EUR'
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                Necessary tables (prodfam and prodfamcft) to include product family type custom field.
-                */
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
@@ -558,18 +510,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                      WHEN sord.salesrepid IN ('220-510','220-520') THEN 'BENELUX'
                      ELSE 'GER'
                 END AS corporate_form,
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                    Added field product_type which is a custom field linked to inventory_product_family table. 
-                    Added joins as well (see below).
-                */
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
-                /*
-                2019-05-16
-                Requested by: Kevin Munroe
-                    Added field Product Set, with custom logic described by Kevin.
-                */
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
                     THEN 'REGEN'
@@ -663,11 +604,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
           AND   currate.currency_type = '4'
           AND   currate.company = '99'
           AND   currate.currency_code = 'EUR'
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                Necessary tables (prodfam and prodfamcft) to include product family type custom field.
-                */
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
@@ -684,18 +620,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                 'ROW' AS sales_market,
                 'DIRECT' AS segment,
                 'SWE' AS corporate_form,
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                    Added field product_type which is a custom field linked to inventory_product_family table. 
-                    Added joins as well (see below).
-                */
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
-                /*
-                2019-05-16
-                Requested by: Kevin Munroe
-                    Added field Product Set, with custom logic described by Kevin.
-                */
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
                     THEN 'REGEN'
@@ -786,11 +711,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
           AND   currate.currency_type = '4'
           AND   currate.company = '99'
           AND   currate.currency_code = 'SEK'
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                Necessary tables (prodfam and prodfamcft) to include product family type custom field.
-                */
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
@@ -815,18 +735,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                                               'IT003693','IT003940') THEN 'EUR'
                      ELSE 'ITL'
                 END AS corporate_form,
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                    Added field product_type which is a custom field linked to inventory_product_family table. 
-                    Added joins as well (see below).
-                */
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
-                /*
-                2019-05-16
-                Requested by: Kevin Munroe
-                    Added field Product Set, with custom logic described by Kevin.
-                */
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
                     THEN 'REGEN'
@@ -921,11 +830,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
           AND   currate.currency_type = '4'
           AND   currate.company = '99'
           AND   currate.currency_code = 'EUR'
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                Necessary tables (prodfam and prodfamcft) to include product family type custom field.
-                */
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
@@ -966,18 +870,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                     ELSE 'OTHER'
                 END AS segment,
                 custinfo.corporate_form,
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                    Added field product_type which is a custom field linked to inventory_product_family table. 
-                    Added joins as well (see below).
-                */
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
-                /*
-                2019-05-16
-                Requested by: Kevin Munroe
-                    Added field Product Set, with custom logic described by Kevin.
-                */
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
                     THEN 'REGEN'
@@ -1069,11 +962,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
           AND   currate.company = '99' 
           AND   TO_CHAR(invhead.invoice_date,'MM/YYYY') = TO_CHAR(currate.valid_from,'MM/YYYY')
           AND   invhead.currencycode = currate.currency_code
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                Necessary tables (prodfam and prodfamcft) to include product family type custom field.
-                */
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
@@ -1085,15 +973,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                 'PTLTD' AS source,
                 '300' AS company,
                 'ROW' AS sales_market,
-                /* 
-                2019-05-08
-                Requested by: Meir Levin
-                    Changed segment from static DISTRIBUTION to salesmngr field (custgroup in SQL, salesmngr in QlikView)
-                2019-05-13
-                Requested by: Meir Levin
-                    The data he changed in the previous request is spelled wrong...
-                    Removed: invhead.salesmngr AS segment,
-                */
                 CASE 
                     WHEN invhead.salesmngr IN ('DISTRIB','DIST IL')
                     THEN 'DISTRIBUTION'
@@ -1112,18 +991,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                     THEN 'PTDIRIL'
                     ELSE 'OTHER'
                 END AS corporate_form,
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                    Added field product_type which is a custom field linked to inventory_product_family table. 
-                    Added joins as well (see below).
-                */
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
-                /*
-                2019-05-16
-                Requested by: Kevin Munroe
-                    Added field Product Set, with custom logic described by Kevin.
-                */
                 CASE
                     WHEN invhead.psgfamilyofitem = 3
                     THEN 'REGEN'
@@ -1153,11 +1021,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                     ELSE 'OTHER'
                 END AS product_set,
                 invhead.territory AS region_code,
-                /* 2019-05-08
-                Rquested by: Meir Levin. 
-                    Changed Salesman_Code to static PTLTD and changed Salesman_Name from Paltop LTD Sales to sales_group.
-                    Meir is going to change the data in the Sales Group field in AX to reflect the salesman name.
-                */
                 'PTLTD' AS salesman_code,
                 invhead.sales_group AS salesman_name,
                 NULL AS order_salesman_code,
@@ -1183,12 +1046,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                 TO_DATE(trunc(invhead.invoicedate),'MM/DD/YYYY') AS invoice_date,
                 invhead.invoiceno AS invoice_id,
                 TO_CHAR(invhead.line_item_no) AS item_id,
-                /* 2019-05-08
-                Rquested by: Meir Levin
-                    Using PSGFamilyOfItem data dictionary entries from AX to code the Part_Product_Code. 
-                    Unavailable in SQL.
-                nvl(inventpart.part_product_code,'IMPL') AS part_product_code, 
-                */
                 CASE
                     WHEN invhead.itemno = '97-00001'
                     THEN 'FREIGHT'
@@ -1198,10 +1055,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                     THEN 'OTHER'
                     ELSE DECODE(invhead.psgfamilyofitem,0,'IMPL',1,'PROST',2,'INSTR',3,'REGEN',4,'OTHER',5,'DIGITAL',6,'OEM','OTHER')
                 END as part_product_code,
-                /* 2019-05-09
-                Requested by: Meir Levin
-                Case statement value mappings were provided by Johanna Drzyzga. 
-                */
                 CASE
                     WHEN invhead.itemno = '97-00001'
                     THEN 'FREIGHT'
@@ -1285,11 +1138,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
     LEFT JOIN   inventory_part inventpart
            ON   upper(invhead.itemno) = upper(inventpart.part_no)
           AND   '100' = inventpart.contract
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                Necessary tables (prodfam and prodfamcft) to include product family type custom field.
-                */
     LEFT JOIN   inventory_product_family prodfam 
            ON    CASE
                     WHEN invhead.itemno = '97-00001'
@@ -1329,12 +1177,30 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
            ON   prodfam.objkey = prodfamcft.rowkey
 
     UNION ALL
-
        SELECT   invhead.recid,
                 'PTUSA' AS source,
-                '100' AS company,
-                'NORAM' AS sales_market,
                 CASE
+                    WHEN invhead.customerno IN (
+                        'Cust1002260',
+                        'Cust1002461'
+                    )
+                    THEN '300'
+                    ELSE '100'
+                END AS company,
+                CASE
+                    WHEN invhead.customerno IN (
+                        'Cust1002260',
+                        'Cust1002461'
+                    )
+                THEN 'DISTROW'
+                ELSE 'NORAM' 
+                END AS sales_market,
+                CASE
+                    WHEN invhead.customerno IN (
+                        'Cust1002260',
+                        'Cust1002461'
+                    )
+                    THEN 'DISTRIBUTION'
                     WHEN custinfo.corporate_form IN (
                         'ASIA',
                         'CAN',
@@ -1355,19 +1221,15 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
                     THEN 'DIRECT'
                     ELSE 'OTHER'
                 END AS segment,
-                custinfo.corporate_form,
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                    Added field product_type which is a custom field linked to inventory_product_family table. 
-                    Added joins as well (see below).
-                */
+                CASE
+                    WHEN invhead.customerno IN (
+                        'Cust1002260',
+                        'Cust1002461'
+                    )
+                THEN 'PTLTD'
+                ELSE custinfo.corporate_form 
+                END AS corporate_form,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
-                /*
-                2019-05-16
-                Requested by: Kevin Munroe
-                    Added field Product Set, with custom logic described by Kevin.
-                */
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
                     THEN 'REGEN'
@@ -1462,19 +1324,29 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
     LEFT JOIN   inventory_part_tab inventpart
            ON   invhead.itemno = inventpart.part_no
           AND   '100' = inventpart.contract
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                Necessary tables (prodfam and prodfamcft) to include product family type custom field.
-                */
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
            ON   prodfam.objkey = prodfamcft.rowkey;
     
 CREATE UNIQUE INDEX "IFSAPP"."KD_SALES_CUBE_RECID" ON "IFSAPP"."KD_SALES_CUBE" ("RECID") 
-PCTFREE 10 INITRANS 2 MAXTRANS 167 COMPUTE STATISTICS 
-STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-TABLESPACE "IFSAPP_DATA" ;
+    PCTFREE 10 
+    INITRANS 2 
+    MAXTRANS 167 
+    COMPUTE STATISTICS 
+    STORAGE
+        (
+        INITIAL 65536 
+        NEXT 1048576 
+        MINEXTENTS 1 
+        MAXEXTENTS 2147483645
+        PCTINCREASE 0 
+        FREELISTS 1 
+        FREELIST GROUPS 1
+        BUFFER_POOL DEFAULT 
+        FLASH_CACHE DEFAULT 
+        CELL_FLASH_CACHE DEFAULT
+        )
+    TABLESPACE "IFSAPP_DATA" ;
+
+CREATE INDEX "IFSAPP"."KD_SALES_CUBE_YQM" ON "IFSAPP"."KD_SALES_CUBE" ("INVOICE_YEAR" ASC, "INVOICE_QUARTER" ASC, "INVOICE_MONTH" ASC);
