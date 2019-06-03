@@ -2,15 +2,6 @@
                 'PTLTD' AS source,
                 '300' AS company,
                 'ROW' AS sales_market,
-                /* 
-                2019-05-08
-                Requested by: Meir Levin
-                    Changed segment from static DISTRIBUTION to salesmngr field (custgroup in SQL, salesmngr in QlikView)
-                2019-05-13
-                Requested by: Meir Levin
-                    The data he changed in the previous request is spelled wrong...
-                    Removed: invhead.salesmngr AS segment,
-                */
                 CASE 
                     WHEN invhead.salesmngr IN ('DISTRIB','DIST IL')
                     THEN 'DISTRIBUTION'
@@ -29,18 +20,7 @@
                     THEN 'PTDIRIL'
                     ELSE 'OTHER'
                 END AS corporate_form,
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                    Added field product_type which is a custom field linked to inventory_product_family table. 
-                    Added joins as well (see below).
-                */
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
-                /*
-                2019-05-16
-                Requested by: Kevin Munroe
-                    Added field Product Set, with custom logic described by Kevin.
-                */
                 CASE
                     WHEN invhead.psgfamilyofitem = 3
                     THEN 'REGEN'
@@ -70,11 +50,6 @@
                     ELSE 'OTHER'
                 END AS product_set,
                 invhead.territory AS region_code,
-                /* 2019-05-08
-                Rquested by: Meir Levin. 
-                    Changed Salesman_Code to static PTLTD and changed Salesman_Name from Paltop LTD Sales to sales_group.
-                    Meir is going to change the data in the Sales Group field in AX to reflect the salesman name.
-                */
                 'PTLTD' AS salesman_code,
                 invhead.sales_group AS salesman_name,
                 NULL AS order_salesman_code,
@@ -100,12 +75,6 @@
                 TO_DATE(trunc(invhead.invoicedate),'MM/DD/YYYY') AS invoice_date,
                 invhead.invoiceno AS invoice_id,
                 TO_CHAR(invhead.line_item_no) AS item_id,
-                /* 2019-05-08
-                Rquested by: Meir Levin
-                    Using PSGFamilyOfItem data dictionary entries from AX to code the Part_Product_Code. 
-                    Unavailable in SQL.
-                nvl(inventpart.part_product_code,'IMPL') AS part_product_code, 
-                */
                 CASE
                     WHEN invhead.itemno = '97-00001'
                     THEN 'FREIGHT'
@@ -115,10 +84,6 @@
                     THEN 'OTHER'
                     ELSE DECODE(invhead.psgfamilyofitem,0,'IMPL',1,'PROST',2,'INSTR',3,'REGEN',4,'OTHER',5,'DIGITAL',6,'OEM','OTHER')
                 END as part_product_code,
-                /* 2019-05-09
-                Requested by: Meir Levin
-                Case statement value mappings were provided by Johanna Drzyzga. 
-                */
                 CASE
                     WHEN invhead.itemno = '97-00001'
                     THEN 'FREIGHT'
@@ -202,11 +167,6 @@
     LEFT JOIN   inventory_part inventpart
            ON   upper(invhead.itemno) = upper(inventpart.part_no)
           AND   '100' = inventpart.contract
-                /*
-                2019-05-15
-                Requested by: Kevin Munroe
-                Necessary tables (prodfam and prodfamcft) to include product family type custom field.
-                */
     LEFT JOIN   inventory_product_family prodfam 
            ON    CASE
                     WHEN invhead.itemno = '97-00001'

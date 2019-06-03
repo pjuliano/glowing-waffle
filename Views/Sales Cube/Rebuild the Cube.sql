@@ -1177,6 +1177,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
            ON   prodfam.objkey = prodfamcft.rowkey
 
     UNION ALL
+    
        SELECT   invhead.recid,
                 'PTUSA' AS source,
                 CASE

@@ -134,7 +134,7 @@
           AND   custinfoaddtype.address_type_code = 'INVOICE'
     LEFT JOIN   customer_info_address_tab custinfoadddel --For delivery address info
            ON   invhead.identity = custinfoadddel.customer_id
-          AND   invhead.delivery_address_id = custinfoadd.address_id
+          AND   invhead.delivery_address_id = custinfoadddel.address_id
     LEFT JOIN   customer_info_address_type_tab custinfoaddtypedel --For delivery address info
            ON   invhead.identity = custinfoaddtypedel.customer_id
           AND   custinfoadddel.address_id = custinfoaddtypedel.address_id
