@@ -28,7 +28,56 @@
                     ELSE 'OTHER'
                 END AS segment,
                 custinfo.corporate_form,
-                NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
+                CASE
+                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
+                        'GNSIS',
+                        'PRIMA',
+                        'PRMA+',
+                        'TLMAX',
+                        'PCOMM',
+                        'IHMAX',
+                        'RENOV',
+                        'RESTO',
+                        'STAGE',
+                        'SUST',
+                        'XP1',
+                        'TRINX',
+                        'EXHEX',
+                        'OCT',
+                        'ZMAX',
+                        'OTMED',
+                        'COMM',
+                        'BVINE',
+                        'CONNX',
+                        'CYTOP',
+                        'DYNAB',
+                        'DYNAG',
+                        'DYNAM',
+                        'MTF',
+                        'SYNTH',
+                        'EG',
+                        'OTHER',
+                        'MOTOR',
+                        'FREIGHT',
+                        'OCOS',
+                        'EDU'
+                    )
+                    THEN 'KEYSTONE'
+                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
+                        'ACTVE',
+                        'ADVN+',
+                        'ADVNC',
+                        'CONCL',
+                        'DIVA',
+                        'DYMIC',
+                        'PAI',
+                        'PTCOM',
+                        'PALTOP BIO'
+                    )
+                    THEN 'PALTOP'
+                    ELSE 'UNCLASSIFIED'
+                END AS product_brand,
+                nvl(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
                     THEN 'REGEN'
@@ -54,10 +103,20 @@
                 custinfo.association_no,
                 invhead.identity AS customer_id,
                 custinfo.name AS customer_name,
-                custinfoadd.address_id as invoice_address_id,
-                custinfoadd.country as invoice_country,
-                custinfoadddel.address_id as delivery_address_id,
-                custinfoadddel.country as delivery_country,
+                custinfoadd.address_id AS invoice_address_id,
+                custinfoadd.address1 AS invoice_street_1,
+                custinfoadd.address2 AS invoice_street_2,
+                custinfoadd.city AS invoice_city,
+                custinfoadd.state AS invoice_state,
+                custinfoadd.zip_code AS invoice_zip,
+                custinfoadd.country AS invoice_country,
+                custinfoadddel.address_id AS delivery_address_id,
+                custinfoadddel.address1 AS delivery_street_1,
+                custinfoadddel.address2 AS delivery_street_2,
+                custinfoadddel.city AS delivery_city,
+                custinfoadddel.state AS delivery_state,
+                custinfoadddel.zip_code AS delivery_zip,
+                custinfoadddel.country AS delivery_country,
                 DECODE(invitem.c1, NULL, client_sys.get_item_value('ORDER_NO', iimast.head_data), invitem.c1) AS order_id,
                 invhead.n2 AS rma_id,
                 invhead.n3 AS rma_line,
@@ -100,7 +159,7 @@
                                                      ELSE invitem.n2
                                                  END, 0) AS unit_price,
                 invitem.net_curr_amount total_price,
-                NVL(invhead.n1, iimast.rate_used) AS currency_rate,
+                nvl(invhead.n1, iimast.rate_used) AS currency_rate,
                 (
                 invitem.net_curr_amount / nullif(CASE
                                                      WHEN invhead.series_id = 'CR'
@@ -110,8 +169,8 @@
                                                       AND invhead.n2 IS NOT NULL --Credit with RMA number.
                                                      THEN invitem.n2 * - 1 --Invert the quantity.
                                                      ELSE invitem.n2
-                                                 END, 0)) * NVL(invhead.n1, iimast.rate_used) AS unit_price_usd,
-                invitem.net_curr_amount * NVL(invhead.n1,iimast.rate_used) as total_price_usd
+                                                 END, 0)) * nvl(invhead.n1, iimast.rate_used) AS unit_price_usd,
+                invitem.net_curr_amount * nvl(invhead.n1,iimast.rate_used) AS total_price_usd
 
         FROM    invoice_tab invhead
     LEFT JOIN   invoice_item_tab invitem

@@ -13,7 +13,7 @@
                         'Cust1002260',
                         'Cust1002461'
                     )
-                THEN 'DISTROW'
+                THEN 'ROW'
                 ELSE 'NORAM' 
                 END AS sales_market,
                 CASE
@@ -50,6 +50,7 @@
                 THEN 'PTLTD'
                 ELSE custinfo.corporate_form 
                 END AS corporate_form,
+                'PALTOP' AS product_brand,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
@@ -76,7 +77,20 @@
                 custinfo.association_no,
                 NVL(custmap.kd_cust_id,invhead.customerno) AS customer_id,
                 NVL(custinfo.name,invhead.customer) AS customer_name,
-                custinfoadd.address_id,
+                custinfoadd.address_id AS invoice_address_id,
+                custinfoadd.address1 AS invoice_street_1,
+                custinfoadd.address2 AS invoice_street_2,
+                custinfoadd.city AS invoice_city,
+                custinfoadd.state AS invoice_state,
+                custinfoadd.zip_code AS invoice_zip,
+                custinfoadd.country AS invoice_country,
+                custinfoadddel.address_id AS delivery_address_id,
+                custinfoadddel.address1 AS delivery_street_1,
+                custinfoadddel.address2 AS delivery_street_2,
+                custinfoadddel.city AS delivery_city,
+                custinfoadddel.state AS delivery_state,
+                custinfoadddel.zip_code AS delivery_zip,
+                custinfoadddel.country AS delivery_country,
                 invhead.salesid AS order_id,
                 NULL AS rma_id,
                 NULL AS rma_line,

@@ -5,9 +5,9 @@
                 CASE 
                     WHEN invhead.salesmngr IN ('DISTRIB','DIST IL')
                     THEN 'DISTRIBUTION'
-                    WHEN invhead.salesmngr IN ('DIRECT','DIRECT IL')
+                    WHEN invhead.salesmngr IN ('DIRECT','DIRECT IL','DIRECT EX')
                     THEN 'DIRECT'
-                    ELSE invhead.salesmngr
+                    ELSE 'OTHER'
                 END AS segment,
                 CASE
                     WHEN invhead.salesmngr = 'DISTRIB'
@@ -20,7 +20,14 @@
                     THEN 'PTDIRIL'
                     ELSE 'OTHER'
                 END AS corporate_form,
-                NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
+                'PALTOP' AS product_brand,
+                CASE
+                    WHEN prodfamcft.cf$_kdprodfamtype IS NOT NULL
+                    THEN prodfamcft.cf$_kdprodfamtype
+                    WHEN invhead.invent_item_group_name = 'DIGITAL'
+                    THEN invhead.invent_item_group_name
+                    ELSE 'SUND'
+                END AS product_type,
                 CASE
                     WHEN invhead.psgfamilyofitem = 3
                     THEN 'REGEN'
@@ -58,7 +65,20 @@
                 NULL AS association_no,
                 invhead.customerno AS customer_id,
                 invhead.customer AS customer_name,
-                NULL as address_id,
+                NULL AS invoice_address_id,
+                invhead.invstreet AS invoice_street_1,
+                NULL AS invoice_street_2,
+                invhead.invcity AS invoice_city,
+                invhead.invstate AS invoice_state,
+                invhead.invzip AS invoice_zip,
+                invhead.invcountry AS invoice_country,
+                NULL AS delivery_address_id,
+                invhead.delivstreet AS delivery_street_1,
+                NULL AS delivery_street_2,
+                invhead.delivcity AS delivery_city,
+                invhead.delivstate AS delivery_state,
+                invhead.delivzip AS delivery_zip,
+                invhead.delivcountry AS delivery_country,
                 invhead.salesid AS order_id,
                 NULL AS rma_id,
                 NULL AS rma_line,

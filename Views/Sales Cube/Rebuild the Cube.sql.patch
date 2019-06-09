@@ -1,0 +1,613 @@
+--- Rebuild the Cube.sql	Sat Jun 08 13:50:44 2019
++++ Rebuild the Cube.sql	Sat Jun 08 13:50:44 2019
+@@ -3,23 +3,87 @@
+-CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
+-    "RECID", "SOURCE", "COMPANY", "SALES_MARKET", "SEGMENT", 
+-    "CORPORATE_FORM", "PRODUCT_TYPE", "PRODUCT_SET", "REGION_CODE", 
+-    "SALESMAN_CODE", "SALESMAN_NAME", 
+-    "ORDER_SALESMAN_CODE", "COMMISSION_RECEIVER", 
+-    "COMMISSION_RECEIVER_NAME", "ASSOCIATION_NO", 
+-    "CUSTOMER_ID", "CUSTOMER_NAME", "INVOICE_ADDRESS_ID",
+-    "INVOICE_COUNTRY","DELIVERY_ADDRESS_ID", "DELIVERY_COUNTRY",
+-    "ORDER_ID", "RMA_ID", "RMA_LINE", 
+-    "MARKET_CODE", "PAY_TERM_ID", "ORDER_CURRENCY", 
+-    "ORDER_ENTRY_YEAR", "ORDER_ENTRY_QUARTER", 
+-    "ORDER_ENTRY_MONTH", "ORDER_ENTRY_DATE", 
+-    "INVOICE_YEAR", "INVOICE_QUARTER", 
+-    "INVOICE_MONTH", "INVOICE_DATE", 
+-    "INVOICE_ID", "ITEM_ID", "PART_PRODUCT_CODE", 
+-    "PART_PRODUCT_FAMILY", "SECOND_COMMODITY", 
+-    "CATALOG_NO", "CATALOG_DESC", "INVOICED_QTY", 
+-    "CURRENT_LIST_PRICE", "UNIT_PRICE", 
+-    "TOTAL_PRICE", "CURRENCY_RATE","UNIT_PRICE_USD", 
+-    "TOTAL_PRICE_USD") 
+-    ORGANIZATION HEAP PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING STORAGE(
+-    INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645 PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT) 
+-    TABLESPACE "IFSAPP_DATA" BUILD IMMEDIATE USING INDEX REFRESH COMPLETE ON DEMAND USING DEFAULT LOCAL ROLLBACK SEGMENT USING ENFORCED CONSTRAINTS DISABLE QUERY REWRITE AS
++CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" 
++    (
++        "RECID", 
++        "SOURCE", 
++        "COMPANY", 
++        "SALES_MARKET", 
++        "SEGMENT", 
++        "CORPORATE_FORM", 
++        "PRODUCT_BRAND",
++        "PRODUCT_TYPE", 
++        "PRODUCT_SET", 
++        "REGION_CODE", 
++        "SALESMAN_CODE", 
++        "SALESMAN_NAME", 
++        "ORDER_SALESMAN_CODE", 
++        "COMMISSION_RECEIVER", 
++        "COMMISSION_RECEIVER_NAME", 
++        "ASSOCIATION_NO", 
++        "CUSTOMER_ID", 
++        "CUSTOMER_NAME", 
++        "INVOICE_ADDRESS_ID", 
++        "INVOICE_STREET_1", 
++        "INVOICE_STREET_2", 
++        "INVOICE_CITY",
++        "INVOICE_STATE", 
++        "INVOICE_ZIP",
++        "INVOICE_COUNTRY",
++        "DELIVERY_ADDRESS_ID", 
++        "DELIVERY_STREET_1",
++        "DELIVERY_STREET_2",
++        "DELIVERY_CITY",
++        "DELIVERY_STATE",
++        "DELIVERY_ZIP",
++        "DELIVERY_COUNTRY",
++        "ORDER_ID", 
++        "RMA_ID", 
++        "RMA_LINE", 
++        "MARKET_CODE", 
++        "PAY_TERM_ID", 
++        "ORDER_CURRENCY", 
++        "ORDER_ENTRY_YEAR", 
++        "ORDER_ENTRY_QUARTER", 
++        "ORDER_ENTRY_MONTH", 
++        "ORDER_ENTRY_DATE", 
++        "INVOICE_YEAR", 
++        "INVOICE_QUARTER", 
++        "INVOICE_MONTH", 
++        "INVOICE_DATE", 
++        "INVOICE_ID", 
++        "ITEM_ID", 
++        "PART_PRODUCT_CODE", 
++        "PART_PRODUCT_FAMILY", 
++        "SECOND_COMMODITY", 
++        "CATALOG_NO", 
++        "CATALOG_DESC", 
++        "INVOICED_QTY", 
++        "CURRENT_LIST_PRICE", 
++        "UNIT_PRICE", 
++        "TOTAL_PRICE", 
++        "CURRENCY_RATE",
++        "UNIT_PRICE_USD", 
++        "TOTAL_PRICE_USD"
++        ) 
++    ORGANIZATION HEAP 
++    PCTFREE 10 
++    PCTUSED 40 
++    INITRANS 1 
++    MAXTRANS 255 
++    NOCOMPRESS 
++    LOGGING STORAGE
++        (
++            INITIAL 65536 
++            NEXT 1048576 
++            MINEXTENTS 1 
++            MAXEXTENTS 2147483645 
++            PCTINCREASE 0 
++            FREELISTS 1 
++            FREELIST GROUPS 1 
++            BUFFER_POOL DEFAULT 
++            FLASH_CACHE DEFAULT 
++            CELL_FLASH_CACHE DEFAULT
++        ) 
++    TABLESPACE "IFSAPP_DATA" 
++    BUILD IMMEDIATE USING INDEX 
++    REFRESH COMPLETE ON DEMAND 
++    USING DEFAULT LOCAL ROLLBACK SEGMENT 
++    USING ENFORCED CONSTRAINTS DISABLE QUERY REWRITE AS
+@@ -56,0 +121,49 @@
++                CASE
++                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
++                        'GNSIS',
++                        'PRIMA',
++                        'PRMA+',
++                        'TLMAX',
++                        'PCOMM',
++                        'IHMAX',
++                        'RENOV',
++                        'RESTO',
++                        'STAGE',
++                        'SUST',
++                        'XP1',
++                        'TRINX',
++                        'EXHEX',
++                        'OCT',
++                        'ZMAX',
++                        'OTMED',
++                        'COMM',
++                        'BVINE',
++                        'CONNX',
++                        'CYTOP',
++                        'DYNAB',
++                        'DYNAG',
++                        'DYNAM',
++                        'MTF',
++                        'SYNTH',
++                        'EG',
++                        'OTHER',
++                        'MOTOR',
++                        'FREIGHT',
++                        'OCOS',
++                        'EDU'
++                    )
++                    THEN 'KEYSTONE'
++                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
++                        'ACTVE',
++                        'ADVN+',
++                        'ADVNC',
++                        'CONCL',
++                        'DIVA',
++                        'DYMIC',
++                        'PAI',
++                        'PTCOM',
++                        'PALTOP BIO'
++                    )
++                    THEN 'PALTOP'
++                    ELSE 'UNCLASSIFIED'
++                END AS product_brand,
+@@ -83,0 +197,5 @@
++                custinfoadd.address1 AS invoice_street_1,
++                custinfoadd.address2 AS invoice_street_2,
++                custinfoadd.city AS invoice_city,
++                custinfoadd.state AS invoice_state,
++                custinfoadd.zip_code AS invoice_zip,
+@@ -85,0 +204,5 @@
++                custinfoadddel.address1 AS delivery_street_1,
++                custinfoadddel.address2 AS delivery_street_2,
++                custinfoadddel.city AS delivery_city,
++                custinfoadddel.state AS delivery_state,
++                custinfoadddel.zip_code AS delivery_zip,
+@@ -128 +251 @@
+-                invitem.net_curr_amount total_price,
++                invitem.net_curr_amount AS total_price,
+@@ -197,0 +321 @@
++           
+@@ -230 +353,0 @@
+-                NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
+@@ -231,0 +355,50 @@
++                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
++                        'GNSIS',
++                        'PRIMA',
++                        'PRMA+',
++                        'TLMAX',
++                        'PCOMM',
++                        'IHMAX',
++                        'RENOV',
++                        'RESTO',
++                        'STAGE',
++                        'SUST',
++                        'XP1',
++                        'TRINX',
++                        'EXHEX',
++                        'OCT',
++                        'ZMAX',
++                        'OTMED',
++                        'COMM',
++                        'BVINE',
++                        'CONNX',
++                        'CYTOP',
++                        'DYNAB',
++                        'DYNAG',
++                        'DYNAM',
++                        'MTF',
++                        'SYNTH',
++                        'EG',
++                        'OTHER',
++                        'MOTOR',
++                        'FREIGHT',
++                        'OCOS',
++                        'EDU'
++                    )
++                    THEN 'KEYSTONE'
++                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
++                        'ACTVE',
++                        'ADVN+',
++                        'ADVNC',
++                        'CONCL',
++                        'DIVA',
++                        'DYMIC',
++                        'PAI',
++                        'PTCOM',
++                        'PALTOP BIO'
++                    )
++                    THEN 'PALTOP'
++                    ELSE 'UNCLASSIFIED'
++                END AS product_brand,
++                nvl(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
++                CASE
+@@ -256,4 +429,14 @@
+-                custinfoadd.address_id as invoice_address_id,
+-                custinfoadd.country as invoice_country,
+-                custinfoadddel.address_id as delivery_address_id,
+-                custinfoadddel.country as delivery_country,
++                custinfoadd.address_id AS invoice_address_id,
++                custinfoadd.address1 AS invoice_street_1,
++                custinfoadd.address2 AS invoice_street_2,
++                custinfoadd.city AS invoice_city,
++                custinfoadd.state AS invoice_state,
++                custinfoadd.zip_code AS invoice_zip,
++                custinfoadd.country AS invoice_country,
++                custinfoadddel.address_id AS delivery_address_id,
++                custinfoadddel.address1 AS delivery_street_1,
++                custinfoadddel.address2 AS delivery_street_2,
++                custinfoadddel.city AS delivery_city,
++                custinfoadddel.state AS delivery_state,
++                custinfoadddel.zip_code AS delivery_zip,
++                custinfoadddel.country AS delivery_country,
+@@ -302 +485 @@
+-                NVL(invhead.n1, iimast.rate_used) AS currency_rate,
++                nvl(invhead.n1, iimast.rate_used) AS currency_rate,
+@@ -312,2 +495,2 @@
+-                                                 END, 0)) * NVL(invhead.n1, iimast.rate_used) AS unit_price_usd,
+-                invitem.net_curr_amount * NVL(invhead.n1,iimast.rate_used) as total_price_usd
++                                                 END, 0)) * nvl(invhead.n1, iimast.rate_used) AS unit_price_usd,
++                invitem.net_curr_amount * nvl(invhead.n1,iimast.rate_used) AS total_price_usd
+@@ -420,0 +604,49 @@
++                CASE
++                    WHEN inventpart.part_product_family IN (
++                        'GNSIS',
++                        'PRIMA',
++                        'PRMA+',
++                        'TLMAX',
++                        'PCOMM',
++                        'IHMAX',
++                        'RENOV',
++                        'RESTO',
++                        'STAGE',
++                        'SUST',
++                        'XP1',
++                        'TRINX',
++                        'EXHEX',
++                        'OCT',
++                        'ZMAX',
++                        'OTMED',
++                        'COMM',
++                        'BVINE',
++                        'CONNX',
++                        'CYTOP',
++                        'DYNAB',
++                        'DYNAG',
++                        'DYNAM',
++                        'MTF',
++                        'SYNTH',
++                        'EG',
++                        'OTHER',
++                        'MOTOR',
++                        'FREIGHT',
++                        'OCOS',
++                        'EDU'
++                    )
++                    THEN 'KEYSTONE'
++                    WHEN inventpart.part_product_family IN (
++                        'ACTVE',
++                        'ADVN+',
++                        'ADVNC',
++                        'CONCL',
++                        'DIVA',
++                        'DYMIC',
++                        'PAI',
++                        'PTCOM',
++                        'PALTOP BIO'
++                    )
++                    THEN 'PALTOP'
++                    ELSE 'UNCLASSIFIED'
++                END AS product_brand,
+@@ -447,0 +680,5 @@
++                custinfoaddinv.address1 AS invoice_street_1,
++                custinfoaddinv.address2 AS invoice_street_2,
++                custinfoaddinv.city AS invoice_city,
++                custinfoaddinv.state AS invoice_state,
++                custinfoaddinv.zip_code AS invoice_zip,
+@@ -449,0 +687,5 @@
++                custinfoadd.address1 AS delivery_street_1,
++                custinfoadd.address2 AS delivery_street_2,
++                custinfoadd.city as delivery_city,
++                custinfoadd.state AS delivery_state,
++                custinfoadd.zip_code AS delivery_zip,
+@@ -542,0 +785,49 @@
++                CASE
++                    WHEN inventpart.part_product_family IN (
++                        'GNSIS',
++                        'PRIMA',
++                        'PRMA+',
++                        'TLMAX',
++                        'PCOMM',
++                        'IHMAX',
++                        'RENOV',
++                        'RESTO',
++                        'STAGE',
++                        'SUST',
++                        'XP1',
++                        'TRINX',
++                        'EXHEX',
++                        'OCT',
++                        'ZMAX',
++                        'OTMED',
++                        'COMM',
++                        'BVINE',
++                        'CONNX',
++                        'CYTOP',
++                        'DYNAB',
++                        'DYNAG',
++                        'DYNAM',
++                        'MTF',
++                        'SYNTH',
++                        'EG',
++                        'OTHER',
++                        'MOTOR',
++                        'FREIGHT',
++                        'OCOS',
++                        'EDU'
++                    )
++                    THEN 'KEYSTONE'
++                    WHEN inventpart.part_product_family IN (
++                        'ACTVE',
++                        'ADVN+',
++                        'ADVNC',
++                        'CONCL',
++                        'DIVA',
++                        'DYMIC',
++                        'PAI',
++                        'PTCOM',
++                        'PALTOP BIO'
++                    )
++                    THEN 'PALTOP'
++                    ELSE 'UNCLASSIFIED'
++                END AS product_brand,
+@@ -572,0 +864,5 @@
++                custinfoaddinv.address1 AS invoice_street_1,
++                custinfoaddinv.address2 AS invoice_street_2,
++                custinfoaddinv.city AS invoice_city,
++                custinfoaddinv.state AS invoice_state,
++                custinfoaddinv.zip_code AS invoice_zip,
+@@ -574,0 +871,5 @@
++                custinfoadd.address1 AS delivery_street_1,
++                custinfoadd.address2 AS delivery_street_2,
++                custinfoadd.city AS delivery_city,
++                custinfoadd.state AS delivery_state,
++                custinfoadd.zip_code AS delivery_zip,
+@@ -662,0 +964,49 @@
++                CASE
++                    WHEN inventpart.part_product_family IN (
++                        'GNSIS',
++                        'PRIMA',
++                        'PRMA+',
++                        'TLMAX',
++                        'PCOMM',
++                        'IHMAX',
++                        'RENOV',
++                        'RESTO',
++                        'STAGE',
++                        'SUST',
++                        'XP1',
++                        'TRINX',
++                        'EXHEX',
++                        'OCT',
++                        'ZMAX',
++                        'OTMED',
++                        'COMM',
++                        'BVINE',
++                        'CONNX',
++                        'CYTOP',
++                        'DYNAB',
++                        'DYNAG',
++                        'DYNAM',
++                        'MTF',
++                        'SYNTH',
++                        'EG',
++                        'OTHER',
++                        'MOTOR',
++                        'FREIGHT',
++                        'OCOS',
++                        'EDU'
++                    )
++                    THEN 'KEYSTONE'
++                    WHEN inventpart.part_product_family IN (
++                        'ACTVE',
++                        'ADVN+',
++                        'ADVNC',
++                        'CONCL',
++                        'DIVA',
++                        'DYMIC',
++                        'PAI',
++                        'PTCOM',
++                        'PALTOP BIO'
++                    )
++                    THEN 'PALTOP'
++                    ELSE 'UNCLASSIFIED'
++                END AS product_brand,
+@@ -689,0 +1040,5 @@
++                custinfoaddinv.address1 AS invoice_street_1,
++                custinfoaddinv.address2 AS invoice_street_2,
++                custinfoaddinv.city AS invoice_city,
++                custinfoaddinv.state AS invoice_state,
++                custinfoaddinv.zip_code AS invoice_zip,
+@@ -691,0 +1047,5 @@
++                custinfoadd.address1 AS delivery_street_1,
++                custinfoadd.address2 AS delivery_street_2,
++                custinfoadd.city AS delivery_city,
++                custinfoadd.state AS delivery_state,
++                custinfoadd.zip_code AS delivery_zip,
+@@ -787,0 +1148,49 @@
++                CASE
++                    WHEN inventpart.part_product_family IN (
++                        'GNSIS',
++                        'PRIMA',
++                        'PRMA+',
++                        'TLMAX',
++                        'PCOMM',
++                        'IHMAX',
++                        'RENOV',
++                        'RESTO',
++                        'STAGE',
++                        'SUST',
++                        'XP1',
++                        'TRINX',
++                        'EXHEX',
++                        'OCT',
++                        'ZMAX',
++                        'OTMED',
++                        'COMM',
++                        'BVINE',
++                        'CONNX',
++                        'CYTOP',
++                        'DYNAB',
++                        'DYNAG',
++                        'DYNAM',
++                        'MTF',
++                        'SYNTH',
++                        'EG',
++                        'OTHER',
++                        'MOTOR',
++                        'FREIGHT',
++                        'OCOS',
++                        'EDU'
++                    )
++                    THEN 'KEYSTONE'
++                    WHEN inventpart.part_product_family IN (
++                        'ACTVE',
++                        'ADVN+',
++                        'ADVNC',
++                        'CONCL',
++                        'DIVA',
++                        'DYMIC',
++                        'PAI',
++                        'PTCOM',
++                        'PALTOP BIO'
++                    )
++                    THEN 'PALTOP'
++                    ELSE 'UNCLASSIFIED'
++                END AS product_brand,
+@@ -818,0 +1228,5 @@
++                custinfoaddinv.address1 AS invoice_street_1,
++                custinfoaddinv.address2 AS invoice_street_2,
++                custinfoaddinv.city AS invoice_city,
++                custinfoaddinv.state AS invoice_state,
++                custinfoaddinv.zip_code AS invoice_zip,
+@@ -820,0 +1235,5 @@
++                custinfoadd.address1 AS delivery_street_1,
++                custinfoadd.address2 AS delivery_street_2,
++                custinfoadd.city AS delivery_city,
++                custinfoadd.state AS delivery_state,
++                custinfoadd.zip_code AS delivery_zip,
+@@ -932,0 +1352,49 @@
++                CASE
++                    WHEN inventpart.part_product_family IN (
++                        'GNSIS',
++                        'PRIMA',
++                        'PRMA+',
++                        'TLMAX',
++                        'PCOMM',
++                        'IHMAX',
++                        'RENOV',
++                        'RESTO',
++                        'STAGE',
++                        'SUST',
++                        'XP1',
++                        'TRINX',
++                        'EXHEX',
++                        'OCT',
++                        'ZMAX',
++                        'OTMED',
++                        'COMM',
++                        'BVINE',
++                        'CONNX',
++                        'CYTOP',
++                        'DYNAB',
++                        'DYNAG',
++                        'DYNAM',
++                        'MTF',
++                        'SYNTH',
++                        'EG',
++                        'OTHER',
++                        'MOTOR',
++                        'FREIGHT',
++                        'OCOS',
++                        'EDU'
++                    )
++                    THEN 'KEYSTONE'
++                    WHEN inventpart.part_product_family IN (
++                        'ACTVE',
++                        'ADVN+',
++                        'ADVNC',
++                        'CONCL',
++                        'DIVA',
++                        'DYMIC',
++                        'PAI',
++                        'PTCOM',
++                        'PALTOP BIO'
++                    )
++                    THEN 'PALTOP'
++                    ELSE 'UNCLASSIFIED'
++                END AS product_brand,
+@@ -959,0 +1428,5 @@
++                custinfoadd.address1 AS invoice_street_1,
++                custinfoadd.address2 AS invoice_street_2,
++                custinfoadd.city AS invoice_city,
++                custinfoadd.state AS invoice_state,
++                custinfoadd.zip_code AS invoice_zip,
+@@ -961,0 +1435,5 @@
++                custinfoadddel.address1 AS delivery_street_1,
++                custinfoadddel.address2 AS delivery_street_2,
++                custinfoadddel.city AS delivery_city,
++                custinfoadddel.state AS delivery_state,
++                custinfoadddel.zip_code AS delivery_zip,
+@@ -1049 +1527 @@
+-                    WHEN invhead.salesmngr IN ('DIRECT','DIRECT IL')
++                    WHEN invhead.salesmngr IN ('DIRECT','DIRECT IL','DIRECT EX')
+@@ -1051 +1529 @@
+-                    ELSE invhead.salesmngr
++                    ELSE 'OTHER'
+@@ -1064 +1542 @@
+-                NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
++                'PALTOP' AS product_brand,
+@@ -1065,0 +1544,7 @@
++                    WHEN prodfamcft.cf$_kdprodfamtype IS NOT NULL
++                    THEN prodfamcft.cf$_kdprodfamtype
++                    WHEN invhead.invent_item_group_name = 'DIGITAL'
++                    THEN invhead.invent_item_group_name
++                    ELSE 'SUND'
++                END AS product_type,
++                CASE
+@@ -1102,0 +1588,5 @@
++                invhead.invstreet AS invoice_street_1,
++                NULL AS invoice_street_2,
++                invhead.invcity AS invoice_city,
++                invhead.invstate AS invoice_state,
++                invhead.invzip AS invoice_zip,
+@@ -1104,0 +1595,5 @@
++                invhead.delivstreet AS delivery_street_1,
++                NULL AS delivery_street_2,
++                invhead.delivcity AS delivery_city,
++                invhead.delivstate AS delivery_state,
++                invhead.delivzip AS delivery_zip,
+@@ -1305,0 +1801 @@
++                'PALTOP' AS product_brand,
+@@ -1332,0 +1829,5 @@
++                custinfoadd.address1 AS invoice_street_1,
++                custinfoadd.address2 AS invoice_street_2,
++                custinfoadd.city AS invoice_city,
++                custinfoadd.state AS invoice_state,
++                custinfoadd.zip_code AS invoice_zip,
+@@ -1334,0 +1836,5 @@
++                custinfoadddel.address1 AS delivery_street_1,
++                custinfoadddel.address2 AS delivery_street_2,
++                custinfoadddel.city AS delivery_city,
++                custinfoadddel.state AS delivery_state,
++                custinfoadddel.zip_code AS delivery_zip,

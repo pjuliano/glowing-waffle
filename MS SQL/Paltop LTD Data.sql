@@ -58,7 +58,17 @@ WITH invoices AS
             d.name AS invent_item_group_name,
             a.payment,
             d.psgfamilyofitem,
-            b.SALESGROUP
+            b.SALESGROUP,
+			a.DELIVERYSTREET,
+			a.DELIVERYCITY,
+			a.DLVSTATE,
+			a.DLVZIPCODE,
+			a.DLVCOUNTRYREGIONID,
+			a.INVOICESTREET,
+			a.INVOICECITY,
+			a.INVSTATE,
+			a.INVZIPCODE,
+			a.INVCOUNTRYREGIONID
         FROM
             paltop_ax09_live_db.dbo.custinvoicejour a 
             LEFT JOIN
@@ -109,7 +119,17 @@ SELECT
     invent_item_group_name,
     payment,
     psgfamilyofitem,
-    salesgroup
+    salesgroup,
+	DELIVERYSTREET,
+	DELIVERYCITY,
+	DLVSTATE,
+	DLVZIPCODE,
+	DLVCOUNTRYREGIONID,
+	INVOICESTREET,
+	INVOICECITY,
+	INVSTATE,
+	INVZIPCODE,
+	INVCOUNTRYREGIONID
 FROM
     invoices 
 GROUP BY
@@ -136,7 +156,17 @@ GROUP BY
     invent_item_group_name,
     payment,
     psgfamilyofitem,
-    salesgroup
+    salesgroup,
+	DELIVERYSTREET,
+	DELIVERYCITY,
+	DLVSTATE,
+	DLVZIPCODE,
+	DLVCOUNTRYREGIONID,
+	INVOICESTREET,
+	INVOICECITY,
+	INVSTATE,
+	INVZIPCODE,
+	INVCOUNTRYREGIONID
 HAVING
     NOT ( round(SUM(rate_usd * amt_ils), 2) = 0 
     AND SUM(qty) = 0 )

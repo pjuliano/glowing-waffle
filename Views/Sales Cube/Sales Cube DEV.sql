@@ -1,93 +1,5 @@
-DROP MATERIALIZED VIEW kd_sales_cube;
-    
-CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" 
-    (
-        "RECID", 
-        "SOURCE", 
-        "COMPANY", 
-        "SALES_MARKET", 
-        "SEGMENT", 
-        "CORPORATE_FORM", 
-        "PRODUCT_BRAND",
-        "PRODUCT_TYPE", 
-        "PRODUCT_SET", 
-        "REGION_CODE", 
-        "SALESMAN_CODE", 
-        "SALESMAN_NAME", 
-        "ORDER_SALESMAN_CODE", 
-        "COMMISSION_RECEIVER", 
-        "COMMISSION_RECEIVER_NAME", 
-        "ASSOCIATION_NO", 
-        "CUSTOMER_ID", 
-        "CUSTOMER_NAME", 
-        "INVOICE_ADDRESS_ID", 
-        "INVOICE_STREET_1", 
-        "INVOICE_STREET_2", 
-        "INVOICE_CITY",
-        "INVOICE_STATE", 
-        "INVOICE_ZIP",
-        "INVOICE_COUNTRY",
-        "DELIVERY_ADDRESS_ID", 
-        "DELIVERY_STREET_1",
-        "DELIVERY_STREET_2",
-        "DELIVERY_CITY",
-        "DELIVERY_STATE",
-        "DELIVERY_ZIP",
-        "DELIVERY_COUNTRY",
-        "ORDER_ID", 
-        "RMA_ID", 
-        "RMA_LINE", 
-        "MARKET_CODE", 
-        "PAY_TERM_ID", 
-        "ORDER_CURRENCY", 
-        "ORDER_ENTRY_YEAR", 
-        "ORDER_ENTRY_QUARTER", 
-        "ORDER_ENTRY_MONTH", 
-        "ORDER_ENTRY_DATE", 
-        "INVOICE_YEAR", 
-        "INVOICE_QUARTER", 
-        "INVOICE_MONTH", 
-        "INVOICE_DATE", 
-        "INVOICE_ID", 
-        "ITEM_ID", 
-        "PART_PRODUCT_CODE", 
-        "PART_PRODUCT_FAMILY", 
-        "SECOND_COMMODITY", 
-        "CATALOG_NO", 
-        "CATALOG_DESC", 
-        "INVOICED_QTY", 
-        "CURRENT_LIST_PRICE", 
-        "UNIT_PRICE", 
-        "TOTAL_PRICE", 
-        "CURRENCY_RATE",
-        "UNIT_PRICE_USD", 
-        "TOTAL_PRICE_USD"
-        ) 
-    ORGANIZATION HEAP 
-    PCTFREE 10 
-    PCTUSED 40 
-    INITRANS 1 
-    MAXTRANS 255 
-    NOCOMPRESS 
-    LOGGING STORAGE
-        (
-            INITIAL 65536 
-            NEXT 1048576 
-            MINEXTENTS 1 
-            MAXEXTENTS 2147483645 
-            PCTINCREASE 0 
-            FREELISTS 1 
-            FREELIST GROUPS 1 
-            BUFFER_POOL DEFAULT 
-            FLASH_CACHE DEFAULT 
-            CELL_FLASH_CACHE DEFAULT
-        ) 
-    TABLESPACE "IFSAPP_DATA" 
-    BUILD IMMEDIATE USING INDEX 
-    REFRESH COMPLETE ON DEMAND 
-    USING DEFAULT LOCAL ROLLBACK SEGMENT 
-    USING ENFORCED CONSTRAINTS DISABLE QUERY REWRITE AS
-    
+DROP materialized view KD_SALES_CUBE_DEV;
+CREATE MATERIALIZED VIEW KD_SALES_CUBE_DEV AS
     SELECT      invitem.company || invhead.series_id || invhead.invoice_no || TO_CHAR(invitem.item_id) || TO_CHAR(invhead.invoice_date,'MMDDYYYY') AS recid,
                 'IFS' AS source,
                 invitem.company,
@@ -118,55 +30,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
                     ELSE 'OTHER'
                 END AS segment,
                 custinfo.corporate_form,
-                CASE
-                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
-                        'GNSIS',
-                        'PRIMA',
-                        'PRMA+',
-                        'TLMAX',
-                        'PCOMM',
-                        'IHMAX',
-                        'RENOV',
-                        'RESTO',
-                        'STAGE',
-                        'SUST',
-                        'XP1',
-                        'TRINX',
-                        'EXHEX',
-                        'OCT',
-                        'ZMAX',
-                        'OTMED',
-                        'COMM',
-                        'BVINE',
-                        'CONNX',
-                        'CYTOP',
-                        'DYNAB',
-                        'DYNAG',
-                        'DYNAM',
-                        'MTF',
-                        'SYNTH',
-                        'EG',
-                        'OTHER',
-                        'MOTOR',
-                        'FREIGHT',
-                        'OCOS',
-                        'EDU'
-                    )
-                    THEN 'KEYSTONE'
-                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
-                        'ACTVE',
-                        'ADVN+',
-                        'ADVNC',
-                        'CONCL',
-                        'DIVA',
-                        'DYMIC',
-                        'PAI',
-                        'PTCOM',
-                        'PALTOP BIO'
-                    )
-                    THEN 'PALTOP'
-                    ELSE 'UNCLASSIFIED'
-                END AS product_brand,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
@@ -194,18 +57,8 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
                 invhead.identity AS customer_id,
                 custinfo.name AS customer_name,
                 custinfoadd.address_id AS invoice_address_id,
-                custinfoadd.address1 AS invoice_street_1,
-                custinfoadd.address2 AS invoice_street_2,
-                custinfoadd.city AS invoice_city,
-                custinfoadd.state AS invoice_state,
-                custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
                 custinfoadddel.address_id AS delivery_address_id,
-                custinfoadddel.address1 AS delivery_street_1,
-                custinfoadddel.address2 AS delivery_street_2,
-                custinfoadddel.city AS delivery_city,
-                custinfoadddel.state AS delivery_state,
-                custinfoadddel.zip_code AS delivery_zip,
                 custinfoadddel.country AS delivery_country,
                 invitem.c1 AS order_id,
                 invhead.n2 AS rma_id,
@@ -248,7 +101,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
                                                      THEN invitem.n2 * - 1 --Invert the quantity.
                                                      ELSE invitem.n2
                                                  END, 0) AS unit_price,
-                invitem.net_curr_amount AS total_price,
+                invitem.net_curr_amount total_price,
                 COALESCE(invhead.n1,invhead.curr_rate) AS currency_rate,
                 (
                 invitem.net_curr_amount / nullif(CASE
@@ -318,7 +171,6 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
            AND  invhead.party_type = 'CUSTOMER'
            AND  invhead.rowstate != 'Preliminary'
            AND  invhead.rowstate != 'Cancelled'
-           
 UNION ALL
 
        SELECT   invitem.company || invhead.series_id || invhead.invoice_no || TO_CHAR(invitem.item_id) || TO_CHAR(invhead.invoice_date,'MMDDYYYY') AS recid,
@@ -351,56 +203,7 @@ UNION ALL
                     ELSE 'OTHER'
                 END AS segment,
                 custinfo.corporate_form,
-                CASE
-                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
-                        'GNSIS',
-                        'PRIMA',
-                        'PRMA+',
-                        'TLMAX',
-                        'PCOMM',
-                        'IHMAX',
-                        'RENOV',
-                        'RESTO',
-                        'STAGE',
-                        'SUST',
-                        'XP1',
-                        'TRINX',
-                        'EXHEX',
-                        'OCT',
-                        'ZMAX',
-                        'OTMED',
-                        'COMM',
-                        'BVINE',
-                        'CONNX',
-                        'CYTOP',
-                        'DYNAB',
-                        'DYNAG',
-                        'DYNAM',
-                        'MTF',
-                        'SYNTH',
-                        'EG',
-                        'OTHER',
-                        'MOTOR',
-                        'FREIGHT',
-                        'OCOS',
-                        'EDU'
-                    )
-                    THEN 'KEYSTONE'
-                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
-                        'ACTVE',
-                        'ADVN+',
-                        'ADVNC',
-                        'CONCL',
-                        'DIVA',
-                        'DYMIC',
-                        'PAI',
-                        'PTCOM',
-                        'PALTOP BIO'
-                    )
-                    THEN 'PALTOP'
-                    ELSE 'UNCLASSIFIED'
-                END AS product_brand,
-                nvl(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
+                NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
                     THEN 'REGEN'
@@ -426,20 +229,10 @@ UNION ALL
                 custinfo.association_no,
                 invhead.identity AS customer_id,
                 custinfo.name AS customer_name,
-                custinfoadd.address_id AS invoice_address_id,
-                custinfoadd.address1 AS invoice_street_1,
-                custinfoadd.address2 AS invoice_street_2,
-                custinfoadd.city AS invoice_city,
-                custinfoadd.state AS invoice_state,
-                custinfoadd.zip_code AS invoice_zip,
-                custinfoadd.country AS invoice_country,
-                custinfoadddel.address_id AS delivery_address_id,
-                custinfoadddel.address1 AS delivery_street_1,
-                custinfoadddel.address2 AS delivery_street_2,
-                custinfoadddel.city AS delivery_city,
-                custinfoadddel.state AS delivery_state,
-                custinfoadddel.zip_code AS delivery_zip,
-                custinfoadddel.country AS delivery_country,
+                custinfoadd.address_id as invoice_address_id,
+                custinfoadd.country as invoice_country,
+                custinfoadddel.address_id as delivery_address_id,
+                custinfoadddel.country as delivery_country,
                 DECODE(invitem.c1, NULL, client_sys.get_item_value('ORDER_NO', iimast.head_data), invitem.c1) AS order_id,
                 invhead.n2 AS rma_id,
                 invhead.n3 AS rma_line,
@@ -482,7 +275,7 @@ UNION ALL
                                                      ELSE invitem.n2
                                                  END, 0) AS unit_price,
                 invitem.net_curr_amount total_price,
-                nvl(invhead.n1, iimast.rate_used) AS currency_rate,
+                NVL(invhead.n1, iimast.rate_used) AS currency_rate,
                 (
                 invitem.net_curr_amount / nullif(CASE
                                                      WHEN invhead.series_id = 'CR'
@@ -492,8 +285,8 @@ UNION ALL
                                                       AND invhead.n2 IS NOT NULL --Credit with RMA number.
                                                      THEN invitem.n2 * - 1 --Invert the quantity.
                                                      ELSE invitem.n2
-                                                 END, 0)) * nvl(invhead.n1, iimast.rate_used) AS unit_price_usd,
-                invitem.net_curr_amount * nvl(invhead.n1,iimast.rate_used) AS total_price_usd
+                                                 END, 0)) * NVL(invhead.n1, iimast.rate_used) AS unit_price_usd,
+                invitem.net_curr_amount * NVL(invhead.n1,iimast.rate_used) as total_price_usd
 
         FROM    invoice_tab invhead
     LEFT JOIN   invoice_item_tab invitem
@@ -592,7 +385,7 @@ UNION ALL
                 )
           AND trunc(invhead.invoice_date) >= TO_DATE('01/01/2010', 'MM/DD/YYYY')
           AND invitem.item_id != '100002'
-          
+
 UNION ALL
 
        SELECT   sord.recid,
@@ -601,55 +394,6 @@ UNION ALL
                 'ROW' AS sales_market,
                 'DIRECT' AS segment,
                 'FRA' AS corporate_form,
-                CASE
-                    WHEN inventpart.part_product_family IN (
-                        'GNSIS',
-                        'PRIMA',
-                        'PRMA+',
-                        'TLMAX',
-                        'PCOMM',
-                        'IHMAX',
-                        'RENOV',
-                        'RESTO',
-                        'STAGE',
-                        'SUST',
-                        'XP1',
-                        'TRINX',
-                        'EXHEX',
-                        'OCT',
-                        'ZMAX',
-                        'OTMED',
-                        'COMM',
-                        'BVINE',
-                        'CONNX',
-                        'CYTOP',
-                        'DYNAB',
-                        'DYNAG',
-                        'DYNAM',
-                        'MTF',
-                        'SYNTH',
-                        'EG',
-                        'OTHER',
-                        'MOTOR',
-                        'FREIGHT',
-                        'OCOS',
-                        'EDU'
-                    )
-                    THEN 'KEYSTONE'
-                    WHEN inventpart.part_product_family IN (
-                        'ACTVE',
-                        'ADVN+',
-                        'ADVNC',
-                        'CONCL',
-                        'DIVA',
-                        'DYMIC',
-                        'PAI',
-                        'PTCOM',
-                        'PALTOP BIO'
-                    )
-                    THEN 'PALTOP'
-                    ELSE 'UNCLASSIFIED'
-                END AS product_brand,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
@@ -677,18 +421,8 @@ UNION ALL
                 sord.customerid AS customer_id,
                 nvl(custinfo.name,sord.customername) AS customer_name,
                 custinfoaddinv.address_id AS invoice_address_id,
-                custinfoaddinv.address1 AS invoice_street_1,
-                custinfoaddinv.address2 AS invoice_street_2,
-                custinfoaddinv.city AS invoice_city,
-                custinfoaddinv.state AS invoice_state,
-                custinfoaddinv.zip_code AS invoice_zip,
                 custinfoaddinv.country AS invoice_country,
                 custinfoadd.address_id AS delivery_address_id,
-                custinfoadd.address1 AS delivery_street_1,
-                custinfoadd.address2 AS delivery_street_2,
-                custinfoadd.city as delivery_city,
-                custinfoadd.state AS delivery_state,
-                custinfoadd.zip_code AS delivery_zip,
                 custinfoadd.country AS delivery_country,
                 sord.ordernumber AS order_id,
                 NULL AS rma_id,
@@ -782,55 +516,6 @@ UNION ALL
                      WHEN sord.salesrepid IN ('220-510','220-520') THEN 'BENELUX'
                      ELSE 'GER'
                 END AS corporate_form,
-                CASE
-                    WHEN inventpart.part_product_family IN (
-                        'GNSIS',
-                        'PRIMA',
-                        'PRMA+',
-                        'TLMAX',
-                        'PCOMM',
-                        'IHMAX',
-                        'RENOV',
-                        'RESTO',
-                        'STAGE',
-                        'SUST',
-                        'XP1',
-                        'TRINX',
-                        'EXHEX',
-                        'OCT',
-                        'ZMAX',
-                        'OTMED',
-                        'COMM',
-                        'BVINE',
-                        'CONNX',
-                        'CYTOP',
-                        'DYNAB',
-                        'DYNAG',
-                        'DYNAM',
-                        'MTF',
-                        'SYNTH',
-                        'EG',
-                        'OTHER',
-                        'MOTOR',
-                        'FREIGHT',
-                        'OCOS',
-                        'EDU'
-                    )
-                    THEN 'KEYSTONE'
-                    WHEN inventpart.part_product_family IN (
-                        'ACTVE',
-                        'ADVN+',
-                        'ADVNC',
-                        'CONCL',
-                        'DIVA',
-                        'DYMIC',
-                        'PAI',
-                        'PTCOM',
-                        'PALTOP BIO'
-                    )
-                    THEN 'PALTOP'
-                    ELSE 'UNCLASSIFIED'
-                END AS product_brand,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
@@ -861,18 +546,8 @@ UNION ALL
                 sord.customerid AS customer_id,
                 nvl(custinfo.name,sord.customername) AS customer_name,
                 custinfoaddinv.address_id AS invoice_address_id,
-                custinfoaddinv.address1 AS invoice_street_1,
-                custinfoaddinv.address2 AS invoice_street_2,
-                custinfoaddinv.city AS invoice_city,
-                custinfoaddinv.state AS invoice_state,
-                custinfoaddinv.zip_code AS invoice_zip,
                 custinfoaddinv.country AS invoice_country,
                 custinfoadd.address_id AS delivery_address_id,
-                custinfoadd.address1 AS delivery_street_1,
-                custinfoadd.address2 AS delivery_street_2,
-                custinfoadd.city AS delivery_city,
-                custinfoadd.state AS delivery_state,
-                custinfoadd.zip_code AS delivery_zip,
                 custinfoadd.country AS delivery_country,
                 sord.ordernumber AS order_id,
                 NULL AS rma_id,
@@ -961,55 +636,6 @@ UNION ALL
                 'ROW' AS sales_market,
                 'DIRECT' AS segment,
                 'SWE' AS corporate_form,
-                CASE
-                    WHEN inventpart.part_product_family IN (
-                        'GNSIS',
-                        'PRIMA',
-                        'PRMA+',
-                        'TLMAX',
-                        'PCOMM',
-                        'IHMAX',
-                        'RENOV',
-                        'RESTO',
-                        'STAGE',
-                        'SUST',
-                        'XP1',
-                        'TRINX',
-                        'EXHEX',
-                        'OCT',
-                        'ZMAX',
-                        'OTMED',
-                        'COMM',
-                        'BVINE',
-                        'CONNX',
-                        'CYTOP',
-                        'DYNAB',
-                        'DYNAG',
-                        'DYNAM',
-                        'MTF',
-                        'SYNTH',
-                        'EG',
-                        'OTHER',
-                        'MOTOR',
-                        'FREIGHT',
-                        'OCOS',
-                        'EDU'
-                    )
-                    THEN 'KEYSTONE'
-                    WHEN inventpart.part_product_family IN (
-                        'ACTVE',
-                        'ADVN+',
-                        'ADVNC',
-                        'CONCL',
-                        'DIVA',
-                        'DYMIC',
-                        'PAI',
-                        'PTCOM',
-                        'PALTOP BIO'
-                    )
-                    THEN 'PALTOP'
-                    ELSE 'UNCLASSIFIED'
-                END AS product_brand,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
@@ -1037,18 +663,8 @@ UNION ALL
                 sord.customerid AS customer_id,
                 nvl(custinfo.name,sord.customername) AS customer_name,
                 custinfoaddinv.address_id AS invoice_address_id,
-                custinfoaddinv.address1 AS invoice_street_1,
-                custinfoaddinv.address2 AS invoice_street_2,
-                custinfoaddinv.city AS invoice_city,
-                custinfoaddinv.state AS invoice_state,
-                custinfoaddinv.zip_code AS invoice_zip,
                 custinfoaddinv.country AS invoice_country,
                 custinfoadd.address_id AS delivery_address_id,
-                custinfoadd.address1 AS delivery_street_1,
-                custinfoadd.address2 AS delivery_street_2,
-                custinfoadd.city AS delivery_city,
-                custinfoadd.state AS delivery_state,
-                custinfoadd.zip_code AS delivery_zip,
                 custinfoadd.country AS delivery_country,
                 sord.ordernumber AS order_id,
                 NULL AS rma_id,
@@ -1145,55 +761,6 @@ UNION ALL
                                               'IT003693','IT003940') THEN 'EUR'
                      ELSE 'ITL'
                 END AS corporate_form,
-                CASE
-                    WHEN inventpart.part_product_family IN (
-                        'GNSIS',
-                        'PRIMA',
-                        'PRMA+',
-                        'TLMAX',
-                        'PCOMM',
-                        'IHMAX',
-                        'RENOV',
-                        'RESTO',
-                        'STAGE',
-                        'SUST',
-                        'XP1',
-                        'TRINX',
-                        'EXHEX',
-                        'OCT',
-                        'ZMAX',
-                        'OTMED',
-                        'COMM',
-                        'BVINE',
-                        'CONNX',
-                        'CYTOP',
-                        'DYNAB',
-                        'DYNAG',
-                        'DYNAM',
-                        'MTF',
-                        'SYNTH',
-                        'EG',
-                        'OTHER',
-                        'MOTOR',
-                        'FREIGHT',
-                        'OCOS',
-                        'EDU'
-                    )
-                    THEN 'KEYSTONE'
-                    WHEN inventpart.part_product_family IN (
-                        'ACTVE',
-                        'ADVN+',
-                        'ADVNC',
-                        'CONCL',
-                        'DIVA',
-                        'DYMIC',
-                        'PAI',
-                        'PTCOM',
-                        'PALTOP BIO'
-                    )
-                    THEN 'PALTOP'
-                    ELSE 'UNCLASSIFIED'
-                END AS product_brand,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
@@ -1225,18 +792,8 @@ UNION ALL
                 sord.customerid AS customer_id,
                 nvl(custinfo.name,sord.customername) AS customer_name,
                 custinfoaddinv.address_id AS invoice_address_id,
-                custinfoaddinv.address1 AS invoice_street_1,
-                custinfoaddinv.address2 AS invoice_street_2,
-                custinfoaddinv.city AS invoice_city,
-                custinfoaddinv.state AS invoice_state,
-                custinfoaddinv.zip_code AS invoice_zip,
                 custinfoaddinv.country AS invoice_country,
                 custinfoadd.address_id AS delivery_address_id,
-                custinfoadd.address1 AS delivery_street_1,
-                custinfoadd.address2 AS delivery_street_2,
-                custinfoadd.city AS delivery_city,
-                custinfoadd.state AS delivery_state,
-                custinfoadd.zip_code AS delivery_zip,
                 custinfoadd.country AS delivery_country,
                 sord.ordernumber AS order_id,
                 NULL AS rma_id,
@@ -1349,55 +906,6 @@ UNION ALL
                     ELSE 'OTHER'
                 END AS segment,
                 custinfo.corporate_form,
-                CASE
-                    WHEN inventpart.part_product_family IN (
-                        'GNSIS',
-                        'PRIMA',
-                        'PRMA+',
-                        'TLMAX',
-                        'PCOMM',
-                        'IHMAX',
-                        'RENOV',
-                        'RESTO',
-                        'STAGE',
-                        'SUST',
-                        'XP1',
-                        'TRINX',
-                        'EXHEX',
-                        'OCT',
-                        'ZMAX',
-                        'OTMED',
-                        'COMM',
-                        'BVINE',
-                        'CONNX',
-                        'CYTOP',
-                        'DYNAB',
-                        'DYNAG',
-                        'DYNAM',
-                        'MTF',
-                        'SYNTH',
-                        'EG',
-                        'OTHER',
-                        'MOTOR',
-                        'FREIGHT',
-                        'OCOS',
-                        'EDU'
-                    )
-                    THEN 'KEYSTONE'
-                    WHEN inventpart.part_product_family IN (
-                        'ACTVE',
-                        'ADVN+',
-                        'ADVNC',
-                        'CONCL',
-                        'DIVA',
-                        'DYMIC',
-                        'PAI',
-                        'PTCOM',
-                        'PALTOP BIO'
-                    )
-                    THEN 'PALTOP'
-                    ELSE 'UNCLASSIFIED'
-                END AS product_brand,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
@@ -1425,18 +933,8 @@ UNION ALL
                 invhead.key_code AS customer_id,
                 custinfo.name AS customer_name,
                 custinfoadd.address_id AS invoice_address_id,
-                custinfoadd.address1 AS invoice_street_1,
-                custinfoadd.address2 AS invoice_street_2,
-                custinfoadd.city AS invoice_city,
-                custinfoadd.state AS invoice_state,
-                custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
                 custinfoadddel.address_id AS delivery_address_id,
-                custinfoadddel.address1 AS delivery_street_1,
-                custinfoadddel.address2 AS delivery_street_2,
-                custinfoadddel.city AS delivery_city,
-                custinfoadddel.state AS delivery_state,
-                custinfoadddel.zip_code AS delivery_zip,
                 custinfoadddel.country AS delivery_country,
                 invhead.sales_order AS order_id,
                 NULL AS rma_id,
@@ -1524,9 +1022,9 @@ UNION ALL
                 CASE 
                     WHEN invhead.salesmngr IN ('DISTRIB','DIST IL')
                     THEN 'DISTRIBUTION'
-                    WHEN invhead.salesmngr IN ('DIRECT','DIRECT IL','DIRECT EX')
+                    WHEN invhead.salesmngr IN ('DIRECT','DIRECT IL')
                     THEN 'DIRECT'
-                    ELSE 'OTHER'
+                    ELSE invhead.salesmngr
                 END AS segment,
                 CASE
                     WHEN invhead.salesmngr = 'DISTRIB'
@@ -1539,14 +1037,7 @@ UNION ALL
                     THEN 'PTDIRIL'
                     ELSE 'OTHER'
                 END AS corporate_form,
-                'PALTOP' AS product_brand,
-                CASE
-                    WHEN prodfamcft.cf$_kdprodfamtype IS NOT NULL
-                    THEN prodfamcft.cf$_kdprodfamtype
-                    WHEN invhead.invent_item_group_name = 'DIGITAL'
-                    THEN invhead.invent_item_group_name
-                    ELSE 'SUND'
-                END AS product_type,
+                NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN invhead.psgfamilyofitem = 3
                     THEN 'REGEN'
@@ -1585,18 +1076,8 @@ UNION ALL
                 invhead.customerno AS customer_id,
                 invhead.customer AS customer_name,
                 NULL AS invoice_address_id,
-                invhead.invstreet AS invoice_street_1,
-                NULL AS invoice_street_2,
-                invhead.invcity AS invoice_city,
-                invhead.invstate AS invoice_state,
-                invhead.invzip AS invoice_zip,
                 invhead.invcountry AS invoice_country,
                 NULL AS delivery_address_id,
-                invhead.delivstreet AS delivery_street_1,
-                NULL AS delivery_street_2,
-                invhead.delivcity AS delivery_city,
-                invhead.delivstate AS delivery_state,
-                invhead.delivzip AS delivery_zip,
                 invhead.delivcountry AS delivery_country,
                 invhead.salesid AS order_id,
                 NULL AS rma_id,
@@ -1798,7 +1279,6 @@ UNION ALL
                 THEN 'PTLTD'
                 ELSE custinfo.corporate_form 
                 END AS corporate_form,
-                'PALTOP' AS product_brand,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
                 CASE
                     WHEN inventpart.part_product_code = 'REGEN'
@@ -1826,18 +1306,8 @@ UNION ALL
                 NVL(custmap.kd_cust_id,invhead.customerno) AS customer_id,
                 NVL(custinfo.name,invhead.customer) AS customer_name,
                 custinfoadd.address_id AS invoice_address_id,
-                custinfoadd.address1 AS invoice_street_1,
-                custinfoadd.address2 AS invoice_street_2,
-                custinfoadd.city AS invoice_city,
-                custinfoadd.state AS invoice_state,
-                custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
                 custinfoadddel.address_id AS delivery_address_id,
-                custinfoadddel.address1 AS delivery_street_1,
-                custinfoadddel.address2 AS delivery_street_2,
-                custinfoadddel.city AS delivery_city,
-                custinfoadddel.state AS delivery_state,
-                custinfoadddel.zip_code AS delivery_zip,
                 custinfoadddel.country AS delivery_country,
                 invhead.salesid AS order_id,
                 NULL AS rma_id,
@@ -1917,26 +1387,4 @@ UNION ALL
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
-           ON   prodfam.objkey = prodfamcft.rowkey;
-    
-CREATE UNIQUE INDEX "IFSAPP"."KD_SALES_CUBE_RECID" ON "IFSAPP"."KD_SALES_CUBE" ("RECID") 
-    PCTFREE 10 
-    INITRANS 2 
-    MAXTRANS 167 
-    COMPUTE STATISTICS 
-    STORAGE
-        (
-            INITIAL 65536 
-            NEXT 1048576 
-            MINEXTENTS 1 
-            MAXEXTENTS 2147483645
-            PCTINCREASE 0 
-            FREELISTS 1 
-            FREELIST GROUPS 1
-            BUFFER_POOL DEFAULT 
-            FLASH_CACHE DEFAULT 
-            CELL_FLASH_CACHE DEFAULT
-        )
-    TABLESPACE "IFSAPP_DATA" ;
-
-CREATE INDEX "IFSAPP"."KD_SALES_CUBE_YQM" ON "IFSAPP"."KD_SALES_CUBE" ("INVOICE_YEAR" ASC, "INVOICE_QUARTER" ASC, "INVOICE_MONTH" ASC);
+           ON   prodfam.objkey = prodfamcft.rowkey

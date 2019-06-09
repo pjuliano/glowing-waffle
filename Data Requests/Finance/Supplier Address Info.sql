@@ -9,3 +9,7 @@ Select
   Supplier_Info_Address_Api.Get_Country(A.Supplier_Id, Supplier_Info_Address_Api.Get_Default_Address(A.Supplier_Id,'Pay')) As Country
 From
   Supplier_Info A
+Where
+    A.Supplier_Id NOT LIKE 'IT%'
+AND A.Supplier_id Not Like 'SE%'
+AND A.Supplier_id Not LIke 'DE%'
