@@ -1,3 +1,4 @@
+CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY9 AS
        SELECT   invhead.recid,
                 'PTUSA' AS source,
                 CASE
@@ -68,15 +69,84 @@
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                custordcustadd.region_code,
-                custord.salesman_code,
-                personout.name AS salesman_name,
-                NULL AS order_salesman_code,
-                comrec.commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                NVL(custmap.kd_cust_id,invhead.customerno) AS customer_id,
-                NVL(custinfo.name,invhead.customer) AS customer_name,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT'
+                        )
+                        OR invhead.itemno = '97-00001'
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                custordcustadd.region_code AS invoice_region_code,
+                custord.salesman_code AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                custordcustadd.region_code AS delivery_region_code,
+                custord.salesman_code AS delivery_salesman_code,
+                personout.name AS delivery_salesman_name,
+                comrec.commission_receiver AS delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                NVL(custmap.kd_cust_id,invhead.customerno) AS invoice_customer_id,
+                NVL(custinfo.name,invhead.customer) AS invoice_customer_name,
                 custinfoadd.address_id AS invoice_address_id,
                 custinfoadd.address1 AS invoice_street_1,
                 custinfoadd.address2 AS invoice_street_2,
@@ -84,6 +154,9 @@
                 custinfoadd.state AS invoice_state,
                 custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
+                custinfo.association_no AS delivery_association_no,
+                NVL(custmap.kd_cust_id,invhead.customerno) AS delivery_customer_id,
+                NVL(custinfo.name,invhead.customer) AS delivery_customer_name,                
                 custinfoadddel.address_id AS delivery_address_id,
                 custinfoadddel.address1 AS delivery_street_1,
                 custinfoadddel.address2 AS delivery_street_2,
@@ -169,4 +242,4 @@
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
-           ON   prodfam.objkey = prodfamcft.rowkey
+           ON   prodfam.objkey = prodfamcft.rowkey;

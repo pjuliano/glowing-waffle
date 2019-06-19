@@ -1,6 +1,6 @@
 Create OR replace View KD_Boomi_Invoice_Headers As
 Select
-  A.Salesman_Code,
+  DECODE(A.Salesman_Code,'501','999','800','999',A.Salesman_Code) AS salesman_code,
   A.Customer_No,
   A.Customer_Name,
   Case When A.Invoice_Id Like 'CR%'
@@ -54,7 +54,7 @@ Where
     (A.Order_No != 'C512921' Or A.Order_No Is Null) And --Kevin Stack's order/return that spanned years.
     Site = '100' And
   A.Charge_Type = 'Parts' And  
-  A.Corporate_Form In ('DOMDIR','ASIA') And
+  A.Corporate_Form NOT IN ('FRA','ITL','SWE','IT','BENELUX','GER','KEY') And
   ((
   A.Salesman_Code Not In ('505','506','507','508') And
   A.Customer_No != 'B3730' And

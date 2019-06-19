@@ -11,29 +11,20 @@ Begin
               From
                 Cust_Ord_Customer_Ent A
               Where
-                Customer_ID In ('8743',
-                                '6717',
-                                '2839',
-                                '17006',
-                                '30085',
-                                '24481',
-                                'A17755',
-                                '17073',
-                                'D44048',
-                                '19877',
-                                '20391',
-                                '22304',
-                                'A22737',
-                                '33063',
-                                '15621',
-                                '15857',
-                                '33810',
-                                '24931'))
+                Customer_ID In (
+'17247',
+'32974',
+'22896',
+'4191',
+'19644',
+'6702',
+'18973'          
+                ))
   Loop
     A_ := Null;
     B_ := Cur.Objid;
     C_ := Cur.Objversion;
-    D_ := 'SALESMAN_CODE'||Chr(31)||'315'||Chr(30);
+    D_ := 'SALESMAN_CODE'||Chr(31)||'121'||Chr(30);
     E_ := 'DO';
     Ifsapp.Cust_Ord_Customer_Api.Modify__( A_ , B_ , C_ , D_ , E_ );
     Commit;

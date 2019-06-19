@@ -10,7 +10,7 @@ With Proc_Parts As
     )
 Select
     A.Proc_Part_No_2,
-    Decode(Sum(B.Due_At_Dock),Null,0,Sum(B.Due_At_Dock)) As Open_PO_Proc
+    NVL(Sum(B.Due_At_Dock),0) As Open_PO_Proc
 From
     Proc_Parts A Left Join Purchase_Order_Line_New B
         On A.Proc_Part_No_2 = B.Part_No And

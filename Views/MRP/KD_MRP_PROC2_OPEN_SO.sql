@@ -10,7 +10,7 @@ With Proc_Parts As
     )
 Select
     A.Proc_Part_No_2,
-    Decode(Sum(Shop_Ord_Util_Api.Get_Remaining_Qty(C.Order_No,C.Release_No,C.Sequence_No,C.Part_No,C.Order_Code)),Null,0,Sum(Shop_Ord_Util_Api.Get_Remaining_Qty(C.Order_No,C.Release_No,C.Sequence_No,C.Part_No,C.Order_Code))) As Open_SO_Proc
+    NVL(Sum(Shop_Ord_Util_Api.Get_Remaining_Qty(C.Order_No,C.Release_No,C.Sequence_No,C.Part_No,C.Order_Code)),0) As Open_SO_Proc
 From
     Proc_Parts A Left Join Shop_Ord C
         On A.Proc_Part_No_2 = C.Part_No And 

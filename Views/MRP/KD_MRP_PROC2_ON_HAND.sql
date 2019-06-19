@@ -10,7 +10,7 @@ With Proc_Parts As
     )
 Select
     A.PROC_Part_No_2,
-    Decode(Sum(B.Qty_OnHand - B.Qty_Reserved),Null,0,Sum(B.Qty_OnHand - B.Qty_Reserved)) On_Hand_PROC
+    NVL(Sum(B.Qty_OnHand - B.Qty_Reserved),0) On_Hand_PROC
 From
     Proc_Parts A Left Join Inventory_Part_In_Stock B
         On A.PROC_Part_No_2 = B.Part_No

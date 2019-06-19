@@ -11,5 +11,6 @@ FROM			Paltop_ax09_Live_db.dbo.CustTrans CT
 				LEFT JOIN Paltop_ax09_Live_db.dbo.CUSTINVOICEJOUR CIJ
 					ON	ct.invoice = cij.invoiceid
 WHERE			ct.dataareaid = 'usa' AND 
-				ct.amountcur - ct.settleamountcur != 0
+				ct.amountcur - ct.settleamountcur != 0 AND
+				ct.accountnum != 'Cust1002609'
 ORDER BY		ct.transdate DESC

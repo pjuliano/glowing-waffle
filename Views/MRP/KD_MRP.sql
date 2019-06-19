@@ -20,28 +20,32 @@ Select
     FG1S.RM_Part_No,
     FG1S.Production_Family,
     FG1S.Cover_Screw_Part_No,
-    NVL(FG1S.on_hand_rm,0) + 
-                    NVL(FG1S.open_po_rm,0) + 
-                    NVL(FG1S.on_hand_proc1,0) + 
-                    NVL(FG1S.open_po_proc1,0) + 
-                    NVL(FG1S.open_so_proc1,0) + 
-                    NVL(FG1S.on_hand_proc2,0) +
-                    NVL(FG1S.open_po_proc2,0) +
-                    NVL(FG1S.open_so_proc2,0) AS On_Hand_Qty_Total,
-    FG1S.On_Hand_RM,
-    FG1S.Open_PO_RM,
+    NVL(FG1S.on_hand_rm,0) +
+        NVL(FG1S.on_hand_proc1,0) + 
+        NVL(FG1S.on_hand_proc2,0) +
+        NVL(FG2S.on_hand_proc1,0) + 
+        NVL(FG2S.on_hand_proc2,0) AS In_Stock_Qty_Total,
+    NVL(FG1S.open_po_rm,0) +
+        NVL(FG1S.open_po_proc1,0) +
+        NVL(FG1S.open_so_proc1,0) +
+        NVL(FG1S.open_po_proc2,0) +
+        NVL(FG1S.open_so_proc2,0) +
+        NVL(FG2S.open_po_proc1,0) +
+        NVL(FG2S.open_so_proc1,0) +
+        NVL(FG2S.open_po_proc2,0) +
+        NVL(FG2S.open_so_proc2,0) AS On_Order_Qty_Total,
+    FG1S.On_Hand_RM + FG2S.On_Hand_RM As On_Hand_RM,
+    FG1S.Open_PO_RM + FG2S.Open_PO_RM As Open_PO_RM,
     FG1S.RM_Ratio as RM_Ratio_FG1S,
     FG1S.RMFG_Split_Total as RMFG_Split_Total_FG1S,
-    FG1S.Proc_Part_No_1,
-    FG1S.On_Hand_Proc1,
-    FG1S.Open_PO_Proc1,
-    FG1S.Open_SO_Proc1,
-    FG1S.Proc1_Total,
-    FG1S.Proc_Part_No_2,
-    FG1S.On_Hand_Proc2,
-    FG1S.Open_PO_Proc2,
-    FG1S.Open_SO_Proc2,
-    FG1S.Proc2_Total,
+    FG1S.On_Hand_Proc1 + FG2S.On_Hand_Proc1 AS On_Hand_Proc1,
+    FG1S.Open_PO_Proc1 + FG2S.Open_PO_Proc1 AS Open_PO_Proc1,
+    FG1S.Open_SO_Proc1 + FG2S.Open_SO_Proc1 AS Open_SO_Proc1,
+    FG1S.Proc1_Total + FG2S.Proc1_Total as Proc1_Total,
+    FG1S.On_Hand_Proc2 + FG2S.On_Hand_Proc2 As On_Hand_Proc2,
+    FG1S.Open_PO_Proc2 + FG2S.Open_PO_Proc2 AS Open_PO_Proc2,
+    FG1S.Open_SO_Proc2 + FG2S.Open_SO_Proc2 AS Open_SO_Proc2,
+    FG1S.Proc2_Total + FG2S.Proc2_Total As Proc2_Total,
     FG1S.FG_Part_No As FG_Part_No_FG1,
     FG1S.On_Hand_FG As On_Hand_FG1S,
     FG1S.Open_SO_FG As Open_SO_FG1S,

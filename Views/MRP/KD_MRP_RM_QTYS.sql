@@ -11,8 +11,8 @@ With RM_Parts As
 
 Select
     A.RM_Part_No,
-    Decode(B.Open_PO_RM,Null,0,B.Open_PO_RM) As Open_PO_RM,
-    Decode(C.On_Hand_Rm,Null,0,C.On_Hand_RM) As On_Hand_RM
+    NVL(B.Open_PO_RM,0) As Open_PO_RM,
+    NVL(C.On_Hand_Rm,0) As On_Hand_RM
 From
     RM_Parts A Left Join KD_MRP_RM_OPEN_PO B
         On A.RM_Part_No = B.RM_Part_No

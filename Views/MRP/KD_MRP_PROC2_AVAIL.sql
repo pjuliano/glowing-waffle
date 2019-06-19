@@ -11,7 +11,7 @@ With Proc_Parts As
 Select
     A.Proc_Part_No_2,
     B.Open_Po_Proc,
-    Decode(C.On_Hand_Proc,Null,0,C.On_Hand_Proc) As On_Hand_Proc,
+    NVL(C.On_Hand_Proc,0) As On_Hand_Proc,
     D.Open_SO_Proc
 From
     Proc_Parts A Left Join KD_MRP_PROC2_Open_PO B

@@ -1,6 +1,6 @@
-DROP MATERIALIZED VIEW kd_sales_cube;
+DROP MATERIALIZED VIEW kd_sales_cube_test;
     
-CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" 
+CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST" 
     (
         "RECID", 
         "SOURCE", 
@@ -10,16 +10,19 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
         "CORPORATE_FORM", 
         "PRODUCT_BRAND",
         "PRODUCT_TYPE", 
-        "PRODUCT_SET", 
-        "REGION_CODE", 
-        "SALESMAN_CODE", 
-        "SALESMAN_NAME", 
-        "ORDER_SALESMAN_CODE", 
-        "COMMISSION_RECEIVER", 
-        "COMMISSION_RECEIVER_NAME", 
-        "ASSOCIATION_NO", 
-        "CUSTOMER_ID", 
-        "CUSTOMER_NAME", 
+        "PRODUCT_SET",
+        "CONNECTION",
+        "INVOICE_REGION_CODE", 
+        "INVOICE_SALESMAN_CODE", 
+        "INVOICE_SALESMAN_NAME",
+        "DELIVERY_REGION_CODE",
+        "DELIVERY_SALESMAN_CODE",
+        "DELIVERY_SALESMAN_NAME",
+        "DELIVERY_COMMISSION_REC", 
+        "DELIVERY_COMMISSION_REC_NAME", 
+        "INVOICE_ASSOCIATION_NO", 
+        "INVOICE_CUSTOMER_ID", 
+        "INVOICE_CUSTOMER_NAME", 
         "INVOICE_ADDRESS_ID", 
         "INVOICE_STREET_1", 
         "INVOICE_STREET_2", 
@@ -27,6 +30,9 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
         "INVOICE_STATE", 
         "INVOICE_ZIP",
         "INVOICE_COUNTRY",
+        "DELIVERY_ASSOCIATION_NO",
+        "DELIVERY_CUSTOMER_ID",
+        "DELIVERY_CUSTOMER_NAME",
         "DELIVERY_ADDRESS_ID", 
         "DELIVERY_STREET_1",
         "DELIVERY_STREET_2",
@@ -92,81 +98,90 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
                 'IFS' AS source,
                 invitem.company,
                 CASE 
-                    WHEN custinfo.corporate_form IN ('DOMDIR','DOMDIS','CAN')
+                    WHEN custinfo.corporate_form IN 
+                        (
+                            'DOMDIR',
+                            'DOMDIS',
+                            'CAN'
+                        )
                     THEN 'NORAM'
                     ELSE 'ROW'
                 END AS sales_market,
                 CASE
-                    WHEN custinfo.corporate_form IN (
-                        'ASIA',
-                        'CAN',
-                        'DOMDIS',
-                        'EUR',
-                        'LA',
-                        'SPA'
-                    )
+                    WHEN custinfo.corporate_form IN 
+                        (
+                            'ASIA',
+                            'CAN',
+                            'DOMDIS',
+                            'EUR',
+                            'LA',
+                            'SPA'
+                        )
                     THEN 'DISTRIBUTION'
-                    WHEN custinfo.corporate_form IN (
-                        'DOMDIR',
-                        'FRA',
-                        'GER',
-                        'BENELUX',
-                        'ITL',
-                        'SWE'
-                    )
+                    WHEN custinfo.corporate_form IN 
+                        (
+                            'DOMDIR',
+                            'FRA',
+                            'GER',
+                            'BENELUX',
+                            'ITL',
+                            'SWE'
+                        )
                     THEN 'DIRECT'
                     ELSE 'OTHER'
                 END AS segment,
                 custinfo.corporate_form,
                 CASE
-                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
-                        'GNSIS',
-                        'PRIMA',
-                        'PRMA+',
-                        'TLMAX',
-                        'PCOMM',
-                        'IHMAX',
-                        'RENOV',
-                        'RESTO',
-                        'STAGE',
-                        'SUST',
-                        'XP1',
-                        'TRINX',
-                        'EXHEX',
-                        'OCT',
-                        'ZMAX',
-                        'OTMED',
-                        'COMM',
-                        'BVINE',
-                        'CONNX',
-                        'CYTOP',
-                        'DYNAB',
-                        'DYNAG',
-                        'DYNAM',
-                        'MTF',
-                        'SYNTH',
-                        'EG',
-                        'OTHER',
-                        'MOTOR',
-                        'FREIGHT',
-                        'OCOS',
-                        'EDU'
-                    )
+                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM',
+                            'IHMAX',
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'TRINX',
+                            'EXHEX',
+                            'OCT',
+                            'ZMAX',
+                            'OTMED',
+                            'COMM',
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT',
+                            'OCOS',
+                            'EDU'
+                        )
                     THEN 'KEYSTONE'
-                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
-                        'ACTVE',
-                        'ADVN+',
-                        'ADVNC',
-                        'CONCL',
-                        'DIVA',
-                        'DYMIC',
-                        'PAI',
-                        'PTCOM',
-                        'PALTOP BIO',
-                        'PAI',
-                        'PAITC',
-                        'PCA'
-                    )
+                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN 
+                        (
+                            'ACTVE',
+                            'ADVN+',
+                            'ADVNC',
+                            'CONCL',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PTCOM',
+                            'PALTOP BIO',
+                            'PAI',
+                            'PAITC',
+                            'PCA'
+                        )
                     THEN 'PALTOP'
                     ELSE 'UNCLASSIFIED'
                 END AS product_brand,
@@ -187,15 +202,83 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                custordcustadd.region_code,
-                custord.salesman_code,
-                personout.name AS salesman_name,
-                custorder.salesman_code AS order_salesman_code,
-                comrec.commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                invhead.identity AS customer_id,
-                custinfo.name AS customer_name,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group) IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                custordcustadd.region_code AS invoice_region_code,
+                custord.salesman_code AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                custordcustadddel.region_code AS delivery_region_code,
+                custordcustdel.salesman_code AS delivery_salesman_code,
+                persondel.name AS delivery_salesman_name,
+                comrec.commission_receiver AS delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                invhead.identity AS invoice_customer_id,
+                custinfo.name AS invoice_customer_name,
                 custinfoadd.address_id AS invoice_address_id,
                 custinfoadd.address1 AS invoice_street_1,
                 custinfoadd.address2 AS invoice_street_2,
@@ -203,6 +286,9 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
                 custinfoadd.state AS invoice_state,
                 custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
+                custinfodel.association_no AS delivery_association_no,
+                invhead.delivery_identity AS delivery_customer_id,
+                custinfodel.name AS delivery_customer_name,
                 custinfoadddel.address_id AS delivery_address_id,
                 custinfoadddel.address1 AS delivery_street_1,
                 custinfoadddel.address2 AS delivery_street_2,
@@ -277,6 +363,10 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
           AND   DECODE(invitem.company, '241', '240', invitem.company) = inventpart.contract
     LEFT JOIN   customer_info_tab custinfo
            ON   invhead.identity = custinfo.customer_id
+    LEFT JOIN   cust_ord_customer_tab custordcustdel --For delivery customer salesman code
+           ON   invhead.delivery_identity = custordcustdel.customer_no
+    LEFT JOIN   customer_info_tab custinfodel --For delivery customer info
+           ON   invhead.delivery_identity = custinfodel.customer_id
     LEFT JOIN   customer_info_address_tab custinfoadd --For invoice address info
            ON   invhead.identity = custinfoadd.customer_id
           AND   invhead.invoice_address_id = custinfoadd.address_id
@@ -285,15 +375,18 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
           AND   custinfoadd.address_id = custinfoaddtype.address_id
           AND   custinfoaddtype.address_type_code = 'INVOICE'
     LEFT JOIN   customer_info_address_tab custinfoadddel --For delivery address info
-           ON   invhead.identity = custinfoadddel.customer_id
+           ON   invhead.delivery_identity = custinfoadddel.customer_id
           AND   invhead.delivery_address_id = custinfoadddel.address_id
     LEFT JOIN   customer_info_address_type_tab custinfoaddtypedel --For delivery address info
-           ON   invhead.identity = custinfoaddtypedel.customer_id
+           ON   invhead.delivery_identity = custinfoaddtypedel.customer_id
           AND   custinfoadddel.address_id = custinfoaddtypedel.address_id
           AND   custinfoaddtypedel.address_type_code = 'DELIVERY'
     LEFT JOIN   cust_ord_customer_address_tab custordcustadd
            ON   invhead.identity = custordcustadd.customer_no
           AND   custinfoadd.address_id = custordcustadd.addr_no
+    LEFT JOIN   cust_ord_customer_address_tab custordcustadddel
+          ON    invhead.delivery_identity = custordcustadddel.customer_no
+         AND    custinfoadddel.address_id = custordcustadddel.addr_no
     LEFT JOIN   cust_ord_customer_tab custord
            ON   invhead.identity = custord.customer_no
     LEFT JOIN   customer_order_tab custorder
@@ -307,6 +400,8 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
            ON   custord.salesman_code = personout.person_id
     LEFT JOIN   person_info_tab personin --For Inside Rep names
            ON   comrecdef.salesman_code = personin.person_id
+    LEFT JOIN   person_info_tab persondel --For Delivery Rep names
+           ON   custordcustdel.salesman_code = persondel.person_id
     LEFT JOIN   customer_order_address_tab custordadd
            ON   invitem.c1 = custordadd.order_no
     LEFT JOIN   sales_charge_type_tab salchar
@@ -423,15 +518,83 @@ UNION ALL
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                custordcustadd.region_code,
-                custord.salesman_code,
-                personout.name AS salesman_name,
-                custorder.salesman_code AS order_salesman_code,
-                comrec.commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                invhead.identity AS customer_id,
-                custinfo.name AS customer_name,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group) IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                custordcustadd.region_code AS invoice_region_code,
+                custord.salesman_code AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                custordcustadddel.region_code AS delivery_region_code,
+                custordcustdel.salesman_code AS delivery_salesman_code,
+                persondel.name AS delivery_salesman_name,
+                comrec.commission_receiver as delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                invhead.identity AS invoice_customer_id,
+                custinfo.name AS invoice_customer_name,
                 custinfoadd.address_id AS invoice_address_id,
                 custinfoadd.address1 AS invoice_street_1,
                 custinfoadd.address2 AS invoice_street_2,
@@ -439,6 +602,9 @@ UNION ALL
                 custinfoadd.state AS invoice_state,
                 custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
+                custinfodel.association_no AS delivery_association_no,
+                invhead.delivery_identity AS delivery_customer_id,
+                custinfodel.name as delivery_customer_name,
                 custinfoadddel.address_id AS delivery_address_id,
                 custinfoadddel.address1 AS delivery_street_1,
                 custinfoadddel.address2 AS delivery_street_2,
@@ -518,6 +684,10 @@ UNION ALL
           AND   DECODE(invitem.company, '241', '240', invitem.company) = inventpart.contract
     LEFT JOIN   customer_info_tab custinfo
            ON   invhead.identity = custinfo.customer_id
+    LEFT JOIN   cust_ord_customer_tab custordcustdel --For delivery customer salesman code
+           ON   invhead.delivery_identity = custordcustdel.customer_no
+    LEFT JOIN   customer_info_tab custinfodel --For delivery customer info
+           ON   invhead.delivery_identity = custinfodel.customer_id
     LEFT JOIN   customer_info_address_tab custinfoadd
            ON   invhead.identity = custinfoadd.customer_id
           AND   invhead.invoice_address_id = custinfoadd.address_id
@@ -526,15 +696,18 @@ UNION ALL
           AND   custinfoadd.address_id = custinfoaddtype.address_id
           AND   custinfoaddtype.address_type_code = 'INVOICE'
     LEFT JOIN   customer_info_address_tab custinfoadddel --For delivery address info
-           ON   invhead.identity = custinfoadddel.customer_id
+           ON   invhead.delivery_identity = custinfoadddel.customer_id
           AND   invhead.delivery_address_id = custinfoadddel.address_id
     LEFT JOIN   customer_info_address_type_tab custinfoaddtypedel --For delivery address info
-           ON   invhead.identity = custinfoaddtypedel.customer_id
+           ON   invhead.delivery_identity = custinfoaddtypedel.customer_id
           AND   custinfoadddel.address_id = custinfoaddtypedel.address_id
           AND   custinfoaddtypedel.address_type_code = 'DELIVERY'          
     LEFT JOIN   cust_ord_customer_address_tab custordcustadd
            ON   invhead.identity = custordcustadd.customer_no
           AND   custinfoadd.address_id = custordcustadd.addr_no
+    LEFT JOIN   cust_ord_customer_address_Tab custordcustadddel
+           ON   invhead.delivery_identity = custordcustadddel.customer_no
+          AND   custinfoadddel.address_id = custordcustadddel.addr_no
     LEFT JOIN   cust_ord_customer_tab custord
            ON   invhead.identity = custord.customer_no
     LEFT JOIN   customer_order_tab custorder
@@ -548,6 +721,8 @@ UNION ALL
            ON   custord.salesman_code = personout.person_id
     LEFT JOIN   person_info_tab personin --For Inside Rep names
            ON   comrecdef.salesman_code = personin.person_id
+    LEFT JOIN   person_info_tab persondel --For Delivery Rep names
+           ON   custordcustdel.salesman_code = persondel.person_id
     LEFT JOIN   customer_order_address_tab custordadd
            ON   invitem.c1 = custordadd.order_no
     LEFT JOIN   sales_charge_type_tab salchar
@@ -676,15 +851,83 @@ UNION ALL
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                'FRA' AS region_code,
-                sord.salesrepid AS salesman_code,
-                personout.name AS salesman_name,
-                sord.salesrepid AS order_salesman_code,
-                comrec.commission_receiver AS commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                sord.customerid AS customer_id,
-                nvl(custinfo.name,sord.customername) AS customer_name,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                'FRA' AS invoice_region_code,
+                sord.salesrepid AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                'FRA' As delivery_region_code,
+                sord.salesrepid AS delivery_salesman_code,
+                personout.name AS delivery_salesman_name,
+                comrec.commission_receiver AS delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                sord.customerid AS invoice_customer_id,
+                nvl(custinfo.name,sord.customername) AS invoice_customer_name,
                 custinfoaddinv.address_id AS invoice_address_id,
                 custinfoaddinv.address1 AS invoice_street_1,
                 custinfoaddinv.address2 AS invoice_street_2,
@@ -692,6 +935,9 @@ UNION ALL
                 custinfoaddinv.state AS invoice_state,
                 custinfoaddinv.zip_code AS invoice_zip,
                 custinfoaddinv.country AS invoice_country,
+                custinfo.association_no AS delivery_association_no,
+                sord.customerid AS delivery_customer_id,
+                nvl(custinfo.name,sord.customername) AS delivery_customer_name,
                 custinfoadd.address_id AS delivery_address_id,
                 custinfoadd.address1 AS delivery_street_1,
                 custinfoadd.address2 AS delivery_street_2,
@@ -777,7 +1023,7 @@ UNION ALL
         WHERE   sord.year >= 2008 
           AND   custinfoaddtype.def_address = 'TRUE'
           AND   custinfoaddtypeinv.def_address = 'TRUE'
-          
+
 UNION ALL
 
        SELECT   sord.recid,
@@ -860,18 +1106,89 @@ UNION ALL
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
                 CASE WHEN sord.customerid IN ('DE55046','DE43125','DE29029','DE47206') THEN 'EURO'
                      WHEN sord.salesrepid IN ('220-510','220-520') THEN 'BENELUX'
                      ELSE 'GER'
-                END AS region_code,    
-                sord.salesrepid AS salesman_code,
-                personout.name AS salesman_name,
-                sord.salesrepid AS order_salesman_code,
-                comrec.commission_receiver AS commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                sord.customerid AS customer_id,
-                nvl(custinfo.name,sord.customername) AS customer_name,
+                END AS invoice_region_code,    
+                sord.salesrepid AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                CASE WHEN sord.customerid IN ('DE55046','DE43125','DE29029','DE47206') THEN 'EURO'
+                     WHEN sord.salesrepid IN ('220-510','220-520') THEN 'BENELUX'
+                     ELSE 'GER'
+                END AS delivery_region_code,
+                sord.salesrepid AS delivery_salesman_code,
+                personout.name as delivery_salesman_name,
+                comrec.commission_receiver AS delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                sord.customerid AS invoice_customer_id,
+                nvl(custinfo.name,sord.customername) AS invoice_customer_name,
                 custinfoaddinv.address_id AS invoice_address_id,
                 custinfoaddinv.address1 AS invoice_street_1,
                 custinfoaddinv.address2 AS invoice_street_2,
@@ -879,6 +1196,9 @@ UNION ALL
                 custinfoaddinv.state AS invoice_state,
                 custinfoaddinv.zip_code AS invoice_zip,
                 custinfoaddinv.country AS invoice_country,
+                custinfo.association_no AS delivery_association_no,
+                sord.customerid AS delivery_customer_id,
+                nvl(custinfo.name,sord.customername) AS delivery_customer_name,                
                 custinfoadd.address_id AS delivery_address_id,
                 custinfoadd.address1 AS delivery_street_1,
                 custinfoadd.address2 AS delivery_street_2,
@@ -1042,15 +1362,83 @@ UNION ALL
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                'SWE' AS region_code,
-                sord.salesrepid AS salesman_code,
-                personout.name AS salesman_name,
-                sord.salesrepid AS order_salesman_code,
-                comrec.commission_receiver AS commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                sord.customerid AS customer_id,
-                nvl(custinfo.name,sord.customername) AS customer_name,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                'SWE' AS invoice_region_code,
+                sord.salesrepid AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                'SWE' AS delivery_region_code,
+                sord.salesrepid AS delivery_salesman_code,
+                personout.name AS delivery_salesman_name,
+                comrec.commission_receiver AS delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                sord.customerid AS invoice_customer_id,
+                nvl(custinfo.name,sord.customername) AS invoice_customer_name,
                 custinfoaddinv.address_id AS invoice_address_id,
                 custinfoaddinv.address1 AS invoice_street_1,
                 custinfoaddinv.address2 AS invoice_street_2,
@@ -1058,6 +1446,9 @@ UNION ALL
                 custinfoaddinv.state AS invoice_state,
                 custinfoaddinv.zip_code AS invoice_zip,
                 custinfoaddinv.country AS invoice_country,
+                custinfo.association_no AS delivery_association_no,
+                sord.customerid AS delivery_customer_id,
+                nvl(custinfo.name,sord.customername) AS delivery_customer_name,
                 custinfoadd.address_id AS delivery_address_id,
                 custinfoadd.address1 AS delivery_street_1,
                 custinfoadd.address2 AS delivery_street_2,
@@ -1229,19 +1620,91 @@ UNION ALL
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
                 CASE WHEN sord.customerid IN ('IT002945','IT000387','IT000807','IT001014','IT000916','IT000921',
                                               'IT000465','IT003382','IT003484','IT003575','IT003656','IT003666',
                                               'IT003693','IT003940') THEN 'EURO'
                      ELSE 'ITL'
-                END AS region_code,
-                sord.salesrepid AS salesman_code,
-                personout.name AS salesman_name,
-                sord.salesrepid AS order_salesman_code,
-                comrec.commission_receiver AS commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                sord.customerid AS customer_id,
-                nvl(custinfo.name,sord.customername) AS customer_name,
+                END AS invoice_region_code,
+                sord.salesrepid AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                CASE WHEN sord.customerid IN ('IT002945','IT000387','IT000807','IT001014','IT000916','IT000921',
+                                              'IT000465','IT003382','IT003484','IT003575','IT003656','IT003666',
+                                              'IT003693','IT003940') THEN 'EURO'
+                     ELSE 'ITL'
+                END AS delivery_region_code,
+                sord.salesrepid AS delivery_salesman_code,
+                personout.name AS delivery_salesman_name,
+                comrec.commission_receiver AS delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                sord.customerid AS invoice_customer_id,
+                nvl(custinfo.name,sord.customername) AS invoice_customer_name,
                 custinfoaddinv.address_id AS invoice_address_id,
                 custinfoaddinv.address1 AS invoice_street_1,
                 custinfoaddinv.address2 AS invoice_street_2,
@@ -1249,6 +1712,9 @@ UNION ALL
                 custinfoaddinv.state AS invoice_state,
                 custinfoaddinv.zip_code AS invoice_zip,
                 custinfoaddinv.country AS invoice_country,
+                custinfo.association_no AS delivery_association_no,
+                sord.customerid AS delivery_customer_id,
+                nvl(custinfo.name,sord.customername) AS delivery_customer_name,
                 custinfoadd.address_id AS delivery_address_id,
                 custinfoadd.address1 AS delivery_street_1,
                 custinfoadd.address2 AS delivery_street_2,
@@ -1436,15 +1902,83 @@ UNION ALL
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                custordcustadd.region_code,
-                custord.salesman_code,
-                personout.name AS salesman_name,
-                NULL AS order_salesman_code,
-                comrec.commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                invhead.key_code AS customer_id,
-                custinfo.name AS customer_name,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                custordcustadd.region_code AS invoice_region_code,
+                custord.salesman_code AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                custordcustadd.region_code AS delivery_region_code,
+                custord.salesman_code AS delivery_salesman_code,
+                personout.name AS delivery_salesman_name,
+                comrec.commission_receiver AS delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no invoice_association_no,
+                invhead.key_code AS invoice_customer_id,
+                custinfo.name AS invoice_customer_name,
                 custinfoadd.address_id AS invoice_address_id,
                 custinfoadd.address1 AS invoice_street_1,
                 custinfoadd.address2 AS invoice_street_2,
@@ -1452,6 +1986,9 @@ UNION ALL
                 custinfoadd.state AS invoice_state,
                 custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
+                custinfo.association_no AS delivery_association_no,
+                invhead.key_code AS delivery_customer_id,
+                custinfo.name AS delivery_customer_name,
                 custinfoadddel.address_id AS delivery_address_id,
                 custinfoadddel.address1 AS delivery_street_1,
                 custinfoadddel.address2 AS delivery_street_2,
@@ -1596,15 +2133,57 @@ UNION ALL
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                invhead.territory AS region_code,
-                'PTLTD' AS salesman_code,
-                invhead.sales_group AS salesman_name,
-                NULL AS order_salesman_code,
-                NULL AS commission_receiver,
-                NULL AS commission_receiver_name,
-                NULL AS association_no,
-                invhead.customerno AS customer_id,
-                invhead.customer AS customer_name,
+                CASE
+                    WHEN UPPER(invhead.invent_item_group_name) IN 
+                        (
+                            'PAI IMPLANTS',
+                            'DYNAMIC IMPLANTS',
+                            'DIVA IMPLANTS',
+                            'DYNAMIC IMPLANTS',
+                            'ADVANCED IMPLANTS',
+                            'ADVANCED PLUS IMPLANTS'
+                        )  
+                    THEN 'INTERNAL HEX'
+                    WHEN UPPER(invhead.invent_item_group_name) IN
+                        (
+                            'CONICAL CONNECTION IMPLANTS'
+                        )
+                    THEN 'CONICAL'
+                    WHEN UPPER(invhead.invent_item_group_name) IN
+                        (
+                            'PEEK ABUTMENTS',
+                            'COBALT CHROME ABUTMENTS',
+                            'TITANIUM ABUTMENTS',
+                            'MULTI UNIT ABUTMENTS',
+                            'IMPRESSION COPING',
+                            'HEALING CAPS',
+                            'SCREWS',
+                            'TOOLS',
+                            'CASTABLE ABUTMENTS',
+                            'KITS',
+                            'CONICAL HEALING CAPS',
+                            'CONICAL TITANIUM ABUTMENTS'
+                        )
+                    THEN 'COMMON'
+                    WHEN UPPER(invhead.invent_item_group_name) IN
+                        (
+                            'DIGITAL',
+                            'PACKAGING MATERIALS'
+                        )
+                    THEN 'N/A'                    
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                invhead.territory AS invoice_region_code,
+                'PTLTD' AS invoice_salesman_code,
+                invhead.sales_group AS invoice_salesman_name,
+                invhead.territory AS delivery_region_code,
+                'PTLTD' AS delivery_salesman_code,
+                invhead.sales_group AS delivery_salesman_name,
+                NULL AS delivery_commission_rec,
+                NULL AS delivery_commission_rec_name,
+                NULL AS invoice_association_no,
+                invhead.customerno AS invoice_customer_id,
+                invhead.customer AS invoice_customer_name,
                 NULL AS invoice_address_id,
                 invhead.invstreet AS invoice_street_1,
                 NULL AS invoice_street_2,
@@ -1612,6 +2191,9 @@ UNION ALL
                 invhead.invstate AS invoice_state,
                 invhead.invzip AS invoice_zip,
                 invhead.invcountry AS invoice_country,
+                NULL AS delivery_association_no,
+                invhead.customerno AS delivery_customer_id,
+                invhead.customer as delivery_customer_name,
                 NULL AS delivery_address_id,
                 invhead.delivstreet AS delivery_street_1,
                 NULL AS delivery_street_2,
@@ -1837,15 +2419,83 @@ UNION ALL
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                custordcustadd.region_code,
-                custord.salesman_code,
-                personout.name AS salesman_name,
-                NULL AS order_salesman_code,
-                comrec.commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                NVL(custmap.kd_cust_id,invhead.customerno) AS customer_id,
-                NVL(custinfo.name,invhead.customer) AS customer_name,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                custordcustadd.region_code AS invoice_region_code,
+                custord.salesman_code AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                custordcustadd.region_code AS delivery_region_code,
+                custord.salesman_code AS delivery_salesman_code,
+                personout.name AS delivery_salesman_name,
+                comrec.commission_receiver AS delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                NVL(custmap.kd_cust_id,invhead.customerno) AS invoice_customer_id,
+                NVL(custinfo.name,invhead.customer) AS invoice_customer_name,
                 custinfoadd.address_id AS invoice_address_id,
                 custinfoadd.address1 AS invoice_street_1,
                 custinfoadd.address2 AS invoice_street_2,
@@ -1853,6 +2503,9 @@ UNION ALL
                 custinfoadd.state AS invoice_state,
                 custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
+                custinfo.association_no AS delivery_association_no,
+                NVL(custmap.kd_cust_id,invhead.customerno) AS delivery_customer_id,
+                NVL(custinfo.name,invhead.customer) AS delivery_customer_name,                
                 custinfoadddel.address_id AS delivery_address_id,
                 custinfoadddel.address1 AS delivery_street_1,
                 custinfoadddel.address2 AS delivery_street_2,
@@ -1938,9 +2591,10 @@ UNION ALL
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
-           ON   prodfam.objkey = prodfamcft.rowkey;
+           ON   prodfam.objkey = prodfamcft.rowkey
+    ;
     
-CREATE UNIQUE INDEX "IFSAPP"."KD_SALES_CUBE_RECID" ON "IFSAPP"."KD_SALES_CUBE" ("RECID") 
+CREATE UNIQUE INDEX "IFSAPP"."KD_SALES_CUBE_RECID_TEST" ON "IFSAPP"."KD_SALES_CUBE_TEST" ("RECID") 
     PCTFREE 10 
     INITRANS 2 
     MAXTRANS 167 
@@ -1960,4 +2614,4 @@ CREATE UNIQUE INDEX "IFSAPP"."KD_SALES_CUBE_RECID" ON "IFSAPP"."KD_SALES_CUBE" (
         )
     TABLESPACE "IFSAPP_DATA" ;
 
-CREATE INDEX "IFSAPP"."KD_SALES_CUBE_YQM" ON "IFSAPP"."KD_SALES_CUBE" ("INVOICE_YEAR" ASC, "INVOICE_QUARTER" ASC, "INVOICE_MONTH" ASC);
+CREATE INDEX "IFSAPP"."KD_SALES_CUBE_YQM_TEST" ON "IFSAPP"."KD_SALES_CUBE_TEST" ("INVOICE_YEAR" ASC, "INVOICE_QUARTER" ASC, "INVOICE_MONTH" ASC);

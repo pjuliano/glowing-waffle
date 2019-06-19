@@ -1,3 +1,4 @@
+CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY8 AS
        SELECT   invhead.recid,
                 'PTLTD' AS source,
                 '300' AS company,
@@ -56,15 +57,58 @@
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                invhead.territory AS region_code,
-                'PTLTD' AS salesman_code,
-                invhead.sales_group AS salesman_name,
-                NULL AS order_salesman_code,
-                NULL AS commission_receiver,
-                NULL AS commission_receiver_name,
-                NULL AS association_no,
-                invhead.customerno AS customer_id,
-                invhead.customer AS customer_name,
+                CASE
+                    WHEN UPPER(invhead.invent_item_group_name) IN 
+                        (
+                            'PAI IMPLANTS',
+                            'DYNAMIC IMPLANTS',
+                            'DIVA IMPLANTS',
+                            'DYNAMIC IMPLANTS',
+                            'ADVANCED IMPLANTS',
+                            'ADVANCED PLUS IMPLANTS'
+                        )  
+                    THEN 'INTERNAL HEX'
+                    WHEN UPPER(invhead.invent_item_group_name) IN
+                        (
+                            'CONICAL CONNECTION IMPLANTS'
+                        )
+                    THEN 'CONICAL'
+                    WHEN UPPER(invhead.invent_item_group_name) IN
+                        (
+                            'PEEK ABUTMENTS',
+                            'COBALT CHROME ABUTMENTS',
+                            'TITANIUM ABUTMENTS',
+                            'MULTI UNIT ABUTMENTS',
+                            'IMPRESSION COPING',
+                            'HEALING CAPS',
+                            'SCREWS',
+                            'TOOLS',
+                            'CASTABLE ABUTMENTS',
+                            'KITS',
+                            'CONICAL HEALING CAPS',
+                            'CONICAL TITANIUM ABUTMENTS'
+                        )
+                    THEN 'COMMON'
+                    WHEN UPPER(invhead.invent_item_group_name) IN
+                        (
+                            'DIGITAL',
+                            'PACKAGING MATERIALS'
+                        )
+                        OR invhead.itemno = '97-00001'
+                    THEN 'N/A'                    
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                invhead.territory AS invoice_region_code,
+                'PTLTD' AS invoice_salesman_code,
+                invhead.sales_group AS invoice_salesman_name,
+                invhead.territory AS delivery_region_code,
+                'PTLTD' AS delivery_salesman_code,
+                invhead.sales_group AS delivery_salesman_name,
+                NULL AS delivery_commission_rec,
+                NULL AS delivery_commission_rec_name,
+                NULL AS invoice_association_no,
+                invhead.customerno AS invoice_customer_id,
+                invhead.customer AS invoice_customer_name,
                 NULL AS invoice_address_id,
                 invhead.invstreet AS invoice_street_1,
                 NULL AS invoice_street_2,
@@ -72,6 +116,9 @@
                 invhead.invstate AS invoice_state,
                 invhead.invzip AS invoice_zip,
                 invhead.invcountry AS invoice_country,
+                NULL AS delivery_association_no,
+                invhead.customerno AS delivery_customer_id,
+                invhead.customer as delivery_customer_name,
                 NULL AS delivery_address_id,
                 invhead.delivstreet AS delivery_street_1,
                 NULL AS delivery_street_2,
@@ -108,15 +155,13 @@
                     WHEN invhead.itemno = '97-00001'
                     THEN 'FREIGHT'
                     WHEN UPPER(invhead.invent_item_group_name) = 'PAI IMPLANTS'
-                    THEN 'ACTVE'
+                    THEN 'PAI'
                     WHEN UPPER(invhead.invent_item_group_name) = 'ADVANCED PLUS IMPLANTS'
                     THEN 'ADVN+'
                     WHEN UPPER(invhead.invent_item_group_name) = 'ADVANCED IMPLANTS'
                     THEN 'ADVNC'
-                    WHEN UPPER(invhead.invent_item_group_name) IN ('CONICAL HEALING CAPS',
-                                                                   'CONICAL TITANIUM ABUTMENTS',
-                                                                   'CONICAL CONNECTION IMPLANTS')
-                    THEN 'CONCL'
+                    WHEN UPPER(invhead.invent_item_group_name) = 'CONICAL CONNECTION IMPLANTS'
+                    THEN 'PCA'
                     WHEN UPPER(invhead.invent_item_group_name) = 'DYNAMIC IMPLANTS'
                     THEN 'DYMIC'
                     WHEN UPPER(invhead.invent_item_group_name) IN ('PEEK ABUTMENTS',
@@ -128,7 +173,9 @@
                                                                    'SCREWS',
                                                                    'TOOLS',
                                                                    'CASTABLE ABUTMENTS',
-                                                                   'KITS')
+                                                                   'KITS',
+                                                                   'CONICAL HEALING CAPS',
+                                                                   'CONICAL TITANIUM ABUTMENTS')
                     THEN 'PTCOM'
                     WHEN UPPER(invhead.invent_item_group_name) = 'DIGITAL'
                     THEN 'DIGITAL'
@@ -192,15 +239,13 @@
                     WHEN invhead.itemno = '97-00001'
                     THEN 'FREIGHT'
                     WHEN UPPER(invhead.invent_item_group_name) = 'PAI IMPLANTS'
-                    THEN 'ACTVE'
+                    THEN 'PAI'
                     WHEN UPPER(invhead.invent_item_group_name) = 'ADVANCED PLUS IMPLANTS'
                     THEN 'ADVN+'
                     WHEN UPPER(invhead.invent_item_group_name) = 'ADVANCED IMPLANTS'
                     THEN 'ADVNC'
-                    WHEN UPPER(invhead.invent_item_group_name) IN ('CONICAL HEALING CAPS',
-                                                                   'CONICAL TITANIUM ABUTMENTS',
-                                                                   'CONICAL CONNECTION IMPLANTS')
-                    THEN 'CONCL'
+                    WHEN UPPER(invhead.invent_item_group_name) = 'CONICAL CONNECTION IMPLANTS'
+                    THEN 'PCA'
                     WHEN UPPER(invhead.invent_item_group_name) = 'DYNAMIC IMPLANTS'
                     THEN 'DYMIC'
                     WHEN UPPER(invhead.invent_item_group_name) IN ('PEEK ABUTMENTS',
@@ -212,7 +257,9 @@
                                                                    'SCREWS',
                                                                    'TOOLS',
                                                                    'CASTABLE ABUTMENTS',
-                                                                   'KITS')
+                                                                   'KITS',
+                                                                   'CONICAL HEALING CAPS',
+                                                                   'CONICAL TITANIUM ABUTMENTS')
                     THEN 'PTCOM'
                     WHEN UPPER(invhead.invent_item_group_name) = 'DIGITAL'
                     THEN 'DIGITAL'

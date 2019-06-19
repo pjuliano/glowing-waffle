@@ -1,3 +1,4 @@
+CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY2 AS
        SELECT   invitem.company || invhead.series_id || invhead.invoice_no || TO_CHAR(invitem.item_id) || TO_CHAR(invhead.invoice_date,'MMDDYYYY') AS recid,
                 'IFS' AS source,
                 invitem.company,
@@ -72,7 +73,10 @@
                         'DYMIC',
                         'PAI',
                         'PTCOM',
-                        'PALTOP BIO'
+                        'PALTOP BIO',
+                        'PAI',
+                        'PAITC',
+                        'PCA'
                     )
                     THEN 'PALTOP'
                     ELSE 'UNCLASSIFIED'
@@ -94,15 +98,92 @@
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                custordcustadd.region_code,
-                custord.salesman_code,
-                personout.name AS salesman_name,
-                custorder.salesman_code AS order_salesman_code,
-                comrec.commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                invhead.identity AS customer_id,
-                custinfo.name AS customer_name,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN coalesce(inventpart.part_product_family, salchar.charge_group) IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'CALFO',
+                            'CALMA',
+                            'CAPSE',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAC',
+                            'MDB',
+                            'TEFGE',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT',
+                            'EDU',
+                            'PROMO',
+                            'RESTOCK'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                custordcustadd.region_code AS invoice_region_code,
+                custord.salesman_code AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                custordcustadddel.region_code AS delivery_region_code,
+                custordcustdel.salesman_code AS delivery_salesman_code,
+                persondel.name AS delivery_salesman_name,
+                comrec.commission_receiver as delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                invhead.identity AS invoice_customer_id,
+                custinfo.name AS invoice_customer_name,
                 custinfoadd.address_id AS invoice_address_id,
                 custinfoadd.address1 AS invoice_street_1,
                 custinfoadd.address2 AS invoice_street_2,
@@ -110,6 +191,9 @@
                 custinfoadd.state AS invoice_state,
                 custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
+                custinfodel.association_no AS delivery_association_no,
+                invhead.delivery_identity AS delivery_customer_id,
+                custinfodel.name as delivery_customer_name,
                 custinfoadddel.address_id AS delivery_address_id,
                 custinfoadddel.address1 AS delivery_street_1,
                 custinfoadddel.address2 AS delivery_street_2,
@@ -189,6 +273,10 @@
           AND   DECODE(invitem.company, '241', '240', invitem.company) = inventpart.contract
     LEFT JOIN   customer_info_tab custinfo
            ON   invhead.identity = custinfo.customer_id
+    LEFT JOIN   cust_ord_customer_tab custordcustdel --For delivery customer salesman code
+           ON   invhead.delivery_identity = custordcustdel.customer_no
+    LEFT JOIN   customer_info_tab custinfodel --For delivery customer info
+           ON   invhead.delivery_identity = custinfodel.customer_id
     LEFT JOIN   customer_info_address_tab custinfoadd
            ON   invhead.identity = custinfoadd.customer_id
           AND   invhead.invoice_address_id = custinfoadd.address_id
@@ -197,15 +285,18 @@
           AND   custinfoadd.address_id = custinfoaddtype.address_id
           AND   custinfoaddtype.address_type_code = 'INVOICE'
     LEFT JOIN   customer_info_address_tab custinfoadddel --For delivery address info
-           ON   invhead.identity = custinfoadddel.customer_id
+           ON   invhead.delivery_identity = custinfoadddel.customer_id
           AND   invhead.delivery_address_id = custinfoadddel.address_id
     LEFT JOIN   customer_info_address_type_tab custinfoaddtypedel --For delivery address info
-           ON   invhead.identity = custinfoaddtypedel.customer_id
+           ON   invhead.delivery_identity = custinfoaddtypedel.customer_id
           AND   custinfoadddel.address_id = custinfoaddtypedel.address_id
           AND   custinfoaddtypedel.address_type_code = 'DELIVERY'          
     LEFT JOIN   cust_ord_customer_address_tab custordcustadd
            ON   invhead.identity = custordcustadd.customer_no
           AND   custinfoadd.address_id = custordcustadd.addr_no
+    LEFT JOIN   cust_ord_customer_address_Tab custordcustadddel
+           ON   invhead.delivery_identity = custordcustadddel.customer_no
+          AND   custinfoadddel.address_id = custordcustadddel.addr_no
     LEFT JOIN   cust_ord_customer_tab custord
            ON   invhead.identity = custord.customer_no
     LEFT JOIN   customer_order_tab custorder
@@ -219,6 +310,8 @@
            ON   custord.salesman_code = personout.person_id
     LEFT JOIN   person_info_tab personin --For Inside Rep names
            ON   comrecdef.salesman_code = personin.person_id
+    LEFT JOIN   person_info_tab persondel --For Delivery Rep names
+           ON   custordcustdel.salesman_code = persondel.person_id
     LEFT JOIN   customer_order_address_tab custordadd
            ON   invitem.c1 = custordadd.order_no
     LEFT JOIN   sales_charge_type_tab salchar

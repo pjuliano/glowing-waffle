@@ -10,7 +10,7 @@ With RM_Parts As
     )
 Select
     A.RM_Part_No,
-    Decode(Sum(B.Qty_OnHand - B.Qty_Reserved),Null,0,Sum(B.Qty_OnHand - B.Qty_Reserved)) On_Hand_RM
+    NVL(Sum(B.Qty_OnHand - B.Qty_Reserved),0) On_Hand_RM
 From
     RM_Parts A Left Join Inventory_Part_In_Stock B
         On A.RM_Part_No = B.Part_No

@@ -32,7 +32,7 @@ Select
       A.Deliv_Zip_Code,
       A.Deliv_Country,
       A.Currency_Code,
-      DECODE(A.Salesman_Code,'501','999',A.Salesman_Code) as Salesman_Code,
+      DECODE(A.Salesman_Code,'501','999','800','999',A.Salesman_Code) as Salesman_Code,
       A.Corporate_Form,
       Decode(A.Association_No,Null,' ',A.Association_No) As Association_No,
       A.Primary_Contact,
@@ -69,7 +69,7 @@ From
 Where
         (
         A.Corporate_Form Not In ('FRA','ITL','SWE','IT','BENELUX','GER','KEY') And
-        A.Salesman_Code Not In ('908','504') And --Removed 318 per Brian and Ilona.
+        A.Salesman_Code Not In ('908','504','317') And --Removed 318 per Brian and Ilona.
         A.Customer_ID != 'CATEMP' AND 
         Salesman_Code Not In 
         (

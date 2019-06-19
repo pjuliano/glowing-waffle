@@ -1,3 +1,4 @@
+CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY4 AS
        SELECT   sord.recid,
                 'EURTBL' AS source,
                 '220' AS company,
@@ -53,7 +54,10 @@
                         'DYMIC',
                         'PAI',
                         'PTCOM',
-                        'PALTOP BIO'
+                        'PALTOP BIO',
+                        'PAI',
+                        'PAITC',
+                        'PCA'
                     )
                     THEN 'PALTOP'
                     ELSE 'UNCLASSIFIED'
@@ -75,18 +79,98 @@
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
+                CASE
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'CALFO',
+                            'CALMA',
+                            'CAPSE',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAC',
+                            'MDB',
+                            'TEFGE',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT',
+                            'EDU',
+                            'PROMO',
+                            'RESTOCK'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
                 CASE WHEN sord.customerid IN ('DE55046','DE43125','DE29029','DE47206') THEN 'EURO'
                      WHEN sord.salesrepid IN ('220-510','220-520') THEN 'BENELUX'
                      ELSE 'GER'
-                END AS region_code,    
-                sord.salesrepid AS salesman_code,
-                personout.name AS salesman_name,
-                sord.salesrepid AS order_salesman_code,
-                comrec.commission_receiver AS commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                sord.customerid AS customer_id,
-                nvl(custinfo.name,sord.customername) AS customer_name,
+                END AS invoice_region_code,    
+                sord.salesrepid AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                CASE WHEN sord.customerid IN ('DE55046','DE43125','DE29029','DE47206') THEN 'EURO'
+                     WHEN sord.salesrepid IN ('220-510','220-520') THEN 'BENELUX'
+                     ELSE 'GER'
+                END AS delivery_region_code,
+                sord.salesrepid AS delivery_salesman_code,
+                personout.name as delivery_salesman_name,
+                comrec.commission_receiver AS delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                sord.customerid AS invoice_customer_id,
+                nvl(custinfo.name,sord.customername) AS invoice_customer_name,
                 custinfoaddinv.address_id AS invoice_address_id,
                 custinfoaddinv.address1 AS invoice_street_1,
                 custinfoaddinv.address2 AS invoice_street_2,
@@ -94,6 +178,9 @@
                 custinfoaddinv.state AS invoice_state,
                 custinfoaddinv.zip_code AS invoice_zip,
                 custinfoaddinv.country AS invoice_country,
+                custinfo.association_no AS delivery_association_no,
+                sord.customerid AS delivery_customer_id,
+                nvl(custinfo.name,sord.customername) AS delivery_customer_name,                
                 custinfoadd.address_id AS delivery_address_id,
                 custinfoadd.address1 AS delivery_street_1,
                 custinfoadd.address2 AS delivery_street_2,

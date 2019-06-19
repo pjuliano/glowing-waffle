@@ -1,5 +1,5 @@
---- Rebuild the Cube.sql	Sat Jun 08 13:50:44 2019
-+++ Rebuild the Cube.sql	Sat Jun 08 13:50:44 2019
+--- Rebuild the Cube.sql	Sat Jun 08 14:31:56 2019
++++ Rebuild the Cube.sql	Sat Jun 08 14:31:56 2019
 @@ -3,23 +3,87 @@
 -CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE" (
 -    "RECID", "SOURCE", "COMPANY", "SALES_MARKET", "SEGMENT", 

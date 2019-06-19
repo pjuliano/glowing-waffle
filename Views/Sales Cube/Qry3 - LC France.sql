@@ -1,3 +1,4 @@
+CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY3 AS
        SELECT   sord.recid,
                 'EURTBL' AS source,
                 '240' AS company,
@@ -48,7 +49,10 @@
                         'DYMIC',
                         'PAI',
                         'PTCOM',
-                        'PALTOP BIO'
+                        'PALTOP BIO',
+                        'PAI',
+                        'PAITC',
+                        'PCA'
                     )
                     THEN 'PALTOP'
                     ELSE 'UNCLASSIFIED'
@@ -70,15 +74,92 @@
                     THEN 'FREIGHT'
                     ELSE 'OTHER'
                 END AS product_set,
-                'FRA' AS region_code,
-                sord.salesrepid AS salesman_code,
-                personout.name AS salesman_name,
-                sord.salesrepid AS order_salesman_code,
-                comrec.commission_receiver AS commission_receiver,
-                personin.name AS commission_receiver_name,
-                custinfo.association_no,
-                sord.customerid AS customer_id,
-                nvl(custinfo.name,sord.customername) AS customer_name,
+                CASE
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'GNSIS',
+                            'PRIMA',
+                            'PRMA+',
+                            'TLMAX',
+                            'PCOMM'
+                        )
+                    THEN 'TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'IHMAX',
+                            'ADVN+',
+                            'ADVNC',
+                            'DIVA',
+                            'DYMIC',
+                            'PAI',
+                            'PAITC'
+                        )
+                    THEN 'INTERNAL HEX'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'COMM',
+                            'PTCOM'
+                        )
+                    THEN 'COMMON'
+                    WHEN inventpart.part_product_family = 'PCA'
+                    THEN 'CONICAL'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'RENOV',
+                            'RESTO',
+                            'STAGE',
+                            'SUST',
+                            'XP1',
+                            'OTMED'
+                        )
+                    THEN 'NON-TILOBE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'TRINX',
+                            'EXHEX',
+                            'ZMAX',
+                            'OCT'
+                        )
+                    THEN 'SI STYLE'
+                    WHEN inventpart.part_product_family IN 
+                        (
+                            'BVINE',
+                            'CONNX',
+                            'CYTOP',
+                            'CALFO',
+                            'CALMA',
+                            'CAPSE',
+                            'DYNAB',
+                            'DYNAG',
+                            'DYNAC',
+                            'MDB',
+                            'TEFGE',
+                            'DYNAM',
+                            'MTF',
+                            'SYNTH',
+                            'PALTOP BIO',
+                            'EG',
+                            'OTHER',
+                            'MOTOR',
+                            'FREIGHT',
+                            'EDU',
+                            'PROMO',
+                            'RESTOCK'
+                        )
+                    THEN 'N/A'
+                    ELSE 'UNCLASSIFIED'
+                END AS connection,
+                'FRA' AS invoice_region_code,
+                sord.salesrepid AS invoice_salesman_code,
+                personout.name AS invoice_salesman_name,
+                'FRA' As delivery_region_code,
+                sord.salesrepid AS delivery_salesman_code,
+                personout.name AS delivery_salesman_name,
+                comrec.commission_receiver AS delivery_commission_rec,
+                personin.name AS delivery_commission_rec_name,
+                custinfo.association_no AS invoice_association_no,
+                sord.customerid AS invoice_customer_id,
+                nvl(custinfo.name,sord.customername) AS invoice_customer_name,
                 custinfoaddinv.address_id AS invoice_address_id,
                 custinfoaddinv.address1 AS invoice_street_1,
                 custinfoaddinv.address2 AS invoice_street_2,
@@ -86,6 +167,9 @@
                 custinfoaddinv.state AS invoice_state,
                 custinfoaddinv.zip_code AS invoice_zip,
                 custinfoaddinv.country AS invoice_country,
+                custinfo.association_no AS delivery_association_no,
+                sord.customerid AS delivery_customer_id,
+                nvl(custinfo.name,sord.customername) AS delivery_customer_name,
                 custinfoadd.address_id AS delivery_address_id,
                 custinfoadd.address1 AS delivery_street_1,
                 custinfoadd.address2 AS delivery_street_2,

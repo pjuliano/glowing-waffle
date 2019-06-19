@@ -11,9 +11,8 @@ Select
   A.LOCZIPCODEEND AS ZIP_END
 From
   Geocodeci A,
-  Kd_Zip_Data_Us B,
-  Kd_Inside_Rep_Assignments C,
-  Srrepquota D
-Where
-  B.Rep_Id = C.Rep_Id And
-  B.Rep_Id = D.Repnumber;
+  Kd_Zip_Data_Us B 
+  left Join Kd_Inside_Rep_Assignments C ON
+    B.Rep_id = C.Rep_id
+  LEFT JOIN Srrepquota D ON
+    B.Rep_ID = D.Repnumber

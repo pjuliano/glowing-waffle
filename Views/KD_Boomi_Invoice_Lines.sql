@@ -18,7 +18,7 @@ Select
        When Sales_Part_Api.Check_Exist(Site, Catalog_No) = 0 Or Inventory_Part_Api.Get_Accounting_Group(Site,Catalog_No) Not In ('FG','LIT','DEMO') Or catalog_No In ('PRCADJ','PRIPROKIT','UPGRFEE','PROCFEE') Then 'UNKNOWN'
        Else Catalog_No End As Catalog_No,
   Authorize_Code,
-  Salesman_Code,
+  DECODE(A.Salesman_Code,'501','999','800','999',A.Salesman_Code) AS salesman_code,
   District_Code,
   Region_Code,
   Createdate,
@@ -50,7 +50,7 @@ Where
     (A.Order_No != 'C512921' Or A.Order_No Is Null) And --Kevin Stack's order/return that spanned years.
     Site = '100' And
   A.Charge_Type = 'Parts' And  
-  A.Corporate_Form In ('DOMDIR','ASIA') And
+  A.Corporate_Form NOT IN ('FRA','ITL','SWE','IT','BENELUX','GER','KEY') And
   ((
   A.Salesman_Code Not In ('505','506','507','508') And
   A.Customer_No != 'B3730' And
