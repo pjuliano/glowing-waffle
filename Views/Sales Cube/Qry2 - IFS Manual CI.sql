@@ -1,5 +1,5 @@
 CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY2 AS
-       SELECT   invitem.company || invhead.series_id || invhead.invoice_no || TO_CHAR(invitem.item_id) || TO_CHAR(invhead.invoice_date,'MMDDYYYY') AS recid,
+    SELECT      invitem.company || invhead.series_id || invhead.invoice_no || TO_CHAR(invitem.item_id) || TO_CHAR(invhead.invoice_date,'MMDDYYYY') AS recid,
                 'IFS' AS source,
                 invitem.company,
                 CASE 
@@ -61,7 +61,9 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY2 AS
                         'MOTOR',
                         'FREIGHT',
                         'OCOS',
-                        'EDU'
+                        'EDU',
+                        'DYNAC',
+                        'RESTOCK'
                     )
                     THEN 'KEYSTONE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
@@ -105,7 +107,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY2 AS
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -134,7 +137,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY2 AS
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -142,7 +146,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY2 AS
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group) IN 
@@ -168,7 +173,9 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY2 AS
                             'FREIGHT',
                             'EDU',
                             'PROMO',
-                            'RESTOCK'
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -362,3 +369,7 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY2 AS
                 )
           AND trunc(invhead.invoice_date) >= TO_DATE('01/01/2010', 'MM/DD/YYYY')
           AND invitem.item_id != '100002'
+          AND (
+                custinfo.corporate_form != 'KEY'
+                    OR custinfo.corporate_form IS NULL
+              )

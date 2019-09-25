@@ -3,9 +3,9 @@ Select
     A.RM_Part_No,
     A.FG_Part_No,
     A.RM_Ratio,
-    B.Open_PO_RM,
-    B.On_Hand_RM,
-    Round((B.Open_PO_RM + B.On_Hand_RM) * A.RM_Ratio) As RMFG_Split_Total
+    B.Open_PO_RM / NVL(RM_Divisor,1) AS Open_PO_RM,
+    B.On_Hand_RM / NVL(RM_Divisor,1) AS On_Hand_RM,
+    Round(((B.Open_PO_RM + B.On_Hand_RM)/NVL(RM_Divisor,1)) * A.RM_Ratio) As RMFG_Split_Total
 From
     KD_MRP_RM_Ratio_Forecast A,
     KD_MRP_RM_Qtys B

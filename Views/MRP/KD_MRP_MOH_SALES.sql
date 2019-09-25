@@ -1,4 +1,4 @@
-Create Or Replace View KD_MRP_MOH_SALES As
+--Create Or Replace View KD_MRP_MOH_SALES As
 Select
     A.Rm_Part_No,
     A.Production_Family,
@@ -37,8 +37,10 @@ From
         On A.Proc_Part_No_2 = CC.Proc_Part_No_2
                                 Left Join KD_MRP_FG_Avail D
         On A.FG_Part_No = D.FG_Part_No
+            And A.Fg_Part_Index = D.Fg_part_index
                                 Left Join KD_MRP_FG_Avg_Sales E
         On A.FG_Part_No = E.FG_Part_No
+            And A.Fg_Part_Index = E.Fg_Part_Index
                                 Left Join Inventory_Part F
         On A.FG_Part_No = F.Part_No And
            F.Contract = '100'

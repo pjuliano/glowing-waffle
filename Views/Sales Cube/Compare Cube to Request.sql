@@ -28,7 +28,8 @@ WITH compare AS
                                 OR order_no Is Null
                             )
                         AND salesman_code = '101'
-                        AND EXTRACT(YEAR FROM invoicedate) = 2019
+                        AND EXTRACT(YEAR FROM invoicedate) = 2018
+                        AND invoicedate != TRUNC(SYSDATE)
         GROUP BY        'REQUEST',
                         salesman_code,
                         invoice_id
@@ -63,7 +64,8 @@ WITH compare AS
                                 OR order_no Is Null
                             )
                         AND salesman_code = '101'
-                        AND EXTRACT(YEAR FROM invoicedate) = 2019
+                        AND EXTRACT(YEAR FROM invoicedate) = 2018
+                        AND invoicedate != TRUNC(SYSDATE)
         GROUP BY        'CUBE',
                         salesman_code,
                         invoice_id
@@ -101,3 +103,18 @@ HAVING          SUM
                             THEN total
                         END 
                     )
+                OR
+                SUM
+                    (
+                        CASE
+                            WHEN source = 'REQUEST'
+                            THEN total
+                        END 
+                    ) +
+                SUM
+                    (
+                        CASE 
+                            WHEN source = 'CUBE'
+                            THEN total
+                        END 
+                    ) IS NULL

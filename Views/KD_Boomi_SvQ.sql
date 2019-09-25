@@ -127,21 +127,21 @@ Select
   Round(H.This_Quarter_Implants) As This_Quarter_Impl_Reg,
   Round(H.This_Quarter_Bio) As This_Quarter_Bio_Reg
 From
-  Kd_Svq A,
-  Kd_Svq_This_Month B,
+  Kd_Svq A
+  LEFT JOIN kd_Svq_This_Month B
+    ON A.Salesman_Code = B.Salesman_Code
+  LEFT JOIN Kd_Svq_This_Quarter D
+    ON A.Salesman_Code = D.Salesman_Code
+  LEFT JOIN Kd_Svq_This_Year E
+    ON A.Salesman_Code = E.Salesman_Code
+  LEFT JOIN KD_Svq_Margins I
+    ON A.Salesman_Code = I.Salesman_Code,
   Kd_Monthly_Calendar C,
-  Kd_Svq_This_Quarter D,
-  Kd_Svq_This_Year E,
   Kd_Svq_This_Month_Reg G,
-  Kd_Svq_This_Quarter_Reg H,
-  KD_Svq_Margins I
+  Kd_Svq_This_Quarter_Reg H
+
 Where
-  A.Salesman_Code = B.Salesman_Code And
   C.Month = Extract(Month From Sysdate) And
-  A.Salesman_Code = D.Salesman_Code And
-  A.Salesman_Code = E.Salesman_Code And
   A.Region = G.Region And
   A.Region = H.Region And 
-  A.Salesman_Code = I.Salesman_Code And
-  A.Salesman_Code != '999' And
-  A.Salesman_Code != '318'
+  A.Salesman_Code != '999'

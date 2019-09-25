@@ -1,4 +1,4 @@
-Create Or Replace View KD_MRP_MOH_FORECAST As
+--Create Or Replace View KD_MRP_MOH_FORECAST As
 Select
     A.Rm_Part_No,
     A.Production_Family,
@@ -37,8 +37,10 @@ From
         On A.Proc_Part_No_2 = CC.Proc_Part_No_2
                                 Left Join KD_MRP_FG_Avail D
         On A.FG_Part_No = D.FG_Part_No
+            And A.Fg_Part_Index = D.Fg_Part_Index
                                 Left Join KD_MRP_FG_Avg_Forecast E
         On A.FG_Part_No = E.FG_Part_No
+            And A.Fg_Part_Index = e.Fg_Part_Index
 Order By
     A.Fg_Part_Index,
     A.FG_Part_No

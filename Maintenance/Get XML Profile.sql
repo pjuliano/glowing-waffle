@@ -1,0 +1,1 @@
+SELECT dbms_xmlgen.getxmltype('SELECT * FROM KD_PTLTD_PRICE_LISTS where rownum = 1') FROM DUAL;

@@ -13,9 +13,9 @@ Select
   Round((A.This_Quarter / NullIF(A.Qtr_Quota,0)) * 100,2) As Quarter_Quota_Pct,
   Round((A.This_Quarter_Implants / NullIF(A.Qtr_Quota_Impl,0)) * 100,2) As Quarter_Quota_Pct_Impl,
   Round((A.This_Quarter_Implants / NullIF(A.Qtr_Quota_Bio,0)) * 100,2) As Quarter_Quota_Pct_Bio,
-  A.Qtr_Quota - A.This_Quarter As Quarter_Remaining,
-  A.Qtr_Quota_Impl - A.This_Quarter_Implants As Quarter_Remaining_Impl,
-  A.Qtr_Quota_Bio - A.This_Quarter_Bio as Quarter_Remaining_Bio
+  A.Qtr_Quota - nvl(A.This_Quarter,0) As Quarter_Remaining,
+  A.Qtr_Quota_Impl - nvl(A.This_Quarter_Implants,0) As Quarter_Remaining_Impl,
+  A.Qtr_Quota_Bio - nvl(A.This_Quarter_Bio,0) as Quarter_Remaining_Bio
 From
   Kd_Svq_This_Quarter A,
   Kd_Daily_Quota_By_Month B

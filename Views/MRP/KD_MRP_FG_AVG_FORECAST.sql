@@ -1,5 +1,5 @@
 Create Or Replace View KD_MRP_FG_AVG_FORECAST As
-Select
+Select Distinct
     A.FG_Part_No,
     A.FG_Part_Index,
     B.Forecast_Count,

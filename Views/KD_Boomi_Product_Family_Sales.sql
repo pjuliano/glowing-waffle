@@ -30,14 +30,28 @@ FROM
 WHERE
     Extract(Year From SD.InvoiceDate) >= Extract(Year From Sysdate)-4 AND
     SD.Charge_Type = 'Parts' And
-    SD.Corporate_Form = 'DOMDIR' And
     SD.Catalog_No != '3DBC-22001091' And
     ((SD.Order_No Not Like 'W%' And
     SD.Order_No Not Like 'X%') Or
     SD.Order_No Is Null) And
     (SD.Market_Code != 'PREPOST' Or SD.Market_Code Is Null) And
     SD.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-(SD.Order_No != 'C512921' Or SD.Order_No Is Null) --Kevin Stack's order/return that spanned years.
+    (SD.Order_No != 'C512921' Or SD.Order_No Is Null) --Kevin Stack's order/return that spanned years.
+    AND 
+        (
+        SD.Corporate_Form Not In ('FRA','ITL','SWE','IT','BENELUX','GER','KEY') And
+        SD.Salesman_Code Not In ('908','504','317') And --Removed 318 per Brian and Ilona.
+        SD.Customer_NO != 'CATEMP' AND 
+        SD.Salesman_Code Not In 
+        (
+            '210-001',
+            '210-098',
+            '220-160',
+            '220-140',
+            '220-600',
+            '220-100',
+            '*'
+        ))
 GROUP BY
     SD.Customer_No,
     SD.Part_Product_Family
@@ -77,7 +91,22 @@ WHERE
     SD.Order_No Is Null) And
     (SD.Market_Code != 'PREPOST' Or SD.Market_Code Is Null) And
     SD.Invoice_ID != 'CR1001802096' AND --20180904 Invoice is stuck not posted and cannot be deleted.
-    SD.Order_No != 'C512921' --Kevin Stack's order/return that spanned years.
+    (SD.Order_No != 'C512921' Or SD.Order_No Is Null) --Kevin Stack's order/return that spanned years.
+    AND 
+        (
+        SD.Corporate_Form Not In ('FRA','ITL','SWE','IT','BENELUX','GER','KEY') And
+        SD.Salesman_Code Not In ('908','504','317') And --Removed 318 per Brian and Ilona.
+        SD.Customer_NO != 'CATEMP' AND 
+        SD.Salesman_Code Not In 
+        (
+            '210-001',
+            '210-098',
+            '220-160',
+            '220-140',
+            '220-600',
+            '220-100',
+            '*'
+        ))
 GROUP BY
     SD.Customer_No,
     SD.Part_Product_Family

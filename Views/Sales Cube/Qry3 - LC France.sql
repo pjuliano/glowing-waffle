@@ -1,5 +1,5 @@
 CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY3 AS
-       SELECT   sord.recid,
+    SELECT      sord.recid,
                 'EURTBL' AS source,
                 '240' AS company,
                 'ROW' AS sales_market,
@@ -37,7 +37,9 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY3 AS
                         'MOTOR',
                         'FREIGHT',
                         'OCOS',
-                        'EDU'
+                        'EDU',
+                        'DYNAC',
+                        'RESTOCK'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -81,7 +83,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY3 AS
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -110,7 +113,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY3 AS
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -118,7 +122,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY3 AS
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN inventpart.part_product_family IN 
@@ -144,7 +149,9 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY3 AS
                             'FREIGHT',
                             'EDU',
                             'PROMO',
-                            'RESTOCK'
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -195,7 +202,7 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY3 AS
                 TO_CHAR(sord.itemid) AS item_id,
                 nvl(inventpart.part_product_code,upper(sord.productcode)) AS part_product_code,
                 nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) AS part_product_family,
-                inventpart.second_commodity AS second_commodity,
+                NVL(inventpart.second_commodity,'OTHER') AS second_commodity,
                 sord.salespartno AS catalog_no,
                 nvl(salespart.catalog_desc,sord.partdescription) AS catalog_desc,
                 sord.quantity AS invoiced_qty,
@@ -255,3 +262,7 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY3 AS
         WHERE   sord.year >= 2008 
           AND   custinfoaddtype.def_address = 'TRUE'
           AND   custinfoaddtypeinv.def_address = 'TRUE'
+          AND   (
+                    custinfo.corporate_form != 'KEY'
+                        OR custinfo.corporate_form IS NULL
+                )

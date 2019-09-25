@@ -1,5 +1,5 @@
 CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY7 AS
-       SELECT   invhead.recid,
+    SELECT      invhead.recid,
                 'SIDATA' AS source,
                 '100' AS company,
                 CASE 
@@ -61,7 +61,9 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY7 AS
                         'MOTOR',
                         'FREIGHT',
                         'OCOS',
-                        'EDU'
+                        'EDU',
+                        'DYNAC',
+                        'RESTOCK'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -105,7 +107,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY7 AS
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -134,7 +137,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY7 AS
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -142,7 +146,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY7 AS
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN inventpart.part_product_family IN 
@@ -168,7 +173,9 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY7 AS
                             'FREIGHT',
                             'EDU',
                             'PROMO',
-                            'RESTOCK'
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -277,3 +284,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY7 AS
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
            ON   prodfam.objkey = prodfamcft.rowkey
+        
+        WHERE   (
+                    custinfo.corporate_form != 'KEY'
+                        OR custinfo.corporate_form IS NULL
+                )

@@ -1,6 +1,7 @@
 Create Or Replace View Kd_Svq_This_Quarter As
     Select
-        A.Salesman_Code,Sum (A.Allamounts) As This_Quarter,Sum (
+        b.repnumber AS salesman_code,
+        Sum (A.Allamounts) As This_Quarter,Sum (
             Case
                 When A.Part_Product_Code Not In (
                     'LIT','REGEN'
@@ -67,9 +68,9 @@ Create Or Replace View Kd_Svq_This_Quarter As
             Then B.Qtr4_Bio
         End As Qtr_Quota_Bio,B.Region
     From
-        Kd_Sales_Data_Request   A
-        Left Join Srrepquota              B On A.Salesman_Code = B.Repnumber
-    Where
+        Srrepquota B
+        Left Join Kd_Sales_Data_Request A 
+        On A.Salesman_Code = B.Repnumber And
         A.Invoiceqtr =
             Case
                 When Extract (Month From Sysdate) In (
@@ -88,21 +89,21 @@ Create Or Replace View Kd_Svq_This_Quarter As
                     10,11,12
                 )
                 Then 'QTR4'
-            End
-        And
+            End And
         Extract (Year From A.Invoicedate) = Extract (Year From Sysdate) And
         A.Charge_Type = 'Parts' And
         A.Corporate_Form = 'DOMDIR' And
         A.Catalog_No != '3DBC-22001091' And
         ((A.Order_No Not Like 'W%' And
-          A.Order_No Not Like 'X%') Or
-         A.Order_No Is Null) And
+        A.Order_No Not Like 'X%') Or
+        A.Order_No Is Null) And
         (A.Market_Code != 'PREPOST' Or
-         A.Market_Code Is Null) And
+        A.Market_Code Is Null) And
         A.Invoice_Id != 'CR1001802096' And --20180904 Invoice is stuck not posted and cannot be deleted.
         (A.Order_No != 'C512921' Or A.Order_No Is Null) --Kevin Stack's order/return that spanned years.    
     Group By
-        A.Salesman_Code,Case
+        b.repnumber,
+        Case
                 When Extract (Month From Sysdate) In (
                     1,2,3
                 )

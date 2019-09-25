@@ -1,5 +1,5 @@
 CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY9 AS
-       SELECT   invhead.recid,
+    SELECT      invhead.recid,
                 'PTUSA' AS source,
                 CASE
                     WHEN invhead.customerno IN (
@@ -48,8 +48,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY9 AS
                         'Cust1002260',
                         'Cust1002461'
                     )
-                THEN 'PTLTD'
-                ELSE custinfo.corporate_form 
+                    THEN 'PTLTD'
+                    ELSE custinfo.corporate_form 
                 END AS corporate_form,
                 'PALTOP' AS product_brand,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
@@ -76,7 +76,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY9 AS
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -105,7 +106,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY9 AS
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -113,7 +115,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY9 AS
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN inventpart.part_product_family IN 
@@ -130,7 +133,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY9 AS
                             'EG',
                             'OTHER',
                             'MOTOR',
-                            'FREIGHT'
+                            'FREIGHT',
+                            'IDENT'
                         )
                         OR invhead.itemno = '97-00001'
                     THEN 'N/A'
@@ -242,4 +246,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY9 AS
     LEFT JOIN   inventory_product_family prodfam 
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
-           ON   prodfam.objkey = prodfamcft.rowkey;
+           ON   prodfam.objkey = prodfamcft.rowkey
+        
+        WHERE   (custinfo.corporate_form != 'KEY' OR custinfo.corporate_form IS NULL)
+          AND   invhead.customerno != 'Cust1002028'
+          

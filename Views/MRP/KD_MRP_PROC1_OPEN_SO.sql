@@ -5,6 +5,8 @@ With Proc_Parts As
         A.Proc_Part_No_1
     From
         KD_MRP_Part_Relationships A
+    Where
+        A.Proc_Part_No_1 IS NOT NULL
     Group By
         A.Proc_Part_No_1
     )

@@ -21,6 +21,7 @@ With Forecast_Qtys As
 Select 
     A.RM_Part_No, 
     A.FG_Part_No,
+    A.RM_Divisor,
     Round(Case When A.FG_Part_Index = 1 Then (B.Forecast_Qty_Fg1/(Nullif((B.Forecast_Qty_FG1 + B.Forecast_Qty_FG2 + B.Forecast_Qty_FG3 + B.Forecast_Qty_FG4),0)))
                When A.FG_Part_Index = 2 Then (B.Forecast_Qty_FG2/(Nullif((B.Forecast_Qty_FG1 + B.Forecast_Qty_FG2 + B.Forecast_Qty_FG3 + B.Forecast_Qty_FG4),0)))
                When A.FG_Part_Index = 3 Then (B.Forecast_Qty_FG3/(Nullif((B.Forecast_Qty_FG1 + B.Forecast_Qty_FG2 + B.Forecast_Qty_FG3 + B.Forecast_Qty_FG4),0)))

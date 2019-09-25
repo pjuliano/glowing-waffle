@@ -1,6 +1,14 @@
 Create OR replace View KD_Boomi_Invoice_Headers As
 Select
-  DECODE(A.Salesman_Code,'501','999','800','999',A.Salesman_Code) AS salesman_code,
+  DECODE(A.Salesman_Code,
+    '501','999',
+    '503','999',
+    '800','999',
+    '504','999',
+    '801','Dor',
+    '802','Boris Shwa',
+    '803','Galit',
+    A.Salesman_Code) AS salesman_code,
   A.Customer_No,
   A.Customer_Name,
   Case When A.Invoice_Id Like 'CR%'
@@ -58,6 +66,7 @@ Where
   ((
   A.Salesman_Code Not In ('505','506','507','508') And
   A.Customer_No != 'B3730' And
+  A.Customer_No != '1639' And
   A.Invoice_Id != '0' )
   Or
   (A.Customer_No In ('B2911',
@@ -73,8 +82,7 @@ Where
         'B6782',
         'B3730',
         'B2848',
-        'B6684',
-        '1639')
+        'B6684')
         )) And
     A.Currency in ('USD','CAD')   
 Group By

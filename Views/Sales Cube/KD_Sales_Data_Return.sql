@@ -1,4 +1,4 @@
---CREATE OR REPLACE VIEW kd_sales_data_cube AS
+CREATE OR REPLACE VIEW kd_sales_data_cube AS
 
 SELECT          sc.company                                  AS company,
                 sc.invoice_id                               AS invoice_id,
@@ -81,7 +81,7 @@ SELECT          sc.company                                  AS company,
                 sc.delivery_country                         AS delivcountry,
                 custinfoadddel.county                       AS delivcounty
                               
-FROM            kd_sales_cube_test sc
+FROM            kd_sales_cube sc
                 LEFT JOIN invoice_tab invhead ON
                     SUBSTR(sc.invoice_id,3) = invhead.invoice_no
                     AND sc.company = invhead.company

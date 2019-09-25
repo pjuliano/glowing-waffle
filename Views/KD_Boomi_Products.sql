@@ -27,5 +27,7 @@ From
                Left Join Inventory_Part_Unit_Cost_Sum C On
       A.Contract = C.Contract And
       A.Part_No = C.Part_No
+Where
+  A.Contract = '100'
 Order By
   A.Catalog_No

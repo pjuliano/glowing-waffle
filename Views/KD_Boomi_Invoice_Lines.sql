@@ -18,7 +18,15 @@ Select
        When Sales_Part_Api.Check_Exist(Site, Catalog_No) = 0 Or Inventory_Part_Api.Get_Accounting_Group(Site,Catalog_No) Not In ('FG','LIT','DEMO') Or catalog_No In ('PRCADJ','PRIPROKIT','UPGRFEE','PROCFEE') Then 'UNKNOWN'
        Else Catalog_No End As Catalog_No,
   Authorize_Code,
-  DECODE(A.Salesman_Code,'501','999','800','999',A.Salesman_Code) AS salesman_code,
+  DECODE(A.Salesman_Code,
+    '501','999',
+    '503','999',
+    '800','999',
+    '504','999',
+    '801','Dor',
+    '802','Boris Shwa',
+    '803','Galit',
+    A.Salesman_Code) AS salesman_code,
   District_Code,
   Region_Code,
   Createdate,
@@ -54,6 +62,7 @@ Where
   ((
   A.Salesman_Code Not In ('505','506','507','508') And
   A.Customer_No != 'B3730' And
+  A.Customer_No != '1639' And
   A.Invoice_Id != '0' )
   Or
   (A.Customer_No In ('B2911',
@@ -69,7 +78,6 @@ Where
         'B6782',
         'B3730',
         'B2848',
-        'B6684',
-        '1639')
+        'B6684')
         )) And
     A.Currency in ('USD','CAD')

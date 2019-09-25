@@ -51,7 +51,7 @@ Select
     Sum(Case When Upper(Product_Type) = 'IMPLANTS' Then M10 + M11 + M12 Else 0 End) As QTR4_IMPL,
     Sum(Case When Upper(Product_Type) = 'BIOMATERIALS' Then M10 + M11 + M12 Else 0 End) As QTR4_BIO,
     Region,
-    Decode(Region,'USSC','Chris Johnson','USEC','Christian Villarroel','USNC','Michael Braun','USWC','RM USWC','UNASSIGNED','Brian Bashaw',Null) As Regionmgr,
+    Decode(Region,'USSC','Chris Johnson','USEC','Christian Villarroel','USNC','Michael Braun','USWC','Tony Zablit','UNASSIGNED','Mike Vandenkolk',Null) As Regionmgr,
     Sum(M1+ M2 + M3 + M4 + M5 + M6 + M7 + M8 + M9 + M10 + M11 + M12) As Year,
     Sum(Case When Upper(Product_Type) = 'IMPLANTS' Then M1 + M2 + M3 + M4 + M5 + M6 + M7 + M8 + M9 + M10 + M11 + M12 Else 0 End) As Year_IMPL,
     Sum(Case When Upper(Product_Type) = 'BIOMATERIALS' Then M1 + M2 + M3 + M4 + M5 + M6 + M7 + M8 +M9 + M10 + M11 + M12 Else 0 End) As Year_BIO

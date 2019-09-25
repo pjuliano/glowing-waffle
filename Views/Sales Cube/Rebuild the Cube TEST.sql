@@ -93,7 +93,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
     REFRESH COMPLETE ON DEMAND 
     USING DEFAULT LOCAL ROLLBACK SEGMENT 
     USING ENFORCED CONSTRAINTS DISABLE QUERY REWRITE AS
-    
+
     SELECT      invitem.company || invhead.series_id || invhead.invoice_no || TO_CHAR(invitem.item_id) || TO_CHAR(invhead.invoice_date,'MMDDYYYY') AS recid,
                 'IFS' AS source,
                 invitem.company,
@@ -164,7 +164,9 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
                             'MOTOR',
                             'FREIGHT',
                             'OCOS',
-                            'EDU'
+                            'EDU',
+                            'DYNAC',
+                            'RESTOCK'
                         )
                     THEN 'KEYSTONE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN 
@@ -209,7 +211,8 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -238,7 +241,8 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -246,7 +250,8 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group) IN 
@@ -254,8 +259,14 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
                             'BVINE',
                             'CONNX',
                             'CYTOP',
+                            'CALFO',
+                            'CALMA',
+                            'CAPSE',
                             'DYNAB',
                             'DYNAG',
+                            'DYNAC',
+                            'MDB',
+                            'TEFGE',
                             'DYNAM',
                             'MTF',
                             'SYNTH',
@@ -263,7 +274,12 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
                             'EG',
                             'OTHER',
                             'MOTOR',
-                            'FREIGHT'
+                            'FREIGHT',
+                            'EDU',
+                            'PROMO',
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -287,7 +303,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
                 custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
                 custinfodel.association_no AS delivery_association_no,
-                invhead.delivery_identity AS delivery_customer_id,
+                COALESCE(invhead.delivery_identity,invhead.identity) AS delivery_customer_id,
                 custinfodel.name AS delivery_customer_name,
                 custinfoadddel.address_id AS delivery_address_id,
                 custinfoadddel.address1 AS delivery_street_1,
@@ -298,7 +314,11 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
                 custinfoadddel.country AS delivery_country,
                 invitem.c1 AS order_id,
                 invhead.n2 AS rma_id,
-                invhead.n3 AS rma_line,
+                CASE
+                    WHEN invitem.c1 IS NOT NULL
+                    THEN invitem.item_id
+                    ELSE NULL 
+                END AS rma_line,
                 custorder.market_code,
                 invhead.pay_term_id,
                 invhead.currency AS order_currency,
@@ -364,9 +384,9 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
     LEFT JOIN   customer_info_tab custinfo
            ON   invhead.identity = custinfo.customer_id
     LEFT JOIN   cust_ord_customer_tab custordcustdel --For delivery customer salesman code
-           ON   invhead.delivery_identity = custordcustdel.customer_no
+           ON   COALESCE(invhead.delivery_identity,invhead.identity) = custordcustdel.customer_no
     LEFT JOIN   customer_info_tab custinfodel --For delivery customer info
-           ON   invhead.delivery_identity = custinfodel.customer_id
+           ON   COALESCE(invhead.delivery_identity,invhead.identity) = custinfodel.customer_id
     LEFT JOIN   customer_info_address_tab custinfoadd --For invoice address info
            ON   invhead.identity = custinfoadd.customer_id
           AND   invhead.invoice_address_id = custinfoadd.address_id
@@ -375,17 +395,17 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
           AND   custinfoadd.address_id = custinfoaddtype.address_id
           AND   custinfoaddtype.address_type_code = 'INVOICE'
     LEFT JOIN   customer_info_address_tab custinfoadddel --For delivery address info
-           ON   invhead.delivery_identity = custinfoadddel.customer_id
+           ON   COALESCE(invhead.delivery_identity,invhead.identity) = custinfoadddel.customer_id
           AND   invhead.delivery_address_id = custinfoadddel.address_id
     LEFT JOIN   customer_info_address_type_tab custinfoaddtypedel --For delivery address info
-           ON   invhead.delivery_identity = custinfoaddtypedel.customer_id
+           ON   COALESCE(invhead.delivery_identity,invhead.identity) = custinfoaddtypedel.customer_id
           AND   custinfoadddel.address_id = custinfoaddtypedel.address_id
           AND   custinfoaddtypedel.address_type_code = 'DELIVERY'
     LEFT JOIN   cust_ord_customer_address_tab custordcustadd
            ON   invhead.identity = custordcustadd.customer_no
           AND   custinfoadd.address_id = custordcustadd.addr_no
     LEFT JOIN   cust_ord_customer_address_tab custordcustadddel
-          ON    invhead.delivery_identity = custordcustadddel.customer_no
+          ON    COALESCE(invhead.delivery_identity,invhead.identity) = custordcustadddel.customer_no
          AND    custinfoadddel.address_id = custordcustadddel.addr_no
     LEFT JOIN   cust_ord_customer_tab custord
            ON   invhead.identity = custord.customer_no
@@ -411,15 +431,19 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
            ON   prodfam.objkey = prodfamcft.rowkey
-
+           
          WHERE  invhead.series_id != 'CI'
            AND  invhead.party_type = 'CUSTOMER'
            AND  invhead.rowstate != 'Preliminary'
            AND  invhead.rowstate != 'Cancelled'
-           
+           AND  (
+                    custinfo.corporate_form != 'KEY'
+                        OR custinfo.corporate_Form IS NULL
+                )
+                
 UNION ALL
 
-       SELECT   invitem.company || invhead.series_id || invhead.invoice_no || TO_CHAR(invitem.item_id) || TO_CHAR(invhead.invoice_date,'MMDDYYYY') AS recid,
+    SELECT      invitem.company || invhead.series_id || invhead.invoice_no || TO_CHAR(invitem.item_id) || TO_CHAR(invhead.invoice_date,'MMDDYYYY') AS recid,
                 'IFS' AS source,
                 invitem.company,
                 CASE 
@@ -481,7 +505,9 @@ UNION ALL
                         'MOTOR',
                         'FREIGHT',
                         'OCOS',
-                        'EDU'
+                        'EDU',
+                        'DYNAC',
+                        'RESTOCK'
                     )
                     THEN 'KEYSTONE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
@@ -525,7 +551,8 @@ UNION ALL
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -554,7 +581,8 @@ UNION ALL
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -562,7 +590,8 @@ UNION ALL
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group) IN 
@@ -570,8 +599,14 @@ UNION ALL
                             'BVINE',
                             'CONNX',
                             'CYTOP',
+                            'CALFO',
+                            'CALMA',
+                            'CAPSE',
                             'DYNAB',
                             'DYNAG',
+                            'DYNAC',
+                            'MDB',
+                            'TEFGE',
                             'DYNAM',
                             'MTF',
                             'SYNTH',
@@ -579,7 +614,12 @@ UNION ALL
                             'EG',
                             'OTHER',
                             'MOTOR',
-                            'FREIGHT'
+                            'FREIGHT',
+                            'EDU',
+                            'PROMO',
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -773,10 +813,14 @@ UNION ALL
                 )
           AND trunc(invhead.invoice_date) >= TO_DATE('01/01/2010', 'MM/DD/YYYY')
           AND invitem.item_id != '100002'
-          
+          AND (
+                custinfo.corporate_form != 'KEY'
+                    OR custinfo.corporate_form IS NULL
+              )
+              
 UNION ALL
 
-       SELECT   sord.recid,
+    SELECT      sord.recid,
                 'EURTBL' AS source,
                 '240' AS company,
                 'ROW' AS sales_market,
@@ -814,7 +858,9 @@ UNION ALL
                         'MOTOR',
                         'FREIGHT',
                         'OCOS',
-                        'EDU'
+                        'EDU',
+                        'DYNAC',
+                        'RESTOCK'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -858,7 +904,8 @@ UNION ALL
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -887,7 +934,8 @@ UNION ALL
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -895,7 +943,8 @@ UNION ALL
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN inventpart.part_product_family IN 
@@ -903,8 +952,14 @@ UNION ALL
                             'BVINE',
                             'CONNX',
                             'CYTOP',
+                            'CALFO',
+                            'CALMA',
+                            'CAPSE',
                             'DYNAB',
                             'DYNAG',
+                            'DYNAC',
+                            'MDB',
+                            'TEFGE',
                             'DYNAM',
                             'MTF',
                             'SYNTH',
@@ -912,7 +967,12 @@ UNION ALL
                             'EG',
                             'OTHER',
                             'MOTOR',
-                            'FREIGHT'
+                            'FREIGHT',
+                            'EDU',
+                            'PROMO',
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -963,7 +1023,7 @@ UNION ALL
                 TO_CHAR(sord.itemid) AS item_id,
                 nvl(inventpart.part_product_code,upper(sord.productcode)) AS part_product_code,
                 nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) AS part_product_family,
-                inventpart.second_commodity AS second_commodity,
+                NVL(inventpart.second_commodity,'OTHER') AS second_commodity,
                 sord.salespartno AS catalog_no,
                 nvl(salespart.catalog_desc,sord.partdescription) AS catalog_desc,
                 sord.quantity AS invoiced_qty,
@@ -1023,10 +1083,14 @@ UNION ALL
         WHERE   sord.year >= 2008 
           AND   custinfoaddtype.def_address = 'TRUE'
           AND   custinfoaddtypeinv.def_address = 'TRUE'
-
+          AND   (
+                    custinfo.corporate_form != 'KEY'
+                        OR custinfo.corporate_form IS NULL
+                )
+                
 UNION ALL
 
-       SELECT   sord.recid,
+    SELECT      sord.recid,
                 'EURTBL' AS source,
                 '220' AS company,
                 'ROW' AS sales_market,
@@ -1069,7 +1133,9 @@ UNION ALL
                         'MOTOR',
                         'FREIGHT',
                         'OCOS',
-                        'EDU'
+                        'EDU',
+                        'DYNAC',
+                        'RESTOCK'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1107,16 +1173,17 @@ UNION ALL
                     ELSE 'OTHER'
                 END AS product_set,
                 CASE
-                    WHEN inventpart.part_product_family IN 
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
                         (
                             'GNSIS',
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
-                    WHEN inventpart.part_product_family IN 
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
                         (
                             'IHMAX',
                             'ADVN+',
@@ -1127,39 +1194,47 @@ UNION ALL
                             'PAITC'
                         )
                     THEN 'INTERNAL HEX'
-                    WHEN inventpart.part_product_family IN 
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
                         (
                             'COMM',
                             'PTCOM'
                         )
                     THEN 'COMMON'
-                    WHEN inventpart.part_product_family = 'PCA'
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) = 'PCA'
                     THEN 'CONICAL'
-                    WHEN inventpart.part_product_family IN 
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
                         (
                             'RENOV',
                             'RESTO',
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
-                    WHEN inventpart.part_product_family IN 
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
                         (
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
-                    WHEN inventpart.part_product_family IN 
+                    WHEN nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) IN 
                         (
                             'BVINE',
                             'CONNX',
                             'CYTOP',
+                            'CALFO',
+                            'CALMA',
+                            'CAPSE',
                             'DYNAB',
                             'DYNAG',
+                            'DYNAC',
+                            'MDB',
+                            'TEFGE',
                             'DYNAM',
                             'MTF',
                             'SYNTH',
@@ -1167,7 +1242,12 @@ UNION ALL
                             'EG',
                             'OTHER',
                             'MOTOR',
-                            'FREIGHT'
+                            'FREIGHT',
+                            'EDU',
+                            'PROMO',
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -1224,7 +1304,7 @@ UNION ALL
                 TO_CHAR(sord.itemid) AS item_id,
                 nvl(inventpart.part_product_code,upper(sord.productcode)) AS part_product_code,
                 nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) AS part_product_family,
-                inventpart.second_commodity AS second_commodity,
+                NVL(inventpart.second_commodity,'OTHER') AS second_commodity,
                 sord.salespartno AS catalog_no,
                 nvl(salespart.catalog_desc,sord.partdescription) AS catalog_desc,
                 sord.quantity AS invoiced_qty,
@@ -1284,10 +1364,14 @@ UNION ALL
         WHERE   sord.year >= 2008
           AND   custinfoaddtype.def_address = 'TRUE'
           AND   custinfoaddtypeinv.def_address = 'TRUE'
-          
+          AND   (
+                    custinfo.corporate_form != 'KEY'
+                        OR custinfo.corporate_form IS NULL
+                )
+
 UNION ALL
 
-       SELECT   sord.recid,
+    SELECT      sord.recid,
                 'EURTBL' AS source,
                 '230' AS company,
                 'ROW' AS sales_market,
@@ -1325,7 +1409,9 @@ UNION ALL
                         'MOTOR',
                         'FREIGHT',
                         'OCOS',
-                        'EDU'
+                        'EDU',
+                        'DYNAC',
+                        'RESTOCK'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1369,7 +1455,8 @@ UNION ALL
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -1398,7 +1485,8 @@ UNION ALL
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -1406,7 +1494,8 @@ UNION ALL
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN inventpart.part_product_family IN 
@@ -1414,8 +1503,14 @@ UNION ALL
                             'BVINE',
                             'CONNX',
                             'CYTOP',
+                            'CALFO',
+                            'CALMA',
+                            'CAPSE',
                             'DYNAB',
                             'DYNAG',
+                            'DYNAC',
+                            'MDB',
+                            'TEFGE',
                             'DYNAM',
                             'MTF',
                             'SYNTH',
@@ -1423,7 +1518,12 @@ UNION ALL
                             'EG',
                             'OTHER',
                             'MOTOR',
-                            'FREIGHT'
+                            'FREIGHT',
+                            'EDU',
+                            'PROMO',
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -1474,7 +1574,7 @@ UNION ALL
                 TO_CHAR(sord.itemid) AS item_id,
                 nvl(inventpart.part_product_code,upper(sord.productcode)) AS part_product_code,
                 nvl(inventpart.part_product_family,upper(sord.productline)) AS part_product_family,
-                inventpart.second_commodity AS second_commodity,
+                nvl(inventpart.second_commodity,'OTHER') AS second_commodity,
                 sord.salespartno AS catalog_no,
                 nvl(salespart.catalog_desc,sord.partdescription) AS catalog_desc,
                 sord.quantity AS invoiced_qty,
@@ -1534,10 +1634,14 @@ UNION ALL
         WHERE   sord.year >= 2008 
           AND   custinfoaddtype.def_address = 'TRUE'
           AND   custinfoaddtypeinv.def_address = 'TRUE'
-          
+          AND   (
+                    custinfo.corporate_form != 'KEY'
+                        OR custinfo.corporate_form IS NULL
+                )
+
 UNION ALL
 
-       SELECT   sord.recid,
+    SELECT      sord.recid,
                 'EURTBL' AS source,
                 '210' AS company,
                 'ROW' AS sales_market,
@@ -1583,7 +1687,9 @@ UNION ALL
                         'MOTOR',
                         'FREIGHT',
                         'OCOS',
-                        'EDU'
+                        'EDU',
+                        'DYNAC',
+                        'RESTOCK'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1627,7 +1733,8 @@ UNION ALL
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -1656,7 +1763,8 @@ UNION ALL
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -1664,7 +1772,8 @@ UNION ALL
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN inventpart.part_product_family IN 
@@ -1672,8 +1781,14 @@ UNION ALL
                             'BVINE',
                             'CONNX',
                             'CYTOP',
+                            'CALFO',
+                            'CALMA',
+                            'CAPSE',
                             'DYNAB',
                             'DYNAG',
+                            'DYNAC',
+                            'MDB',
+                            'TEFGE',
                             'DYNAM',
                             'MTF',
                             'SYNTH',
@@ -1681,7 +1796,12 @@ UNION ALL
                             'EG',
                             'OTHER',
                             'MOTOR',
-                            'FREIGHT'
+                            'FREIGHT',
+                            'EDU',
+                            'PROMO',
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -1740,7 +1860,7 @@ UNION ALL
                 TO_CHAR(sord.itemid) AS item_id,
                 nvl(inventpart.part_product_code,upper(sord.productcode)) AS part_product_code,
                 nvl(inventpart.part_product_family,substr(upper(sord.productline),1,5)) AS part_product_family,
-                inventpart.second_commodity AS second_commodity,
+                NVL(inventpart.second_commodity, 'OTHER') AS second_commodity,
                 sord.salespartno AS catalog_no,
                 nvl(salespart.catalog_desc,sord.partdescription) AS catalog_desc,
                 sord.quantity AS invoiced_qty,
@@ -1800,10 +1920,14 @@ UNION ALL
         WHERE   sord.year >= 2008 
           AND   custinfoaddtype.def_address = 'TRUE'
           AND   custinfoaddtypeinv.def_address = 'TRUE'
-          
+          AND   (
+                    custinfo.corporate_form != 'KEY'
+                        OR Custinfo.corporate_form IS NULL
+                )
+
 UNION ALL
 
-       SELECT   invhead.recid,
+    SELECT      invhead.recid,
                 'SIDATA' AS source,
                 '100' AS company,
                 CASE 
@@ -1865,7 +1989,9 @@ UNION ALL
                         'MOTOR',
                         'FREIGHT',
                         'OCOS',
-                        'EDU'
+                        'EDU',
+                        'DYNAC',
+                        'RESTOCK'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1909,7 +2035,8 @@ UNION ALL
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -1938,7 +2065,8 @@ UNION ALL
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -1946,7 +2074,8 @@ UNION ALL
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN inventpart.part_product_family IN 
@@ -1954,8 +2083,14 @@ UNION ALL
                             'BVINE',
                             'CONNX',
                             'CYTOP',
+                            'CALFO',
+                            'CALMA',
+                            'CAPSE',
                             'DYNAB',
                             'DYNAG',
+                            'DYNAC',
+                            'MDB',
+                            'TEFGE',
                             'DYNAM',
                             'MTF',
                             'SYNTH',
@@ -1963,7 +2098,12 @@ UNION ALL
                             'EG',
                             'OTHER',
                             'MOTOR',
-                            'FREIGHT'
+                            'FREIGHT',
+                            'EDU',
+                            'PROMO',
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -2072,10 +2212,15 @@ UNION ALL
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
            ON   prodfam.objkey = prodfamcft.rowkey
-           
+        
+        WHERE   (
+                    custinfo.corporate_form != 'KEY'
+                        OR custinfo.corporate_form IS NULL
+                )
+                
 UNION ALL
 
-       SELECT   invhead.recid,
+    SELECT     invhead.recid,
                 'PTLTD' AS source,
                 '300' AS company,
                 'ROW' AS sales_market,
@@ -2170,6 +2315,7 @@ UNION ALL
                             'DIGITAL',
                             'PACKAGING MATERIALS'
                         )
+                        OR invhead.itemno = '97-00001'
                     THEN 'N/A'                    
                     ELSE 'UNCLASSIFIED'
                 END AS connection,
@@ -2346,10 +2492,26 @@ UNION ALL
                 END = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
            ON   prodfam.objkey = prodfamcft.rowkey
-           
+        WHERE   
+                (
+                    invhead.salesmngr NOT IN 
+                        (
+                            'DORIT AVIV',
+                            'MARKETING',
+                            'R' || CHR(38) || 'D'
+                        ) OR
+                    invhead.salesmngr IS NULL
+                )
+          AND   invhead.customerno NOT IN 
+                    (
+                        'Cust1002664',
+                        'Cust1002656',
+                        'Cust1002224'
+                    )
+                    
 UNION ALL
 
-       SELECT   invhead.recid,
+    SELECT      invhead.recid,
                 'PTUSA' AS source,
                 CASE
                     WHEN invhead.customerno IN (
@@ -2398,8 +2560,8 @@ UNION ALL
                         'Cust1002260',
                         'Cust1002461'
                     )
-                THEN 'PTLTD'
-                ELSE custinfo.corporate_form 
+                    THEN 'PTLTD'
+                    ELSE custinfo.corporate_form 
                 END AS corporate_form,
                 'PALTOP' AS product_brand,
                 NVL(prodfamcft.cf$_kdprodfamtype,'SUND') AS product_type,
@@ -2426,7 +2588,8 @@ UNION ALL
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -2455,7 +2618,8 @@ UNION ALL
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -2463,7 +2627,8 @@ UNION ALL
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN inventpart.part_product_family IN 
@@ -2480,8 +2645,10 @@ UNION ALL
                             'EG',
                             'OTHER',
                             'MOTOR',
-                            'FREIGHT'
+                            'FREIGHT',
+                            'IDENT'
                         )
+                        OR invhead.itemno = '97-00001'
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
                 END AS connection,
@@ -2592,9 +2759,12 @@ UNION ALL
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
            ON   prodfam.objkey = prodfamcft.rowkey
-    ;
+        
+        WHERE   (custinfo.corporate_form != 'KEY' OR custinfo.corporate_form IS NULL)
+          AND   invhead.customerno != 'Cust1002028'
+;
     
-CREATE UNIQUE INDEX "IFSAPP"."KD_SALES_CUBE_RECID_TEST" ON "IFSAPP"."KD_SALES_CUBE_TEST" ("RECID") 
+CREATE UNIQUE INDEX "IFSAPP"."KD_SALES_CUBE_TEST_RECID" ON "IFSAPP"."KD_SALES_CUBE_TEST" ("RECID") 
     PCTFREE 10 
     INITRANS 2 
     MAXTRANS 167 
@@ -2614,4 +2784,23 @@ CREATE UNIQUE INDEX "IFSAPP"."KD_SALES_CUBE_RECID_TEST" ON "IFSAPP"."KD_SALES_CU
         )
     TABLESPACE "IFSAPP_DATA" ;
 
-CREATE INDEX "IFSAPP"."KD_SALES_CUBE_YQM_TEST" ON "IFSAPP"."KD_SALES_CUBE_TEST" ("INVOICE_YEAR" ASC, "INVOICE_QUARTER" ASC, "INVOICE_MONTH" ASC);
+CREATE INDEX KD_SALES_CUBE_TEST_yqm ON KD_SALES_CUBE_TEST (invoice_year, invoice_month, invoice_quarter);
+CREATE INDEX KD_SALES_CUBE_TEST_inv_year ON KD_SALES_CUBE_TEST (invoice_year);
+CREATE INDEX KD_SALES_CUBE_TEST_inv_quarter ON KD_SALES_CUBE_TEST (invoice_quarter);
+CREATE INDEX KD_SALES_CUBE_TEST_inv_mo ON KD_SALES_CUBE_TEST (invoice_month);
+CREATE INDEX KD_SALES_CUBE_TEST_family ON KD_SALES_CUBE_TEST (part_product_family);
+CREATE INDEX KD_SALES_CUBE_TEST_code ON KD_SALES_CUBE_TEST (part_product_code);
+CREATE INDEX KD_SALES_CUBE_TEST_sm ON KD_SALES_CUBE_TEST (sales_market);
+CREATE INDEX KD_SALES_CUBE_TEST_segment ON KD_SALES_CUBE_TEST (segment);
+CREATE INDEX KD_SALES_CUBE_TEST_CF ON KD_SALES_CUBE_TEST (corporate_form);
+CREATE INDEX KD_SALES_CUBE_TEST_brand ON KD_SALES_CUBE_TEST (product_brand);
+CREATE INDEX KD_SALES_CUBE_TEST_type ON KD_SALES_CUBE_TEST (product_type);
+CREATE INDEX KD_SALES_CUBE_TEST_prod_set ON KD_SALES_CUBE_TEST (product_set);
+CREATE INDEX KD_SALES_CUBE_TEST_connection ON KD_SALES_CUBE_TEST (connection);
+CREATE INDEX KD_SALES_CUBE_TEST_inv_region ON KD_SALES_CUBE_TEST (invoice_region_code);
+CREATE INDEX KD_SALES_CUBE_TEST_inv_rep ON KD_SALES_CUBE_TEST (invoice_salesman_code);
+CREATE INDEX KD_SALES_CUBE_TEST_inv_custid ON KD_SALES_CUBE_TEST (invoice_customer_id);
+CREATE INDEX KD_SALES_CUBE_TEST_order ON KD_SALES_CUBE_TEST (order_id);
+CREATE INDEX KD_SALES_CUBE_TEST_invoice ON KD_SALES_CUBE_TEST (invoice_id);
+CREATE INDEX KD_SALES_CUBE_TEST_secondcomm ON KD_SALES_CUBE_TEST (second_commodity);
+CREATE INDEX KD_SALES_CUBE_TEST_catalog_no ON KD_SALES_CUBE_TEST (catalog_no);

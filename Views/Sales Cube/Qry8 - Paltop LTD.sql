@@ -1,5 +1,5 @@
 CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY8 AS
-       SELECT   invhead.recid,
+    SELECT     invhead.recid,
                 'PTLTD' AS source,
                 '300' AS company,
                 'ROW' AS sales_market,
@@ -271,3 +271,19 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY8 AS
                 END = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
            ON   prodfam.objkey = prodfamcft.rowkey
+        WHERE   
+                (
+                    invhead.salesmngr NOT IN 
+                        (
+                            'DORIT AVIV',
+                            'MARKETING',
+                            'R' || CHR(38) || 'D'
+                        ) OR
+                    invhead.salesmngr IS NULL
+                )
+          AND   invhead.customerno NOT IN 
+                    (
+                        'Cust1002664',
+                        'Cust1002656',
+                        'Cust1002224'
+                    )

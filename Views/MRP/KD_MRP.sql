@@ -16,7 +16,7 @@ With FG1S As
      FG4F As
         (Select * From KD_MRP_MOH_Forecast Where FG_Part_Index = 4)
 
-Select
+Select Distinct
     FG1S.RM_Part_No,
     FG1S.Production_Family,
     FG1S.Cover_Screw_Part_No,

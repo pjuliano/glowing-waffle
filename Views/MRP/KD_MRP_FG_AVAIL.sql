@@ -1,5 +1,5 @@
 Create Or Replace View KD_MRP_FG_AVAIL As
-Select
+Select Distinct
     A.FG_Part_No,
     A.Fg_Part_Index,
     NVL(B.On_Hand_FG,0) As On_Hand_FG,

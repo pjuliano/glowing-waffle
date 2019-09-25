@@ -69,7 +69,9 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY1 AS
                             'MOTOR',
                             'FREIGHT',
                             'OCOS',
-                            'EDU'
+                            'EDU',
+                            'DYNAC',
+                            'RESTOCK'
                         )
                     THEN 'KEYSTONE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN 
@@ -114,7 +116,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY1 AS
                             'PRIMA',
                             'PRMA+',
                             'TLMAX',
-                            'PCOMM'
+                            'PCOMM',
+                            'ODYSS'
                         )
                     THEN 'TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -143,7 +146,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY1 AS
                             'STAGE',
                             'SUST',
                             'XP1',
-                            'OTMED'
+                            'OTMED',
+                            'PRSFT'
                         )
                     THEN 'NON-TILOBE'
                     WHEN inventpart.part_product_family IN 
@@ -151,7 +155,8 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY1 AS
                             'TRINX',
                             'EXHEX',
                             'ZMAX',
-                            'OCT'
+                            'OCT',
+                            'EXORL'
                         )
                     THEN 'SI STYLE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group) IN 
@@ -177,7 +182,9 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY1 AS
                             'FREIGHT',
                             'EDU',
                             'PROMO',
-                            'RESTOCK'
+                            'RESTOCK',
+                            'IDENT',
+                            'MAGMA'
                         )
                     THEN 'N/A'
                     ELSE 'UNCLASSIFIED'
@@ -201,7 +208,7 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY1 AS
                 custinfoadd.zip_code AS invoice_zip,
                 custinfoadd.country AS invoice_country,
                 custinfodel.association_no AS delivery_association_no,
-                invhead.delivery_identity AS delivery_customer_id,
+                COALESCE(invhead.delivery_identity,invhead.identity) AS delivery_customer_id,
                 custinfodel.name AS delivery_customer_name,
                 custinfoadddel.address_id AS delivery_address_id,
                 custinfoadddel.address1 AS delivery_street_1,
@@ -212,7 +219,11 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY1 AS
                 custinfoadddel.country AS delivery_country,
                 invitem.c1 AS order_id,
                 invhead.n2 AS rma_id,
-                invhead.n3 AS rma_line,
+                CASE
+                    WHEN invitem.c1 IS NOT NULL
+                    THEN invitem.item_id
+                    ELSE NULL 
+                END AS rma_line,
                 custorder.market_code,
                 invhead.pay_term_id,
                 invhead.currency AS order_currency,
@@ -278,9 +289,9 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY1 AS
     LEFT JOIN   customer_info_tab custinfo
            ON   invhead.identity = custinfo.customer_id
     LEFT JOIN   cust_ord_customer_tab custordcustdel --For delivery customer salesman code
-           ON   invhead.delivery_identity = custordcustdel.customer_no
+           ON   COALESCE(invhead.delivery_identity,invhead.identity) = custordcustdel.customer_no
     LEFT JOIN   customer_info_tab custinfodel --For delivery customer info
-           ON   invhead.delivery_identity = custinfodel.customer_id
+           ON   COALESCE(invhead.delivery_identity,invhead.identity) = custinfodel.customer_id
     LEFT JOIN   customer_info_address_tab custinfoadd --For invoice address info
            ON   invhead.identity = custinfoadd.customer_id
           AND   invhead.invoice_address_id = custinfoadd.address_id
@@ -289,17 +300,17 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY1 AS
           AND   custinfoadd.address_id = custinfoaddtype.address_id
           AND   custinfoaddtype.address_type_code = 'INVOICE'
     LEFT JOIN   customer_info_address_tab custinfoadddel --For delivery address info
-           ON   invhead.delivery_identity = custinfoadddel.customer_id
+           ON   COALESCE(invhead.delivery_identity,invhead.identity) = custinfoadddel.customer_id
           AND   invhead.delivery_address_id = custinfoadddel.address_id
     LEFT JOIN   customer_info_address_type_tab custinfoaddtypedel --For delivery address info
-           ON   invhead.delivery_identity = custinfoaddtypedel.customer_id
+           ON   COALESCE(invhead.delivery_identity,invhead.identity) = custinfoaddtypedel.customer_id
           AND   custinfoadddel.address_id = custinfoaddtypedel.address_id
           AND   custinfoaddtypedel.address_type_code = 'DELIVERY'
     LEFT JOIN   cust_ord_customer_address_tab custordcustadd
            ON   invhead.identity = custordcustadd.customer_no
           AND   custinfoadd.address_id = custordcustadd.addr_no
     LEFT JOIN   cust_ord_customer_address_tab custordcustadddel
-          ON    invhead.delivery_identity = custordcustadddel.customer_no
+          ON    COALESCE(invhead.delivery_identity,invhead.identity) = custordcustadddel.customer_no
          AND    custinfoadddel.address_id = custordcustadddel.addr_no
     LEFT JOIN   cust_ord_customer_tab custord
            ON   invhead.identity = custord.customer_no
@@ -325,8 +336,12 @@ CREATE OR REPLACE VIEW KD_SALES_CUBE_TEST_QRY1 AS
            ON   inventpart.part_product_family = prodfam.part_product_family
     LEFT JOIN   inventory_product_family_cft prodfamcft
            ON   prodfam.objkey = prodfamcft.rowkey
-
+           
          WHERE  invhead.series_id != 'CI'
            AND  invhead.party_type = 'CUSTOMER'
            AND  invhead.rowstate != 'Preliminary'
            AND  invhead.rowstate != 'Cancelled'
+           AND  (
+                    custinfo.corporate_form != 'KEY'
+                        OR custinfo.corporate_Form IS NULL
+                )
