@@ -440,6 +440,15 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE_TEST"
                     custinfo.corporate_form != 'KEY'
                         OR custinfo.corporate_Form IS NULL
                 )
+--Exclude errored invoices in 2018 data.
+           AND  invhead.series_id || invhead.invoice_no NOT IN 
+                (
+                    'CR1001800123',
+                    'CD1001814996',
+                    'CR1001802096',
+                    'CD1001851789'
+                )    
+                    
                 
 UNION ALL
 
@@ -507,7 +516,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
@@ -779,37 +789,37 @@ UNION ALL
           AND   invhead.rowstate != 'Cancelled'
           AND   invhead.series_id || invhead.invoice_no IN 
                 (
-                'CI99106731',
-                'CI99104708',
-                'CI99107429',
-                'CI99099245',
-                'CI99105630A',
-                'CI99103094',
-                'CI99091427A',
-                'CI541784B',
-                'CI999901456',
-                'CI999901697',
-                'CI999913881',
-                'CI99100341A',
-                'CI99096834A',
-                'CI99076516',
-                'CI99104656',
-                'CI99100924',
-                'CI99098866',
-                'CI999912837A',
-                'CI99093418A',
-                'CI99106176',
-                'CI99106235',
-                'CI99016153',
-                'CICD99101896',
-                'CI99100544',
-                'CI2951A',
-                'CI999908479A',
-                'CI99086484',
-                'CI99086930',
-                'CI99105850',
-                'CI99061875',
-                'CI99093370A'
+                    'CI99106731',
+                    'CI99104708',
+                    'CI99107429',
+                    'CI99099245',
+                    'CI99105630A',
+                    'CI99103094',
+                    'CI99091427A',
+                    'CI541784B',
+                    'CI999901456',
+                    'CI999901697',
+                    'CI999913881',
+                    'CI99100341A',
+                    'CI99096834A',
+                    'CI99076516',
+                    'CI99104656',
+                    'CI99100924',
+                    'CI99098866',
+                    'CI999912837A',
+                    'CI99093418A',
+                    'CI99106176',
+                    'CI99106235',
+                    'CI99016153',
+                    'CICD99101896',
+                    'CI99100544',
+                    'CI2951A',
+                    'CI999908479A',
+                    'CI99086484',
+                    'CI99086930',
+                    'CI99105850',
+                    'CI99061875',
+                    'CI99093370A'
                 )
           AND trunc(invhead.invoice_date) >= TO_DATE('01/01/2010', 'MM/DD/YYYY')
           AND invitem.item_id != '100002'
@@ -860,7 +870,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1135,7 +1146,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1411,7 +1423,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1689,7 +1702,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1991,7 +2005,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (

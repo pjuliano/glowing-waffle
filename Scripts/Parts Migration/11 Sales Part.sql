@@ -128,98 +128,98 @@ DECLARE
                              || Chr(30); --p3
     E_   VARCHAR2(32000) := 'DO'; --p4
 BEGIN
-    For Parts In (Select * From KD_Data_Migration)
+    For Parts In (Select * From KD_Data_Migration Where done IS NULL)
     Loop
         A_ := Null;
         B_ := Null;
         C_ := Null;
         D_ :=   'CATALOG_NO'
                  || Chr(31)
-                 || PArts.Catalog_No
+                 || parts.catalog_no
                  || Chr(30)
                  || 'CATALOG_DESC'
                  || Chr(31)
-                 || Parts.Catalog_Desc
+                 || parts.catalog_desc
                  || Chr(30)
                  || 'CONTRACT'
                  || Chr(31)
-                 || Parts.Contract
+                 || parts.contract
                  || Chr(30)
                  || 'PART_NO'
                  || Chr(31)
-                 || Parts.Part_No
+                 || parts.part_no
                  || Chr(30)
                  || 'SOURCING_OPTION'
                  || Chr(31)
-                 || Parts.Sourcing_Option
+                 || parts.sourcing_option
                  || Chr(30)
                  || 'UNIT_MEAS'
                  || Chr(31)
-                 || Parts.Unit_Meas
+                 || parts.unit_meas
                  || Chr(30)
                  || 'CONV_FACTOR'
                  || Chr(31)
-                 || PArts.Conv_Factor
+                 || parts.conv_factor
                  || Chr(30)
                  || 'PRICE_UNIT_MEAS'
                  || Chr(31)
-                 || Parts.Price_Unit_Meas
+                 || parts.price_unit_meas
                  || Chr(30)
                  || 'PRICE_CONV_FACTOR'
                  || Chr(31)
-                 || Parts.Price_Conv_Factor
+                 || parts.price_conv_factor
                  || Chr(30)
                  || 'SALES_UNIT_MEAS'
                  || Chr(31)
-                 || Parts.Sales_Unit_Meas
+                 || parts.sales_unit_meas
                  || Chr(30)
                  || 'INVERTED_CONV_FACTOR'
                  || Chr(31)
-                 || Parts.Inverted_Conv_Factor
+                 || parts.inverted_conv_factor
                  || Chr(30)
                  || 'SALES_PRICE_GROUP_ID'
                  || Chr(31)
-                 || Parts.Sales_Price_Group_ID
+                 || parts.sales_price_group_id
                  || Chr(30)
                  || 'CATALOG_GROUP'
                  || Chr(31)
-                 || Parts.Catalog_Group
+                 || parts.catalog_group
                  || Chr(30)
                  || 'LIST_PRICE'
                  || Chr(31)
-                 || Parts.List_Price2
+                 || parts.list_price
                  || Chr(30)
                  || 'PRIMARY_CATALOG_DB'
                  || Chr(31)
-                 || Upper(Parts.Primary_Catalog_Db)
+                 || parts.primary_catalog_db
                  || Chr(30)
                  || 'ACTIVEIND_DB'
                  || Chr(31)
-                 || PArts.ActiveInd_Db
+                 || parts.activeind_db
                  || Chr(30)
                  || 'TAXABLE_DB'
                  || Chr(31)
-                 || Parts.Taxable_DB
+                 || parts.taxable_db
                  || Chr(30)
                  || 'QUICK_REGISTERED_PART_DB'
                  || Chr(31)
-                 || Upper(Parts.Quick_Registered_Part_DB)
+                 || parts.quick_registered_part_db
                  || Chr(30)
                  || 'EXPORT_TO_EXTERNAL_APP_DB'
                  || Chr(31)
-                 || Upper(Parts.Export_To_External_App_DB)
+                 || parts.export_to_external_app_db
                  || Chr(30)
                  || 'CLOSE_TOLERANCE'
                  || Chr(31)
-                 || Parts.Close_Tolerance
+                 || parts.close_tolerance
                  || Chr(30)
                  || 'CREATE_SM_OBJECT_OPTION_DB'
                  || Chr(31)
-                 || Parts.Create_SM_Object_Option_DB
+                 || parts.create_sm_object_option_db
                  || Chr(30)
                  || 'USE_SITE_SPECIFIC_DB'
                  || Chr(31)
-                 || Upper(Parts.Use_Site_Specific_DB)
+                 || parts.use_site_specific_db
                  || Chr(30)
                  || 'WEIGHT_NET'
                  || Chr(31)
@@ -235,29 +235,34 @@ BEGIN
                  || Chr(30)
                  || 'COST'
                  || Chr(31)
-                 || Parts.Cost
+                 || parts.cost
                  || Chr(30)
                  || 'CATALOG_TYPE_DB'
                  || Chr(31)
-                 || Parts.Catalog_Type_DB
+                 || parts.catalog_type_db
                  || Chr(30)
                  || 'COMPANY'
                  || Chr(31)
-                 || Parts.Company
+                 || parts.company
                  || Chr(30)
                  || 'FREE_SAMPLE_DB'
                  || Chr(31)
-                 || Parts.Free_Sample_DB
+                 || parts.free_sample_db
                  || Chr(30)
                  || 'PART_DESCRIPTION'
                  || Chr(31)
-                 || Parts.Part_Description
+                 || parts.part_description
                  || Chr(30)
                  || 'CREATE_PURCHASE_PART'
                  || Chr(31)
-                 || Upper(Parts.Create_Purchase_Part)
+                 || 'FALSE'
                  || Chr(30); --p3
         E_ := 'DO';
+        UPDATE kd_data_migration SET done = 'notok' WHERE catalog_no = parts.catalog_no;
+        COMMIT;
         Ifsapp.Sales_Part_Api.New__(A_,B_,C_,D_,E_);
+        COMMIT;
+        UPDATE kd_data_migration SET done = 'ok' WHERE catalog_no = parts.catalog_no;
+        COMMIT;
     End Loop;
 END;

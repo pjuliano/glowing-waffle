@@ -1,7 +1,7 @@
-Create Or Replace View Kd_Svq_This_Month As
+--Create Or Replace View Kd_Svq_This_Month As
 Select
     B.repnumber AS salesman_code,
-    Sum(A.Allamounts)As This_Month,
+    NVL(Sum(A.Allamounts),0) As This_Month,
     Sum(
         Case
             When A.Part_Product_Code Not In(
@@ -18,14 +18,14 @@ Select
             Else 0
         End
     )As This_Month_Bio,
-    Sum(
+   NVL(Sum(
         Case
             When A.Part_Product_Code != 'LIT' And
                  A.Order_No Not Like 'W%' And
                  A.Order_No Not Like 'X%'
             Then Round((A.Allamounts -(A.Cost * A.Invoiced_Qty)),2)
         End
-    )As This_Month_Gross_Margin,
+    ),0)As This_Month_Gross_Margin,
     Case
         When Extract(Month From Sysdate)= 1
         Then B.Jan
@@ -109,7 +109,7 @@ Select
     End As Month_Quota_BIO,
     B.Region
 From
-    Srrepquota    B
+    kd_quota_rep_tab    B
     Left Join  Kd_Sales_Data_Request   A
         On A.Salesman_Code = B.Repnumber And
         Extract(Month From A.Invoicedate)= Extract(Month From Sysdate)And

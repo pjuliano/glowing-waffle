@@ -166,7 +166,8 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
                             'OCOS',
                             'EDU',
                             'DYNAC',
-                            'RESTOCK'
+                            'RESTOCK',
+                            'COMPT'
                         )
                     THEN 'KEYSTONE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN 
@@ -315,7 +316,7 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
                 invitem.c1 AS order_id,
                 invhead.n2 AS rma_id,
                 CASE
-                    WHEN invitem.c1 IS NOT NULL
+                    WHEN invitem.n2 IS NOT NULL
                     THEN invitem.item_id
                     ELSE NULL 
                 END AS rma_line,
@@ -440,6 +441,13 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
                     custinfo.corporate_form != 'KEY'
                         OR custinfo.corporate_Form IS NULL
                 )
+           AND  invhead.series_id || invhead.invoice_no NOT IN --Removes 2018 invoices per Frank Landino, 10-2019.
+                (
+                    'CR1001800123',
+                    'CD1001814996',
+                    'CR1001802096',
+                    'CD1001851789'
+                ) 
                 
 UNION ALL
 
@@ -507,7 +515,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
@@ -860,7 +869,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1135,7 +1145,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1411,7 +1422,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1689,7 +1701,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1991,7 +2004,8 @@ UNION ALL
                         'OCOS',
                         'EDU',
                         'DYNAC',
-                        'RESTOCK'
+                        'RESTOCK',
+                        'COMPT'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (

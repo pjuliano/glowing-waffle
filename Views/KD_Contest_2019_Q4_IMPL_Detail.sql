@@ -42,17 +42,27 @@ dso_reps AS
     (
         SELECT
                         person_id AS repnumber,
-                        name AS rep_name
+                        name AS rep_name,
+                        'USNA' AS region
         FROM
                         person_info
         WHERE
                         person_id IN ('898','899')
+        
+        UNION ALL
+        
+        SELECT
+                        repnumber,
+                        rep_name,
+                        region
+        FROM
+                        srrepquota
     )
 
 SELECT
                 '2019-Q4-IMPL' AS contest_name,
                 sr.region,
-                sr.repnumber AS rep_code,
+                DECODE(sr.repnumber,'305','126',sr.repnumber) AS rep_code,
                 sr.rep_name,
                 sdr.customer_no,
                 sdr.customer_name,
@@ -94,9 +104,11 @@ FROM
                                 FROM
                                                 exclusions
                             )
+                        AND sdr.invoice_id != 'CD1001938657' --To make sure Dr. Ho doesn't get in the contest.
 WHERE
-                    sr.repnumber NOT IN ('318','999','000')
+                    sr.repnumber NOT IN ('318','999','000','001','002')
                         AND customer_no IS NOT NULL
+                        
 GROUP BY
                     sr.region,
                     sr.repnumber,
@@ -109,8 +121,8 @@ UNION ALL
 
 SELECT
                 '2019-Q4-IMPL' AS contest_name,
-                'USNA' AS region,
-                sr.repnumber AS rep_code,
+                sr.region AS region,
+                DECODE(sr.repnumber,'305','126',sr.repnumber) AS rep_code,
                 sr.rep_name,
                 sdr.customer_no,
                 sdr.customer_name,
@@ -146,11 +158,12 @@ FROM
                                     OR sdr.order_no IS NULL
                             )
                         AND sdr.part_product_code = 'IMPL'
-                        AND sdr.invoicedate BETWEEN TO_DATE('10/01/2019','MM/DD/YYYY') AND TO_DATE('12/31/2019','MM/DD/YYYY')
+                        AND sdr.invoicedate BETWEEN TO_DATE('10/01/2019','MM/DD/YYYY') AND TO_DATE('12/31/2019','MM/DD/YYYY') 
 WHERE
                     sr.repnumber NOT IN ('318','999','000')
-                        AND customer_no IS NOT NULL
+                        AND sdr.customer_no IS NOT NULL
 GROUP BY
+                    sr.region,
                     sr.repnumber,
                     sr.rep_name,
                     sdr.customer_no,

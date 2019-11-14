@@ -6,23 +6,59 @@ DECLARE
    e_ VARCHAR2(32000) := 'DO'; --p4
 BEGIN
 
-  For Cur In (Select * From Customer_Info A Where A.Association_No = 'N1045')
-  Loop
-    A_ := Null;
-    B_ := Null;
-    C_ := Null;
-    D_ := 'SALES_PRICE_GROUP_ID'||Chr(31)||'SIMPLNT'||Chr(30)||'CURRENCY_CODE'||Chr(31)||'USD'||Chr(30)||'PRICE_LIST_NO'||Chr(31)||'N1045S'||Chr(30)||'CUSTOMER_ID'||Chr(31)||Cur.Customer_Id||Chr(30);
+  FOR cur IN 
+    (
+                
+                
+SELECT
+            iii.identity,
+            pl.price_list_no,
+            pl.sales_price_group_id
+            
+FROM
+            identity_invoice_info iii,
+            (
+                SELECT
+                                *
+                FROM
+                                sales_price_list
+                WHERE
+                                price_list_no LIKE 'CAD%'
+            ) pl
+            
+WHERE
+            iii.def_currency = 'CAD'
+                AND iii.identity IN  
+                    (
+                        SELECT
+                                        customer_id
+                        FROM
+                                        customer_pricelist_ent
+                        WHERE
+                                        identity_invoice_info_api.get_def_currency('100',customer_id,'CUSTOMER') = 'CAD'
+                        GROUP BY
+                                        customer_id
+                        HAVING
+                                        count(price_list_no) != 16
+                    )
+                AND NOT EXISTS 
+                    (
+                        SELECT
+                                        cpe.price_list_no
+                        FROM
+                                        customer_pricelist_ent cpe
+                        WHERE
+                                        iii.identity = cpe.customer_id
+                                            AND cpe.sales_price_group_id = pl.sales_price_group_id
+                                            AND cpe.price_list_no != pl.price_list_no
+                    )
+    )
+  LOOP
+    a_ := NULL;
+    b_ := NULL;
+    c_ := NULL;
+    d_ := 'SALES_PRICE_GROUP_ID'||chr(31)||cur.sales_price_group_id||chr(30)||'CURRENCY_CODE'||chr(31)||'CAD'||chr(30)||'PRICE_LIST_NO'||chr(31)||cur.price_list_no||chr(30)||'CUSTOMER_ID'||chr(31)||cur.identity||chr(30);
     e_:= 'DO';
-    Ifsapp.Customer_Pricelist_Api.New__( A_ , B_ , C_ , D_ , E_ );
-  End loop;
-   ----------------------------------
-   ---Dbms_Output Section---
-   ----------------------------------
-   Dbms_Output.Put_Line('a_=' || a_);
-   Dbms_Output.Put_Line('b_=' || b_);
-   Dbms_Output.Put_Line('c_=' || c_);
-   Dbms_Output.Put_Line('d_=' || d_);
-   Dbms_Output.Put_Line('e_=' || e_);
-   ----------------------------------
-
+    ifsapp.customer_pricelist_api.new__( a_ , b_ , c_ , d_ , e_ );
+  END LOOP;
 END;

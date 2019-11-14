@@ -1,4 +1,4 @@
-Create Or Replace View KD_SVQ_This_Quarter_Reg As
+--Create Or Replace View KD_SVQ_This_Quarter_Reg As
 Select
   A.Region,
   Sum(A.This_Quarter) As This_Quarter,

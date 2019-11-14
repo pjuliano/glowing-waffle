@@ -36,6 +36,8 @@ Select
             '501','999',
             '800','999',
             '504','999',
+            '001','999',
+            '002','999',
             '801','Dor',
             '802','Boris Shwa',
             '803','Galit',
@@ -56,6 +58,7 @@ Select
       Decode(A.Cybio,Null,0,A.Cybio) As Cybio,
       Nvl(B.First_Order_Date,To_Date('01/01/1900','MM/DD/YYYY')) As First_Order_Date,
       C.Last_Order_Date,
+      A.Creation_date,
       Decode(D.Price_Lists,Null,' ',D.Price_Lists) As Price_Lists,
       Case When E.Status Is Null And
                 Sysdate - Last_Order_Date >= 365

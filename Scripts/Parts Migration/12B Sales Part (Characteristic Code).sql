@@ -20,7 +20,7 @@ DECLARE
                              || Chr(30); --p3
     E_   VARCHAR2(32000) := 'DO'; --p4
 BEGIN
-    For Parts In (Select * From KD_Data_Migration)
+    For Parts In (Select * From KD_Data_Migration where done = 'ok')
     Loop
         A_ := Null;
         B_ := Null;
@@ -35,11 +35,11 @@ BEGIN
              || Chr(30)
              || 'CHARACTERISTIC_CODE'
              || Chr(31)
-             || PArts.Characteristic_Code2
+             || PArts.Characteristic_Code
              || Chr(30)
              || 'ATTR_VALUE_ALPHA'
              || Chr(31)
-             || Parts.Attr_Value_Alpha2
+             || Parts.Attr_Value_Alpha
              || Chr(30); --p3
         E_ := 'DO';
         Ifsapp.Sales_Part_Characteristic_Api.New__(A_,B_,C_,D_,E_);

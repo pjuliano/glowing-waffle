@@ -1,7 +1,9 @@
-Create Or Replace View Kd_Svq_This_Quarter As
+--Create Or Replace View Kd_Svq_This_Quarter As
     Select
         b.repnumber AS salesman_code,
-        Sum (A.Allamounts) As This_Quarter,Sum (
+        NVL(Sum (A.Allamounts),0) As This_Quarter,
+        Sum 
+            (
             Case
                 When A.Part_Product_Code Not In (
                     'LIT','REGEN'
@@ -9,7 +11,8 @@ Create Or Replace View Kd_Svq_This_Quarter As
                 Then A.Allamounts
                 Else 0
             End
-        ) As This_Quarter_Implants,Sum (
+            ) As This_Quarter_Implants,
+        Sum (
             Case
                 When A.Part_Product_Code = 'REGEN'
                 Then A.Allamounts
@@ -68,7 +71,7 @@ Create Or Replace View Kd_Svq_This_Quarter As
             Then B.Qtr4_Bio
         End As Qtr_Quota_Bio,B.Region
     From
-        Srrepquota B
+        kd_quota_rep_tab B
         Left Join Kd_Sales_Data_Request A 
         On A.Salesman_Code = B.Repnumber And
         A.Invoiceqtr =

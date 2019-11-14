@@ -1,4 +1,4 @@
-Create Or Replace View KD_SVQ_This_Month_Reg As
+--Create Or Replace View KD_SVQ_This_Month_Reg As
 Select
   A.Region,
   Sum(A.This_Month) As This_Month,
@@ -7,9 +7,10 @@ Select
   Sum(A.Month_Quota) As Month_Quota,
   Sum(A.Month_Quota_Impl) As Month_Quota_Impl,
   Sum(A.Month_Quota_Bio) As Month_Quota_Bio,
-  Sum(B.PY_This_Month_SD) As PY_MTD_SD --Rem
+  Sum(B.PY_This_Month_SD) As PY_MTD_SD 
 From
   Kd_Svq_This_Month A,
+  kd_quota_region a,
   KD_PY_Month_SD B
 Where
   A.Region = B.Region And

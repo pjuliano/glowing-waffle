@@ -1,0 +1,50 @@
+CREATE OR REPLACE VIEW kd_quota_region AS
+SELECT
+                rep.region_code,
+                terr.territory_code,
+                SUM(terr.m1) AS m1,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m1)) AS m1_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m1)) AS m1_bio,
+                SUM(terr.m2) AS m2,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m2)) AS m2_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m2)) AS m2_bio,
+                SUM(terr.m3) AS m3,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m3)) AS m3_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m3)) AS m3_bio,
+                SUM(terr.m4) AS m4,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m4)) AS m4_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m4)) AS m4_bio,
+                SUM(terr.m5) AS m5,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m5)) AS m5_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m5)) AS m5_bio,
+                SUM(terr.m6) AS m6,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m6)) AS m6_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m6)) AS m6_bio,
+                SUM(terr.m7) AS m7,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m7)) AS m7_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m7)) AS m7_bio,
+                SUM(terr.m8) AS m8,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m8)) AS m8_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m8)) AS m8_bio,
+                SUM(terr.m9) AS m9,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m9)) AS m9_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m9)) AS m9_bio,
+                SUM(terr.m10) AS m10,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m10)) AS m10_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m10)) AS m10_bio,
+                SUM(terr.m11) AS m11,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m11)) AS m11_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m11)) AS m11_bio,
+                SUM(terr.m12) AS m12,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m12)) AS m12_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m12)) AS m12_bio,
+                SUM(terr.m1 + terr.m2 + terr.m3 + terr.m4 + terr.m5 + terr.m6 + terr.m7 + terr.m8 + terr.m9 + terr.m10 + terr.m11 + terr.m12) AS year,
+                SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m2)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m3)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m4)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m5)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m6)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m7)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m1)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m8)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m9)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m10)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m11)) + SUM(DECODE(UPPER(terr.product_type),'IMPLANTS',terr.m12)) AS year_impl,
+                SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m2)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m3)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m4)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m5)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m6)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m7)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m1)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m8)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m9)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m10)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m11)) + SUM(DECODE(UPPER(terr.product_type),'BIOMATERIALS',terr.m12)) AS year_bio
+FROM
+                kd_quota_territory terr
+                LEFT JOIN kd_quota_rep_config rep
+                    ON terr.territory_code = rep.rep_code
+GROUP BY
+                rep.region_code,
+                terr.territory_code
