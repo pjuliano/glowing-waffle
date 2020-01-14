@@ -18,4 +18,4 @@ and
 order by
    rj.job_name;
 
-alter system kill session '1069,15255';
+alter system kill session '1056,64769';

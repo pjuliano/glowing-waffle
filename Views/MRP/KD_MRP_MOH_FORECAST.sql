@@ -1,4 +1,4 @@
---Create Or Replace View KD_MRP_MOH_FORECAST As
+Create Or Replace View KD_MRP_MOH_FORECAST As
 Select
     A.Rm_Part_No,
     A.Production_Family,
@@ -21,7 +21,8 @@ Select
     D.Fg_Part_Index,
     D.On_Hand_Fg,
     D.Open_So_Fg,
-    D.On_Hand_FG + D.Open_SO_FG as FG_Total,
+    D.Open_PO_fg,
+    D.On_Hand_FG + D.Open_SO_FG + D.Open_PO_FG as FG_Total,
     B.RMFG_Split_Total + Nvl(C.On_Hand_Proc,0) + Nvl(C.Open_PO_Proc,0) + Nvl(C.Open_SO_Proc,0) + Nvl(CC.On_Hand_Proc,0) + Nvl(CC.Open_PO_Proc,0) + Nvl(CC.Open_SO_Proc,0) + Nvl(D.On_Hand_Fg,0) + Nvl(D.Open_So_FG,0) As Total_Inventory,
     E.Forecast_Count,
     E.Units_Forecast,

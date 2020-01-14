@@ -1,349 +1,354 @@
---Create or Replace View Kd_Sales_Data As
-    SELECT
-        DECODE(A.Company,'241','240',A.Company) AS Site,
-        B.Series_Id || B.Invoice_No AS Invoice_Id,
-        TO_CHAR(A.Item_Id) AS Item_Id,
-        Trunc(B.D2) AS Invoicedate,
+create or replace view kd_sales_data AS
+  SELECT
+        decode(a.company,'241','240',a.company) AS site,
+        b.series_id || b.invoice_no AS invoice_id,
+        to_char(a.item_id) AS item_id,
+        trunc(b.d2) AS invoicedate,
         CASE
-                WHEN B.Series_Id = 'CR' AND
-                     B.N2 IS NULL THEN 0
-                WHEN B.Series_Id = 'CR' AND
-                     B.N2 IS NOT NULL THEN A.N2 *-1
-                ELSE A.N2
+                WHEN b.series_id = 'CR' AND
+                     b.n2 IS NULL THEN 0
+                WHEN b.series_id = 'CR' AND
+                     b.n2 IS NOT NULL THEN a.n2 *-1
+                ELSE a.n2
             END
-        AS Invoiced_Qty,
-        A.N4 AS Sale_Unit_Price,
-        A.N5 AS Discount,
-        A.Net_Curr_Amount,
-        A.Net_Curr_Amount + A.Vat_Curr_Amount AS Gross_Curr_Amount,
-        C.Catalog_Desc,
-        Customer_Info_Api.Get_Name(B.Identity) AS Customer_Name,
-        A.C1 AS Order_No,
-        A.C13 AS Customer_No,
-        D.Cust_Grp,
-        A.C5 AS Catalog_No,
-        Substr(B.C1,1,35) AS Authorize_Code,
-        D.Salesman_Code,
-        E.Commission_Receiver,
-        F.District_Code,
-        F.Region_Code,
-        Trunc(B.Creation_Date) AS Createdate,
-        DECODE(A.C5,G.Part_No,G.Part_Product_Code,'OTHER') AS Part_Product_Code,
-        DECODE(A.C5,G.Part_No,G.Part_Product_Family,'OTHER') AS Part_Product_Family,
-        DECODE(A.C5,G.Part_No,G.Second_Commodity,'OTHER') AS Second_Commodity,
+        AS invoiced_qty,
+        a.n4 AS sale_unit_price,
+        a.n5 AS discount,
+        a.net_curr_amount,
+        a.net_curr_amount + a.vat_curr_amount AS gross_curr_amount,
+        c.catalog_desc,
+        customer_info_api.get_name(b.identity) AS customer_name,
+        a.c1 AS order_no,
+        a.c13 AS customer_no,
+        d.cust_grp,
+        a.c5 AS catalog_no,
+        substr(b.c1,1,35) AS authorize_code,
+        d.salesman_code,
+        e.commission_receiver,
+        f.district_code,
+        f.region_code,
+        trunc(b.creation_date) AS createdate,
+        decode(a.c5,g.part_no,g.part_product_code,'OTHER') AS part_product_code,
+        decode(a.c5,g.part_no,g.part_product_family,'OTHER') AS part_product_family,
+        decode(a.c5,g.part_no,g.second_commodity,'OTHER') AS second_commodity,
         CASE
-                WHEN TO_CHAR(B.D2,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(B.D2,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(B.D2,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(B.D2,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(B.D2,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(B.D2,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(B.D2,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(B.D2,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(B.D2,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(B.D2,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(B.D2,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(B.D2,'MM') = '12' THEN 'December'
+                WHEN to_char(b.d2,'MM') = '01' THEN 'January'
+                WHEN to_char(b.d2,'MM') = '02' THEN 'February'
+                WHEN to_char(b.d2,'MM') = '03' THEN 'March'
+                WHEN to_char(b.d2,'MM') = '04' THEN 'April'
+                WHEN to_char(b.d2,'MM') = '05' THEN 'May'
+                WHEN to_char(b.d2,'MM') = '06' THEN 'June'
+                WHEN to_char(b.d2,'MM') = '07' THEN 'July'
+                WHEN to_char(b.d2,'MM') = '08' THEN 'August'
+                WHEN to_char(b.d2,'MM') = '09' THEN 'September'
+                WHEN to_char(b.d2,'MM') = '10' THEN 'October'
+                WHEN to_char(b.d2,'MM') = '11' THEN 'November'
+                WHEN to_char(b.d2,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                WHEN to_char(b.d2,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                WHEN to_char(b.d2,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                WHEN to_char(b.d2,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                WHEN to_char(b.d2,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                WHEN to_char(b.d2,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM B.D2)
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                       || EXTRACT(YEAR FROM b.d2)
+                WHEN to_char(b.d2,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM B.D2)
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                       || EXTRACT(YEAR FROM b.d2)
+                WHEN to_char(b.d2,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM B.D2)
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                       || EXTRACT(YEAR FROM b.d2)
+                WHEN to_char(b.d2,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM B.D2)
+                       || EXTRACT(YEAR FROM b.d2)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(B.D2,'MM/YYYY') AS Invoicemthyr,
-        Q.Group_Id AS Group_Id,
-        DECODE(A.C5,G.Part_No,G.Type_Designation,'Non-Target') AS Type_Designation,
-        A.Identity AS Customer_No_Pay,
-        H.Corporate_Form,
-        DECODE(B.Currency,'SEK', (A.Net_Curr_Amount * 0.13),'EUR', (A.Net_Curr_Amount * 1.4),'DKK', (A.Net_Curr_Amount * 0.13),A.Net_Curr_Amount) AS
-Fixedamounts,
+        AS invoiceqtryr,
+        to_char(b.d2,'MM/YYYY') AS invoicemthyr,
+        q.group_id AS group_id,
+        decode(a.c5,g.part_no,g.type_designation,'Non-Target') AS type_designation,
+        a.identity AS customer_no_pay,
+        h.corporate_form,
+        decode(b.currency,'SEK', (a.net_curr_amount * 0.13),'EUR', (a.net_curr_amount * 1.4),'DKK', (a.net_curr_amount * 0.13),a.net_curr_amount) AS fixedamounts,
         CASE
-                WHEN B.Currency = 'CAD' AND
-                     Trunc(B.D2) >= TO_DATE('03/01/2013','MM/DD/YYYY') THEN A.Net_Curr_Amount
-                WHEN B.Currency != 'USD' THEN A.Net_Curr_Amount * I.Currency_Rate
-                ELSE A.Net_Curr_Amount
+                WHEN b.currency = 'CAD' AND
+                     trunc(b.d2) >= TO_DATE('03/01/2013','MM/DD/YYYY') AND
+                     trunc(b.d2) <= TO_DATE('12/16/2019','MM/DD/YYYY') 
+                THEN a.net_curr_amount
+                WHEN b.currency = 'CAD' AND
+                     trunc(b.d2) > TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN a.net_curr_amount * coalesce(b.n1,b.curr_rate)
+                WHEN b.currency != 'USD' 
+                THEN a.net_curr_amount * i.currency_rate
+                ELSE a.net_curr_amount
             END
-        AS Allamounts,
+        AS allamounts,
         CASE
-                WHEN B.Currency IN (
+                WHEN b.currency IN (
                     'SEK',
                     'DKK'
-                ) THEN A.Net_Curr_Amount / J.Currency_Rate
-                ELSE A.Net_Curr_Amount
+                ) THEN a.net_curr_amount / j.currency_rate
+                ELSE a.net_curr_amount
             END
-        AS Localamount,
-        A.Net_Curr_Amount AS Truelocalamt,
-        A.Vat_Dom_Amount,
-        A.Vat_Code,
+        AS localamount,
+        a.net_curr_amount AS truelocalamt,
+        a.vat_dom_amount,
+        a.vat_code,
         CASE
-                WHEN A.C5 = K.Part_No THEN K.Inventory_Value
-                ELSE L.Inventory_Value * 1.4
+                WHEN a.c5 = k.part_no THEN k.inventory_value
+                ELSE l.inventory_value * 1.4
             END
-        AS Cost,
-        'Parts' AS Charge_Type,
-        'IFS' AS Source,
-        M.Market_Code,
-        H.Association_No,
-        B.Vat_Curr_Amount,
-        Payment_Term_Api.Get_Description(B.Company,B.Pay_Term_Id) AS Pay_Term_Description,
-        Substr(B.C1,1,35) AS Kdreference,
-        Substr(B.C2,1,30) AS Customerref,
-        TO_CHAR(B.D3,'MM/DD/YYYY') AS Deliverydate,
-        Substr(B.C3,1,35) AS Ship_Via,
-        B.Delivery_Identity,
-        B.Identity,
-        B.Delivery_Address_Id,
-        B.Invoice_Address_Id,
-        B.Currency,
-        B.N2 AS Rma_No,
-        N.Address1 AS Invoiceadd1,
-        N.Address2 AS Invoiceadd2,
-        N.City AS Invoicecity,
-        N.State AS Invoicestate,
-        N.Zip_Code AS Invoicezip,
-        Iso_Country_Api.DECODE(N.Country) AS Invoicecountry,
-        N.County AS Invoicecounty,
-        O.Address1 AS Delivadd1,
-        O.Address2 AS Delivadd2,
-        O.City AS Delivcity,
-        O.State AS Delivstate,
-        O.Zip_Code AS Delivzip,
-        Iso_Country_Api.DECODE(O.Country) AS Delivcountry,
-        O.County AS Delivcounty
+        AS cost,
+        'Parts' AS charge_type,
+        'IFS' AS source,
+        m.market_code,
+        h.association_no,
+        b.vat_curr_amount,
+        payment_term_api.get_description(b.company,b.pay_term_id) AS pay_term_description,
+        substr(b.c1,1,35) AS kdreference,
+        substr(b.c2,1,30) AS customerref,
+        to_char(b.d3,'MM/DD/YYYY') AS deliverydate,
+        substr(b.c3,1,35) AS ship_via,
+        b.delivery_identity,
+        b.identity,
+        b.delivery_address_id,
+        b.invoice_address_id,
+        b.currency,
+        b.n2 AS rma_no,
+        n.address1 AS invoiceadd1,
+        n.address2 AS invoiceadd2,
+        n.city AS invoicecity,
+        n.state AS invoicestate,
+        n.zip_code AS invoicezip,
+        iso_country_api.decode(n.country) AS invoicecountry,
+        n.county AS invoicecounty,
+        o.address1 AS delivadd1,
+        o.address2 AS delivadd2,
+        o.city AS delivcity,
+        o.state AS delivstate,
+        o.zip_code AS delivzip,
+        iso_country_api.decode(o.country) AS delivcountry,
+        o.county AS delivcounty
     FROM
-        Invoice_Item_Tab A
-        LEFT JOIN Sales_Part_Tab C ON A.C5 = C.Catalog_No AND
-                                      DECODE(A.Company,'241','240',A.Company) = C.Contract
-        LEFT JOIN Cust_Def_Com_Receiver_Tab E ON A.C13 = E.Customer_No
-        LEFT JOIN Inventory_Part_Tab G ON A.C5 = G.Part_No AND
-                                          DECODE(A.Company,'241','240',A.Company) = G.Contract
-        LEFT JOIN Kd_Cost_100 K ON A.C5 = K.Part_No
-        LEFT JOIN Kd_Cost_210 L ON A.C5 = L.Part_No
-        LEFT JOIN Customer_Order_Tab M ON A.C1 = M.Order_No
-        LEFT JOIN Identity_Invoice_Info_Tab Q ON A.Company = Q.Company AND
-                                                 A.Identity = Q.Identity AND
-                                                 A.Party_Type = Q.Party_Type,Invoice_Tab B
-        LEFT JOIN Kd_Currency_Rate_4 I ON B.Currency = I.Currency_Code AND
-                                          TO_CHAR(B.D2,'MM/YYYY') = I.Valid_From
-        LEFT JOIN Customer_Info_Address_Tab N ON B.Identity = N.Customer_Id AND
-                                                 B.Invoice_Address_Id = N.Address_Id
-        LEFT JOIN Customer_Info_Address_Tab O ON B.Identity = O.Customer_Id AND
-                                                 B.Delivery_Address_Id = O.Address_Id
-        LEFT JOIN Kd_Currency_Rate_1 J ON B.Currency = J.Currency_Code AND
-                                          TO_CHAR(B.D2,'MM/YYYY') = J.Valid_From,
-        Cust_Ord_Customer_Tab D,
-        Cust_Ord_Customer_Address_Tab F,
-        Customer_Info_Tab H
+        invoice_item_tab a
+        LEFT JOIN sales_part_tab c ON a.c5 = c.catalog_no AND
+                                      decode(a.company,'241','240',a.company) = c.contract
+        LEFT JOIN cust_def_com_receiver_tab e ON a.c13 = e.customer_no
+        LEFT JOIN inventory_part_tab g ON a.c5 = g.part_no AND
+                                          decode(a.company,'241','240',a.company) = g.contract
+        LEFT JOIN kd_cost_100 k ON a.c5 = k.part_no
+        LEFT JOIN kd_cost_210 l ON a.c5 = l.part_no
+        LEFT JOIN customer_order_tab m ON a.c1 = m.order_no
+        LEFT JOIN identity_invoice_info_tab q ON a.company = q.company AND
+                                                 a.identity = q.identity AND
+                                                 a.party_type = q.party_type,invoice_tab b
+        LEFT JOIN kd_currency_rate_4 i ON b.currency = i.currency_code AND
+                                          to_char(b.d2,'MM/YYYY') = i.valid_from
+        LEFT JOIN customer_info_address_tab n ON b.identity = n.customer_id AND
+                                                 b.invoice_address_id = n.address_id
+        LEFT JOIN customer_info_address_tab o ON b.identity = o.customer_id AND
+                                                 b.delivery_address_id = o.address_id
+        LEFT JOIN kd_currency_rate_1 j ON b.currency = j.currency_code AND
+                                          to_char(b.d2,'MM/YYYY') = j.valid_from,
+        cust_ord_customer_tab d,
+        cust_ord_customer_address_tab f,
+        customer_info_tab h
     WHERE
-        A.Invoice_Id = B.Invoice_Id AND
-        A.C11 IS NULL AND
-        A.C13 = D.Customer_No AND
-        B.Delivery_Identity = D.Customer_No AND
-        A.C13 = F.Customer_No AND
-        A.C13 = H.Customer_Id AND
-        H.Customer_Id = D.Customer_No AND
-        H.Customer_Id = F.Customer_No AND
-        B.Delivery_Identity = H.Customer_Id AND
-        B.Rowstate != 'Preliminary' AND
-        F.Addr_No = '99' AND
-        Trunc(B.D2) >= TO_DATE('01/01/2008','MM/DD/YYYY')
+        a.invoice_id = b.invoice_id AND
+        a.c11 IS NULL AND
+        a.c13 = d.customer_no AND
+        b.delivery_identity = d.customer_no AND
+        a.c13 = f.customer_no AND
+        a.c13 = h.customer_id AND
+        h.customer_id = d.customer_no AND
+        h.customer_id = f.customer_no AND
+        b.delivery_identity = h.customer_id AND
+        b.rowstate != 'Preliminary' AND
+        f.addr_no = '99' AND
+        trunc(b.d2) >= TO_DATE('01/01/2008','MM/DD/YYYY')
     UNION ALL
     SELECT
-        '220' AS Site,
-        A.Invoiceno AS Invoice_Id,
-        TO_CHAR(A.Itemid) AS Item_Id,
-        Trunc(A.Salesdate) AS Invoicedate,
-        A.Quantity AS Invoiced_Qty,
-        A.Unitprice AS Sales_Unit_Price,
-        A.Discount,
-        0 AS Net_Curr_Amount,
-        0 AS Gross_Curr_Amount,
-        A.Partdescription AS Catalog_Desc,
-        A.Customername AS Customer_Name,
-        A.Ordernumber AS Order_No,
-        A.Customerid AS Customer_No,
-        ' ' AS Cust_Grp,
-        A.Salespartno AS Catalog_No,
-        ' ' AS Authorize_Code,
-        B.Salesman_Code,
-        ' ' AS Commission_Receiver,
-        ' ' AS District_Code,
-        DECODE(A.Salesrepid,'220-510','BENELUX','220-520','BENELUX','GER') AS Region_Code,
-        A.Salesdate AS Createdate,
-        Upper(A.Productcode) AS Part_Product_Code,
-        Upper(A.Productline) AS Part_Product_Family,
-        ' ' AS Second_Commodity,
+        '220' AS site,
+        a.invoiceno AS invoice_id,
+        to_char(a.itemid) AS item_id,
+        trunc(a.salesdate) AS invoicedate,
+        a.quantity AS invoiced_qty,
+        a.unitprice AS sales_unit_price,
+        a.discount,
+        0 AS net_curr_amount,
+        0 AS gross_curr_amount,
+        a.partdescription AS catalog_desc,
+        a.customername AS customer_name,
+        a.ordernumber AS order_no,
+        a.customerid AS customer_no,
+        ' ' AS cust_grp,
+        a.salespartno AS catalog_no,
+        ' ' AS authorize_code,
+        b.salesman_code,
+        ' ' AS commission_receiver,
+        ' ' AS district_code,
+        decode(a.salesrepid,'220-510','BENELUX','220-520','BENELUX','GER') AS region_code,
+        a.salesdate AS createdate,
+        upper(a.productcode) AS part_product_code,
+        upper(a.productline) AS part_product_family,
+        ' ' AS second_commodity,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '12' THEN 'December'
+                WHEN to_char(a.salesdate,'MM') = '01' THEN 'January'
+                WHEN to_char(a.salesdate,'MM') = '02' THEN 'February'
+                WHEN to_char(a.salesdate,'MM') = '03' THEN 'March'
+                WHEN to_char(a.salesdate,'MM') = '04' THEN 'April'
+                WHEN to_char(a.salesdate,'MM') = '05' THEN 'May'
+                WHEN to_char(a.salesdate,'MM') = '06' THEN 'June'
+                WHEN to_char(a.salesdate,'MM') = '07' THEN 'July'
+                WHEN to_char(a.salesdate,'MM') = '08' THEN 'August'
+                WHEN to_char(a.salesdate,'MM') = '09' THEN 'September'
+                WHEN to_char(a.salesdate,'MM') = '10' THEN 'October'
+                WHEN to_char(a.salesdate,'MM') = '11' THEN 'November'
+                WHEN to_char(a.salesdate,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
+                       || EXTRACT(YEAR FROM a.salesdate)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(A.Salesdate,'MM/YYYY') AS Invoicemthyr,
-        ' ' AS Group_Id,
-        'Sub-Part' AS Type_Designation,
-        ' ' AS Customer_No_Pay,
-        DECODE(A.Salesrepid,'220-510','BENELUX','220-520','BENELUX','GER') AS Corporate_Form,
-        A.Amount * 1.4 AS Fixedamounts,
-        A.Amount * I.Currency_Rate AS Allamounts,
-        A.Amount AS Localamount,
-        A.Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        DECODE(A.Salespartno,C.Part_No,C.Inventory_Value,D.Part_No,D.Inventory_Value * 1.4) AS Cost,
-        'Parts' AS Charge_Type,
-        'GER' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        ' ' AS Delivery_Identity,
-        ' ' AS Identity,
-        ' ' AS Delivery_Address_Id,
-        ' ' AS Invoice_Address_Id,
-        'EUR' AS Currency,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        AS invoiceqtryr,
+        to_char(a.salesdate,'MM/YYYY') AS invoicemthyr,
+        ' ' AS group_id,
+        'Sub-Part' AS type_designation,
+        ' ' AS customer_no_pay,
+        decode(a.salesrepid,'220-510','BENELUX','220-520','BENELUX','GER') AS corporate_form,
+        a.amount * 1.4 AS fixedamounts,
+        a.amount * i.currency_rate AS allamounts,
+        a.amount AS localamount,
+        a.amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        decode(a.salespartno,c.part_no,c.inventory_value,d.part_no,d.inventory_value * 1.4) AS cost,
+        'Parts' AS charge_type,
+        'GER' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        ' ' AS delivery_identity,
+        ' ' AS identity,
+        ' ' AS delivery_address_id,
+        ' ' AS invoice_address_id,
+        'EUR' AS currency,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Srordersger A
-        LEFT JOIN Cust_Ord_Customer_Tab B ON A.Customerid = B.Customer_No
-        LEFT JOIN Kd_Currency_Rate_4 I ON TO_CHAR(A.Salesdate,'MM/YYYY') = I.Valid_From
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum C ON A.Salespartno = C.Part_No AND
-                                                    C.Contract = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum D ON A.Salespartno = D.Part_No AND
-                                                    D.Contract = '210'
+        srordersger a
+        LEFT JOIN cust_ord_customer_tab b ON a.customerid = b.customer_no
+        LEFT JOIN kd_currency_rate_4 i ON to_char(a.salesdate,'MM/YYYY') = i.valid_from
+        LEFT JOIN inventory_part_unit_cost_sum c ON a.salespartno = c.part_no AND
+                                                    c.contract = '100'
+        LEFT JOIN inventory_part_unit_cost_sum d ON a.salespartno = d.part_no AND
+                                                    d.contract = '210'
     WHERE
-        A.Salesrepid IN (
+        a.salesrepid IN (
             '220-100',
             '220-110',
             '220-120',
@@ -368,7 +373,7 @@ Fixedamounts,
             '220-950',
             '220-998'
         ) AND
-        A.Customerid NOT IN (
+        a.customerid NOT IN (
             'DE43125',
             'DE160010',
             'DE47206',
@@ -377,306 +382,306 @@ Fixedamounts,
             'DE29029',
             'DE55046'
         ) AND
-        A.Salesdate >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
-        I.Currency_Code = 'EUR'
+        a.salesdate >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
+        i.currency_code = 'EUR'
     UNION ALL
     SELECT
-        '240' AS Site,
-        A.Invoiceno AS Invoice_Id,
-        TO_CHAR(A.Itemid) AS Item_Id,
-        Trunc(A.Salesdate) AS Invoicedate,
-        A.Quantity AS Invoiced_Qty,
-        0 AS Sales_Unit_Price,
-        A.Discount,
-        0 AS Net_Curr_Amount,
-        0 AS Gross_Curr_Amount,
-        A.Partdescription AS Catalog_Desc,
-        A.Customername AS Customer_Name,
-        A.Ordernumber AS Order_No,
-        A.Customerid AS Customer_No,
-        ' ' AS Cust_Grp,
-        A.Salespartno AS Catalog_No,
-        ' ' AS Authorize_Code,
-        B.Salesman_Code,
-        ' ' AS Commission_Receiver,
-        ' ' AS District_Code,
-        'FRA' AS Region_Code,
-        A.Salesdate AS Createdate,
-        Upper(A.Productcode) AS Part_Product_Code,
-        Upper(A.Productline) AS Part_Product_Family,
-        ' ' AS Second_Commodity,
+        '240' AS site,
+        a.invoiceno AS invoice_id,
+        to_char(a.itemid) AS item_id,
+        trunc(a.salesdate) AS invoicedate,
+        a.quantity AS invoiced_qty,
+        0 AS sales_unit_price,
+        a.discount,
+        0 AS net_curr_amount,
+        0 AS gross_curr_amount,
+        a.partdescription AS catalog_desc,
+        a.customername AS customer_name,
+        a.ordernumber AS order_no,
+        a.customerid AS customer_no,
+        ' ' AS cust_grp,
+        a.salespartno AS catalog_no,
+        ' ' AS authorize_code,
+        b.salesman_code,
+        ' ' AS commission_receiver,
+        ' ' AS district_code,
+        'FRA' AS region_code,
+        a.salesdate AS createdate,
+        upper(a.productcode) AS part_product_code,
+        upper(a.productline) AS part_product_family,
+        ' ' AS second_commodity,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '12' THEN 'December'
+                WHEN to_char(a.salesdate,'MM') = '01' THEN 'January'
+                WHEN to_char(a.salesdate,'MM') = '02' THEN 'February'
+                WHEN to_char(a.salesdate,'MM') = '03' THEN 'March'
+                WHEN to_char(a.salesdate,'MM') = '04' THEN 'April'
+                WHEN to_char(a.salesdate,'MM') = '05' THEN 'May'
+                WHEN to_char(a.salesdate,'MM') = '06' THEN 'June'
+                WHEN to_char(a.salesdate,'MM') = '07' THEN 'July'
+                WHEN to_char(a.salesdate,'MM') = '08' THEN 'August'
+                WHEN to_char(a.salesdate,'MM') = '09' THEN 'September'
+                WHEN to_char(a.salesdate,'MM') = '10' THEN 'October'
+                WHEN to_char(a.salesdate,'MM') = '11' THEN 'November'
+                WHEN to_char(a.salesdate,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
+                       || EXTRACT(YEAR FROM a.salesdate)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(A.Salesdate,'MM/YYYY') AS Invoicemthyr,
-        ' ' AS Group_Id,
-        'Sub-Part' AS Type_Designation,
-        ' ' AS Customer_No_Pay,
-        'FRA' AS Corporate_Form,
-        A.Amount * 1.4 AS Fixedamounts,
-        A.Amount * I.Currency_Rate AS Allamounts,
-        A.Amount AS Localamount,
-        A.Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        DECODE(A.Salespartno,C.Part_No,C.Inventory_Value,D.Part_No,D.Inventory_Value * 1.4) AS Cost,
-        'Parts' AS Charge_Type,
-        'FRA' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        ' ' AS Delivery_Identity,
-        ' ' AS Identity,
-        ' ' AS Delivery_Address_Id,
-        ' ' AS Invoice_Address_Id,
-        'EUR' AS Currency,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        AS invoiceqtryr,
+        to_char(a.salesdate,'MM/YYYY') AS invoicemthyr,
+        ' ' AS group_id,
+        'Sub-Part' AS type_designation,
+        ' ' AS customer_no_pay,
+        'FRA' AS corporate_form,
+        a.amount * 1.4 AS fixedamounts,
+        a.amount * i.currency_rate AS allamounts,
+        a.amount AS localamount,
+        a.amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        decode(a.salespartno,c.part_no,c.inventory_value,d.part_no,d.inventory_value * 1.4) AS cost,
+        'Parts' AS charge_type,
+        'FRA' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        ' ' AS delivery_identity,
+        ' ' AS identity,
+        ' ' AS delivery_address_id,
+        ' ' AS invoice_address_id,
+        'EUR' AS currency,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Srordersfra A
-        LEFT JOIN Cust_Ord_Customer_Tab B ON A.Customerid = B.Customer_No
-        LEFT JOIN Kd_Currency_Rate_4 I ON TO_CHAR(A.Salesdate,'MM/YYYY') = I.Valid_From
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum C ON A.Salespartno = C.Part_No AND
-                                                    C.Contract = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum D ON A.Salespartno = D.Part_No AND
-                                                    D.Contract = '210'
+        srordersfra a
+        LEFT JOIN cust_ord_customer_tab b ON a.customerid = b.customer_no
+        LEFT JOIN kd_currency_rate_4 i ON to_char(a.salesdate,'MM/YYYY') = i.valid_from
+        LEFT JOIN inventory_part_unit_cost_sum c ON a.salespartno = c.part_no AND
+                                                    c.contract = '100'
+        LEFT JOIN inventory_part_unit_cost_sum d ON a.salespartno = d.part_no AND
+                                                    d.contract = '210'
     WHERE
-        A.Customerid != 'FR0672' AND
-        A.Salesdate >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
-        I.Currency_Code = 'EUR'
+        a.customerid != 'FR0672' AND
+        a.salesdate >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
+        i.currency_code = 'EUR'
     UNION ALL
     SELECT
-        '210' AS Site,
-        A.Invoiceno AS Invoice_Id,
-        TO_CHAR(A.Itemid) AS Item_Id,
-        Trunc(A.Salesdate) AS Invoicedate,
-        A.Quantity AS Invoiced_Qty,
-        0 AS Sales_Unit_Price,
-        A.Discount,
-        0 AS Net_Curr_Amount,
-        0 AS Gross_Curr_Amount,
-        A.Partdescription AS Catalog_Desc,
-        A.Customername AS Customer_Name,
-        A.Ordernumber AS Order_No,
-        A.Customerid AS Customer_No,
-        ' ' AS Cust_Grp,
-        A.Salespartno AS Catalog_No,
-        ' ' AS Authorize_Code,
-        B.Salesman_Code,
-        ' ' AS Commission_Receiver,
-        ' ' AS District_Code,
-        'ITL' AS Region_Code,
-        A.Salesdate AS Createdate,
-        Upper(A.Productcode) AS Part_Product_Code,
-        DECODE(A.Productline,'Calfor','CALFO','Calmat','CALMA','Dynablast','DYNAB','Dynagraft','DYNAG','DynaMatrix','DYNAM','Renova','RENOV'
-,'Restore','RESTO','Stage1','STAGE','Tefgen','TEFGE','Connexus','CONNX','Genesis','GNSIS',Upper(A.Productline) ) AS Part_Product_Family
+        '210' AS site,
+        a.invoiceno AS invoice_id,
+        to_char(a.itemid) AS item_id,
+        trunc(a.salesdate) AS invoicedate,
+        a.quantity AS invoiced_qty,
+        0 AS sales_unit_price,
+        a.discount,
+        0 AS net_curr_amount,
+        0 AS gross_curr_amount,
+        a.partdescription AS catalog_desc,
+        a.customername AS customer_name,
+        a.ordernumber AS order_no,
+        a.customerid AS customer_no,
+        ' ' AS cust_grp,
+        a.salespartno AS catalog_no,
+        ' ' AS authorize_code,
+        b.salesman_code,
+        ' ' AS commission_receiver,
+        ' ' AS district_code,
+        'ITL' AS region_code,
+        a.salesdate AS createdate,
+        upper(a.productcode) AS part_product_code,
+        decode(a.productline,'Calfor','CALFO','Calmat','CALMA','Dynablast','DYNAB','Dynagraft','DYNAG','DynaMatrix','DYNAM','Renova','RENOV'
+,'Restore','RESTO','Stage1','STAGE','Tefgen','TEFGE','Connexus','CONNX','Genesis','GNSIS',upper(a.productline) ) AS part_product_family
 ,
-        ' ' AS Second_Commodity,
+        ' ' AS second_commodity,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '12' THEN 'December'
+                WHEN to_char(a.salesdate,'MM') = '01' THEN 'January'
+                WHEN to_char(a.salesdate,'MM') = '02' THEN 'February'
+                WHEN to_char(a.salesdate,'MM') = '03' THEN 'March'
+                WHEN to_char(a.salesdate,'MM') = '04' THEN 'April'
+                WHEN to_char(a.salesdate,'MM') = '05' THEN 'May'
+                WHEN to_char(a.salesdate,'MM') = '06' THEN 'June'
+                WHEN to_char(a.salesdate,'MM') = '07' THEN 'July'
+                WHEN to_char(a.salesdate,'MM') = '08' THEN 'August'
+                WHEN to_char(a.salesdate,'MM') = '09' THEN 'September'
+                WHEN to_char(a.salesdate,'MM') = '10' THEN 'October'
+                WHEN to_char(a.salesdate,'MM') = '11' THEN 'November'
+                WHEN to_char(a.salesdate,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
+                       || EXTRACT(YEAR FROM a.salesdate)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(A.Salesdate,'MM/YYYY') AS Invoicemthyr,
-        ' ' AS Group_Id,
-        'Sub-Part' AS Type_Designation,
-        ' ' AS Customer_No_Pay,
-        'ITL' AS Corporate_Form,
-        A.Amount * 1.4 AS Fixedamounts,
-        A.Amount * I.Currency_Rate AS Allamounts,
-        A.Amount AS Localamount,
-        A.Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        DECODE(A.Salespartno,C.Part_No,C.Inventory_Value,D.Part_No,D.Inventory_Value * 1.4) AS Cost,
-        'Parts' AS Charge_Type,
-        'ITL' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        ' ' AS Delivery_Identity,
-        ' ' AS Identity,
-        ' ' AS Delivery_Address_Id,
-        ' ' AS Invoice_Address_Id,
-        'EUR' AS Currency,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        AS invoiceqtryr,
+        to_char(a.salesdate,'MM/YYYY') AS invoicemthyr,
+        ' ' AS group_id,
+        'Sub-Part' AS type_designation,
+        ' ' AS customer_no_pay,
+        'ITL' AS corporate_form,
+        a.amount * 1.4 AS fixedamounts,
+        a.amount * i.currency_rate AS allamounts,
+        a.amount AS localamount,
+        a.amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        decode(a.salespartno,c.part_no,c.inventory_value,d.part_no,d.inventory_value * 1.4) AS cost,
+        'Parts' AS charge_type,
+        'ITL' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        ' ' AS delivery_identity,
+        ' ' AS identity,
+        ' ' AS delivery_address_id,
+        ' ' AS invoice_address_id,
+        'EUR' AS currency,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Srordersitl A
-        LEFT JOIN Cust_Ord_Customer_Tab B ON A.Customerid = B.Customer_No
-        LEFT JOIN Kd_Currency_Rate_4 I ON TO_CHAR(A.Salesdate,'MM/YYYY') = I.Valid_From
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum C ON A.Salespartno = C.Part_No AND
-                                                    C.Contract = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum D ON A.Salespartno = D.Part_No AND
-                                                    D.Contract = '210'
+        srordersitl a
+        LEFT JOIN cust_ord_customer_tab b ON a.customerid = b.customer_no
+        LEFT JOIN kd_currency_rate_4 i ON to_char(a.salesdate,'MM/YYYY') = i.valid_from
+        LEFT JOIN inventory_part_unit_cost_sum c ON a.salespartno = c.part_no AND
+                                                    c.contract = '100'
+        LEFT JOIN inventory_part_unit_cost_sum d ON a.salespartno = d.part_no AND
+                                                    d.contract = '210'
     WHERE
-        A.Customerid NOT IN (
+        a.customerid NOT IN (
             'IT002945',
             'IT000387',
             'IT000807',
@@ -696,8 +701,8 @@ Fixedamounts,
             'IT002014',
             ' '
         ) AND
-        A.Salesdate >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
-        A.Salesrepid IN (
+        a.salesdate >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
+        a.salesrepid IN (
             '210-001',
             '210-002',
             '210-003',
@@ -727,467 +732,467 @@ Fixedamounts,
             '210-037',
             '210-098'
         ) AND
-        I.Currency_Code = 'EUR'
+        i.currency_code = 'EUR'
     UNION ALL
     SELECT
-        '230' AS Site,
-        A.Invoiceno AS Invoice_Id,
-        TO_CHAR(A.Itemid) AS Item_Id,
-        Trunc(A.Salesdate) AS Invoicedate,
-        A.Quantity AS Invoiced_Qty,
-        0 AS Sales_Unit_Price,
-        A.Discount,
-        0 AS Net_Curr_Amount,
-        0 AS Gross_Curr_Amount,
-        A.Partdescription AS Catalog_Desc,
-        A.Customername AS Customer_Name,
-        A.Ordernumber AS Order_No,
-        A.Customerid AS Customer_No,
-        ' ' AS Cust_Grp,
-        A.Salespartno AS Catalog_No,
-        ' ' AS Authorize_Code,
-        B.Salesman_Code,
-        ' ' AS Commission_Receiver,
-        ' ' AS District_Code,
-        'SWE' AS Region_Code,
-        A.Salesdate AS Createdate,
-        Upper(A.Productcode) AS Part_Product_Code,
-        Upper(A.Productline) AS Part_Product_Family,
-        ' ' AS Second_Commodity,
+        '230' AS site,
+        a.invoiceno AS invoice_id,
+        to_char(a.itemid) AS item_id,
+        trunc(a.salesdate) AS invoicedate,
+        a.quantity AS invoiced_qty,
+        0 AS sales_unit_price,
+        a.discount,
+        0 AS net_curr_amount,
+        0 AS gross_curr_amount,
+        a.partdescription AS catalog_desc,
+        a.customername AS customer_name,
+        a.ordernumber AS order_no,
+        a.customerid AS customer_no,
+        ' ' AS cust_grp,
+        a.salespartno AS catalog_no,
+        ' ' AS authorize_code,
+        b.salesman_code,
+        ' ' AS commission_receiver,
+        ' ' AS district_code,
+        'SWE' AS region_code,
+        a.salesdate AS createdate,
+        upper(a.productcode) AS part_product_code,
+        upper(a.productline) AS part_product_family,
+        ' ' AS second_commodity,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '12' THEN 'December'
+                WHEN to_char(a.salesdate,'MM') = '01' THEN 'January'
+                WHEN to_char(a.salesdate,'MM') = '02' THEN 'February'
+                WHEN to_char(a.salesdate,'MM') = '03' THEN 'March'
+                WHEN to_char(a.salesdate,'MM') = '04' THEN 'April'
+                WHEN to_char(a.salesdate,'MM') = '05' THEN 'May'
+                WHEN to_char(a.salesdate,'MM') = '06' THEN 'June'
+                WHEN to_char(a.salesdate,'MM') = '07' THEN 'July'
+                WHEN to_char(a.salesdate,'MM') = '08' THEN 'August'
+                WHEN to_char(a.salesdate,'MM') = '09' THEN 'September'
+                WHEN to_char(a.salesdate,'MM') = '10' THEN 'October'
+                WHEN to_char(a.salesdate,'MM') = '11' THEN 'November'
+                WHEN to_char(a.salesdate,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
+                       || EXTRACT(YEAR FROM a.salesdate)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(A.Salesdate,'MM/YYYY') AS Invoicemthyr,
-        ' ' AS Group_Id,
-        'Sub-Part' AS Type_Designation,
-        ' ' AS Customer_No_Pay,
-        'SWE' AS Corporate_Form,
-        A.Amount *.13 AS Fixedamounts,
-        A.Amount * I.Currency_Rate AS Allamounts,
-        A.Amount * J.Currency_Rate AS Localamount,
-        A.Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        DECODE(A.Salespartno,C.Part_No,C.Inventory_Value,D.Part_No,D.Inventory_Value * 1.4) AS Cost,
-        'Parts' AS Charge_Type,
-        'ITL' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        ' ' AS Delivery_Identity,
-        ' ' AS Identity,
-        ' ' AS Delivery_Address_Id,
-        ' ' AS Invoice_Address_Id,
-        'SEK' AS Currency,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        AS invoiceqtryr,
+        to_char(a.salesdate,'MM/YYYY') AS invoicemthyr,
+        ' ' AS group_id,
+        'Sub-Part' AS type_designation,
+        ' ' AS customer_no_pay,
+        'SWE' AS corporate_form,
+        a.amount *.13 AS fixedamounts,
+        a.amount * i.currency_rate AS allamounts,
+        a.amount * j.currency_rate AS localamount,
+        a.amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        decode(a.salespartno,c.part_no,c.inventory_value,d.part_no,d.inventory_value * 1.4) AS cost,
+        'Parts' AS charge_type,
+        'ITL' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        ' ' AS delivery_identity,
+        ' ' AS identity,
+        ' ' AS delivery_address_id,
+        ' ' AS invoice_address_id,
+        'SEK' AS currency,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Srordersswe A
-        LEFT JOIN Cust_Ord_Customer_Tab B ON A.Customerid = B.Customer_No
-        LEFT JOIN Kd_Currency_Rate_4 I ON TO_CHAR(A.Salesdate,'MM/YYYY') = I.Valid_From
-        LEFT JOIN Kd_Currency_Rate_4 J ON TO_CHAR(A.Salesdate,'MM/YYYY') = J.Valid_From
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum C ON A.Salespartno = C.Part_No AND
-                                                    C.Contract = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum D ON A.Salespartno = D.Part_No AND
-                                                    D.Contract = '210'
+        srordersswe a
+        LEFT JOIN cust_ord_customer_tab b ON a.customerid = b.customer_no
+        LEFT JOIN kd_currency_rate_4 i ON to_char(a.salesdate,'MM/YYYY') = i.valid_from
+        LEFT JOIN kd_currency_rate_4 j ON to_char(a.salesdate,'MM/YYYY') = j.valid_from
+        LEFT JOIN inventory_part_unit_cost_sum c ON a.salespartno = c.part_no AND
+                                                    c.contract = '100'
+        LEFT JOIN inventory_part_unit_cost_sum d ON a.salespartno = d.part_no AND
+                                                    d.contract = '210'
     WHERE
-        A.Customerid NOT IN (
+        a.customerid NOT IN (
             'SE1477',
             'SE1421',
             'SE1424',
             'SE1420',
             'SE1419'
         ) AND
-        A.Salesdate >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
-        I.Currency_Code = 'SEK' AND
-        J.Currency_Code = 'EUR'
+        a.salesdate >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
+        i.currency_code = 'SEK' AND
+        j.currency_code = 'EUR'
     UNION ALL
     SELECT
-        '220' AS Site,
-        A.Invoiceno AS Invoice_Id,
-        TO_CHAR(A.Itemid) AS Item_Id,
-        Trunc(A.Salesdate) AS Invoicedate,
-        A.Quantity AS Invoiced_Qty,
-        0 AS Sales_Unit_Price,
-        A.Discount,
-        0 AS Net_Curr_Amount,
-        0 AS Gross_Curr_Amount,
-        A.Partdescription AS Catalog_Desc,
-        A.Customername AS Customer_Name,
-        A.Ordernumber AS Order_No,
-        A.Customerid AS Customer_No,
-        'DIST' AS Cust_Grp,
-        A.Salespartno AS Catalog_No,
-        ' ' AS Authorize_Code,
-        B.Salesman_Code,
-        ' ' AS Commission_Receiver,
-        ' ' AS District_Code,
-        'EURO' AS Region_Code,
-        A.Salesdate AS Createdate,
-        Upper(A.Productcode) AS Part_Product_Code,
-        DECODE(A.Productline,'Calfor','CALFO','Calmat','CALMA','Dynablast','DYNAB','Dynagraft','DYNAG','DynaMatrix','DYNAM','Renova','RENOV'
-,'Restore','RESTO','Stage1','STAGE','Tefgen','TEFGE','Connexus','CONNX',Upper(A.Productline) ) AS Part_Product_Family,
-        ' ' AS Second_Commodity,
+        '220' AS site,
+        a.invoiceno AS invoice_id,
+        to_char(a.itemid) AS item_id,
+        trunc(a.salesdate) AS invoicedate,
+        a.quantity AS invoiced_qty,
+        0 AS sales_unit_price,
+        a.discount,
+        0 AS net_curr_amount,
+        0 AS gross_curr_amount,
+        a.partdescription AS catalog_desc,
+        a.customername AS customer_name,
+        a.ordernumber AS order_no,
+        a.customerid AS customer_no,
+        'DIST' AS cust_grp,
+        a.salespartno AS catalog_no,
+        ' ' AS authorize_code,
+        b.salesman_code,
+        ' ' AS commission_receiver,
+        ' ' AS district_code,
+        'EURO' AS region_code,
+        a.salesdate AS createdate,
+        upper(a.productcode) AS part_product_code,
+        decode(a.productline,'Calfor','CALFO','Calmat','CALMA','Dynablast','DYNAB','Dynagraft','DYNAG','DynaMatrix','DYNAM','Renova','RENOV'
+,'Restore','RESTO','Stage1','STAGE','Tefgen','TEFGE','Connexus','CONNX',upper(a.productline) ) AS part_product_family,
+        ' ' AS second_commodity,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '12' THEN 'December'
+                WHEN to_char(a.salesdate,'MM') = '01' THEN 'January'
+                WHEN to_char(a.salesdate,'MM') = '02' THEN 'February'
+                WHEN to_char(a.salesdate,'MM') = '03' THEN 'March'
+                WHEN to_char(a.salesdate,'MM') = '04' THEN 'April'
+                WHEN to_char(a.salesdate,'MM') = '05' THEN 'May'
+                WHEN to_char(a.salesdate,'MM') = '06' THEN 'June'
+                WHEN to_char(a.salesdate,'MM') = '07' THEN 'July'
+                WHEN to_char(a.salesdate,'MM') = '08' THEN 'August'
+                WHEN to_char(a.salesdate,'MM') = '09' THEN 'September'
+                WHEN to_char(a.salesdate,'MM') = '10' THEN 'October'
+                WHEN to_char(a.salesdate,'MM') = '11' THEN 'November'
+                WHEN to_char(a.salesdate,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
+                       || EXTRACT(YEAR FROM a.salesdate)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(A.Salesdate,'MM/YYYY') AS Invoicemthyr,
-        ' ' AS Group_Id,
-        'Sub-Part' AS Type_Designation,
-        ' ' AS Customer_No_Pay,
-        'EUR' AS Corporate_Form,
-        A.Amount * 1.4 AS Fixedamounts,
-        A.Amount * I.Currency_Rate AS Allamounts,
-        A.Amount AS Localamount,
-        A.Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        DECODE(A.Salespartno,C.Part_No,C.Inventory_Value,D.Part_No,D.Inventory_Value * 1.4) AS Cost,
-        'Parts' AS Charge_Type,
-        'GER' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        ' ' AS Delivery_Identity,
-        ' ' AS Identity,
-        ' ' AS Delivery_Address_Id,
-        ' ' AS Invoice_Address_Id,
-        'EUR' AS Currency,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        AS invoiceqtryr,
+        to_char(a.salesdate,'MM/YYYY') AS invoicemthyr,
+        ' ' AS group_id,
+        'Sub-Part' AS type_designation,
+        ' ' AS customer_no_pay,
+        'EUR' AS corporate_form,
+        a.amount * 1.4 AS fixedamounts,
+        a.amount * i.currency_rate AS allamounts,
+        a.amount AS localamount,
+        a.amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        decode(a.salespartno,c.part_no,c.inventory_value,d.part_no,d.inventory_value * 1.4) AS cost,
+        'Parts' AS charge_type,
+        'GER' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        ' ' AS delivery_identity,
+        ' ' AS identity,
+        ' ' AS delivery_address_id,
+        ' ' AS invoice_address_id,
+        'EUR' AS currency,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Srordersger A
-        LEFT JOIN Cust_Ord_Customer_Tab B ON A.Customerid = B.Customer_No
-        LEFT JOIN Kd_Currency_Rate_4 I ON TO_CHAR(A.Salesdate,'MM/YYYY') = I.Valid_From
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum C ON A.Salespartno = C.Part_No AND
-                                                    C.Contract = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum D ON A.Salespartno = D.Part_No AND
-                                                    D.Contract = '210'
+        srordersger a
+        LEFT JOIN cust_ord_customer_tab b ON a.customerid = b.customer_no
+        LEFT JOIN kd_currency_rate_4 i ON to_char(a.salesdate,'MM/YYYY') = i.valid_from
+        LEFT JOIN inventory_part_unit_cost_sum c ON a.salespartno = c.part_no AND
+                                                    c.contract = '100'
+        LEFT JOIN inventory_part_unit_cost_sum d ON a.salespartno = d.part_no AND
+                                                    d.contract = '210'
     WHERE
-        A.Customerid IN (
+        a.customerid IN (
             'DE55046',
             'DE43125',
             'DE29029',
             'DE47206'
         ) AND
-        A.Salesdate >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
-        I.Currency_Code = 'EUR'
+        a.salesdate >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
+        i.currency_code = 'EUR'
     UNION ALL
     SELECT
-        '210' AS Site,
-        A.Invoiceno AS Invoice_Id,
-        TO_CHAR(A.Itemid) AS Item_Id,
-        Trunc(A.Salesdate) AS Invoicedate,
-        A.Quantity AS Invoiced_Qty,
-        0 AS Sales_Unit_Price,
-        A.Discount,
-        0 AS Net_Curr_Amount,
-        0 AS Gross_Curr_Amount,
-        A.Partdescription AS Catalog_Desc,
-        A.Customername AS Customer_Name,
-        A.Ordernumber AS Order_No,
-        A.Customerid AS Customer_No,
-        'DIST' AS Cust_Grp,
-        A.Salespartno AS Catalog_No,
-        ' ' AS Authorize_Code,
-        B.Salesman_Code,
-        ' ' AS Commission_Receiver,
-        ' ' AS District_Code,
-        'EURO' AS Region_Code,
-        A.Salesdate AS Createdate,
-        Upper(A.Productcode) AS Part_Product_Code,
-        DECODE(A.Productline,'Calfor','CALFO','Calmat','CALMA','Dynablast','DYNAB','Dynagraft','DYNAG','DynaMatrix','DYNAM','Renova','RENOV'
-,'Restore','RESTO','Stage1','STAGE','Tefgen','TEFGE','Connexus','CONNX',Upper(A.Productline) ) AS Part_Product_Family,
-        ' ' AS Second_Commodity,
+        '210' AS site,
+        a.invoiceno AS invoice_id,
+        to_char(a.itemid) AS item_id,
+        trunc(a.salesdate) AS invoicedate,
+        a.quantity AS invoiced_qty,
+        0 AS sales_unit_price,
+        a.discount,
+        0 AS net_curr_amount,
+        0 AS gross_curr_amount,
+        a.partdescription AS catalog_desc,
+        a.customername AS customer_name,
+        a.ordernumber AS order_no,
+        a.customerid AS customer_no,
+        'DIST' AS cust_grp,
+        a.salespartno AS catalog_no,
+        ' ' AS authorize_code,
+        b.salesman_code,
+        ' ' AS commission_receiver,
+        ' ' AS district_code,
+        'EURO' AS region_code,
+        a.salesdate AS createdate,
+        upper(a.productcode) AS part_product_code,
+        decode(a.productline,'Calfor','CALFO','Calmat','CALMA','Dynablast','DYNAB','Dynagraft','DYNAG','DynaMatrix','DYNAM','Renova','RENOV'
+,'Restore','RESTO','Stage1','STAGE','Tefgen','TEFGE','Connexus','CONNX',upper(a.productline) ) AS part_product_family,
+        ' ' AS second_commodity,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '12' THEN 'December'
+                WHEN to_char(a.salesdate,'MM') = '01' THEN 'January'
+                WHEN to_char(a.salesdate,'MM') = '02' THEN 'February'
+                WHEN to_char(a.salesdate,'MM') = '03' THEN 'March'
+                WHEN to_char(a.salesdate,'MM') = '04' THEN 'April'
+                WHEN to_char(a.salesdate,'MM') = '05' THEN 'May'
+                WHEN to_char(a.salesdate,'MM') = '06' THEN 'June'
+                WHEN to_char(a.salesdate,'MM') = '07' THEN 'July'
+                WHEN to_char(a.salesdate,'MM') = '08' THEN 'August'
+                WHEN to_char(a.salesdate,'MM') = '09' THEN 'September'
+                WHEN to_char(a.salesdate,'MM') = '10' THEN 'October'
+                WHEN to_char(a.salesdate,'MM') = '11' THEN 'November'
+                WHEN to_char(a.salesdate,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
+                       || EXTRACT(YEAR FROM a.salesdate)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(A.Salesdate,'MM/YYYY') AS Invoicemthyr,
-        ' ' AS Group_Id,
-        'Sub-Part' AS Type_Designation,
-        ' ' AS Customer_No_Pay,
-        'EUR' AS Corporate_Form,
-        A.Amount * 1.4 AS Fixedamounts,
-        A.Amount * I.Currency_Rate AS Allamounts,
-        A.Amount AS Localamount,
-        A.Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        DECODE(A.Salespartno,C.Part_No,C.Inventory_Value,D.Part_No,D.Inventory_Value * 1.4) AS Cost,
-        'Parts' AS Charge_Type,
-        'ITL' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        ' ' AS Delivery_Identity,
-        ' ' AS Identity,
-        ' ' AS Delivery_Address_Id,
-        ' ' AS Invoice_Address_Id,
-        'EUR' AS Currency,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        AS invoiceqtryr,
+        to_char(a.salesdate,'MM/YYYY') AS invoicemthyr,
+        ' ' AS group_id,
+        'Sub-Part' AS type_designation,
+        ' ' AS customer_no_pay,
+        'EUR' AS corporate_form,
+        a.amount * 1.4 AS fixedamounts,
+        a.amount * i.currency_rate AS allamounts,
+        a.amount AS localamount,
+        a.amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        decode(a.salespartno,c.part_no,c.inventory_value,d.part_no,d.inventory_value * 1.4) AS cost,
+        'Parts' AS charge_type,
+        'ITL' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        ' ' AS delivery_identity,
+        ' ' AS identity,
+        ' ' AS delivery_address_id,
+        ' ' AS invoice_address_id,
+        'EUR' AS currency,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Srordersitl A
-        LEFT JOIN Cust_Ord_Customer_Tab B ON A.Customerid = B.Customer_No
-        LEFT JOIN Kd_Currency_Rate_4 I ON TO_CHAR(A.Salesdate,'MM/YYYY') = I.Valid_From
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum C ON A.Salespartno = C.Part_No AND
-                                                    C.Contract = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum D ON A.Salespartno = D.Part_No AND
-                                                    D.Contract = '210'
+        srordersitl a
+        LEFT JOIN cust_ord_customer_tab b ON a.customerid = b.customer_no
+        LEFT JOIN kd_currency_rate_4 i ON to_char(a.salesdate,'MM/YYYY') = i.valid_from
+        LEFT JOIN inventory_part_unit_cost_sum c ON a.salespartno = c.part_no AND
+                                                    c.contract = '100'
+        LEFT JOIN inventory_part_unit_cost_sum d ON a.salespartno = d.part_no AND
+                                                    d.contract = '210'
     WHERE
-        A.Customerid IN (
+        a.customerid IN (
             'IT002945',
             'IT000387',
             'IT000807',
@@ -1203,185 +1208,190 @@ Fixedamounts,
             'IT003693',
             'IT003940'
         ) AND
-        A.Salesdate >= TO_DATE('01/01/2010','MM/DD/YYYY') AND
-        I.Currency_Code = 'EUR'
+        a.salesdate >= TO_DATE('01/01/2010','MM/DD/YYYY') AND
+        i.currency_code = 'EUR'
     UNION ALL
     SELECT
-        '100' AS Site,
-        A.Invoice_No AS Invoice_Id,
-        '1' AS Item_Id,
-        Trunc(A.Invoice_Date) AS Invoicedate,
-        0 AS Invoiced_Qty,
-        0 AS Sale_Unit_Price,
-        0 AS Discount,
-        A.Net_Curr_Amount AS Net_Curr_Amount,
-        A.Net_Curr_Amount + A.Vat_Curr_Amount AS Gross_Curr_Amount,
-        'Other' AS Catalog_Desc,
-        B.Name AS Customer_Name,
-        A.Creators_Reference AS Order_No,
-        A.Identity AS Customer_No,
-        C.Cust_Grp AS Cust_Grp,
-        'Other' AS Catalog_No,
-        'Other' AS Authorize_Code,
-        C.Salesman_Code AS Salesman_Code,
-        E.Commission_Receiver AS Commission_Receiver,
-        D.District_Code AS District_Code,
-        D.Region_Code AS Region_Code,
-        Trunc(A.Invoice_Date) AS Createdate,
-        'OTHER' AS Part_Product_Code,
-        'OTHER' AS Part_Product_Family,
-        'OTHER' AS Second_Commodity,
+        '100' AS site,
+        a.invoice_no AS invoice_id,
+        '1' AS item_id,
+        trunc(a.invoice_date) AS invoicedate,
+        0 AS invoiced_qty,
+        0 AS sale_unit_price,
+        0 AS discount,
+        a.net_curr_amount AS net_curr_amount,
+        a.net_curr_amount + a.vat_curr_amount AS gross_curr_amount,
+        'Other' AS catalog_desc,
+        b.name AS customer_name,
+        a.creators_reference AS order_no,
+        a.identity AS customer_no,
+        c.cust_grp AS cust_grp,
+        'Other' AS catalog_no,
+        'Other' AS authorize_code,
+        c.salesman_code AS salesman_code,
+        e.commission_receiver AS commission_receiver,
+        d.district_code AS district_code,
+        d.region_code AS region_code,
+        trunc(a.invoice_date) AS createdate,
+        'OTHER' AS part_product_code,
+        'OTHER' AS part_product_family,
+        'OTHER' AS second_commodity,
         CASE
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '12' THEN 'December'
+                WHEN to_char(a.invoice_date,'MM') = '01' THEN 'January'
+                WHEN to_char(a.invoice_date,'MM') = '02' THEN 'February'
+                WHEN to_char(a.invoice_date,'MM') = '03' THEN 'March'
+                WHEN to_char(a.invoice_date,'MM') = '04' THEN 'April'
+                WHEN to_char(a.invoice_date,'MM') = '05' THEN 'May'
+                WHEN to_char(a.invoice_date,'MM') = '06' THEN 'June'
+                WHEN to_char(a.invoice_date,'MM') = '07' THEN 'July'
+                WHEN to_char(a.invoice_date,'MM') = '08' THEN 'August'
+                WHEN to_char(a.invoice_date,'MM') = '09' THEN 'September'
+                WHEN to_char(a.invoice_date,'MM') = '10' THEN 'October'
+                WHEN to_char(a.invoice_date,'MM') = '11' THEN 'November'
+                WHEN to_char(a.invoice_date,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Invoice_Date)
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM a.invoice_date)
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Invoice_Date)
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM a.invoice_date)
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Invoice_Date)
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM a.invoice_date)
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Invoice_Date)
+                       || EXTRACT(YEAR FROM a.invoice_date)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(A.Invoice_Date,'MM/YYYY') AS Invoicemthyr,
-        F.Group_Id AS Group_Id,
-        DECODE(A.Invoice_No,'99086930','Non-Target','Target') AS Type_Designation,
-        C.Customer_No_Pay,
-        B.Corporate_Form,
-        DECODE(A.Currency,'SEK', (A.Net_Curr_Amount *.13),'EUR', (A.Net_Curr_Amount * 1.4),A.Net_Curr_Amount) AS Fixed_Amounts,
+        AS invoiceqtryr,
+        to_char(a.invoice_date,'MM/YYYY') AS invoicemthyr,
+        f.group_id AS group_id,
+        decode(a.invoice_no,'99086930','Non-Target','Target') AS type_designation,
+        c.customer_no_pay,
+        b.corporate_form,
+        decode(a.currency,'SEK', (a.net_curr_amount *.13),'EUR', (a.net_curr_amount * 1.4),a.net_curr_amount) AS fixed_amounts,
         CASE
-                WHEN A.Currency = 'CAD' AND
-                     Trunc(A.Invoice_Date) >= TO_DATE('03/01/2013','MM/DD/YYYY') THEN A.Net_Curr_Amount
-                WHEN A.Currency != 'USD' THEN A.Net_Curr_Amount * I.Currency_Rate
-                ELSE A.Net_Curr_Amount
+                WHEN a.currency = 'CAD' AND
+                     trunc(a.invoice_date) >= TO_DATE('03/01/2013','MM/DD/YYYY') AND
+                     trunc(a.invoice_date) <= TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN a.net_curr_amount
+                WHEN a.currency = 'CAD' AND
+                     trunc(a.invoice_date) > TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN a.net_curr_amount * coalesce(a.n1,a.curr_rate)
+                WHEN a.currency != 'USD' THEN a.net_curr_amount * i.currency_rate
+                ELSE a.net_curr_amount
             END
-        AS Allamounts,
+        AS allamounts,
         CASE
-                WHEN A.Currency IN (
+                WHEN a.currency IN (
                     'SEK',
                     'DKK'
-                ) THEN A.Net_Curr_Amount / J.Currency_Rate
-                ELSE A.Net_Curr_Amount
+                ) THEN a.net_curr_amount / j.currency_rate
+                ELSE a.net_curr_amount
             END
-        AS Localamount,
-        A.Net_Curr_Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        0 AS Cost,
-        'Parts' AS Charge_Type,
-        'IFS' AS Source,
-        'Market' AS Market_Code,
-        B.Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        A.Identity AS Delivery_Identity,
-        A.Identity AS Identity,
-        '99' AS Delivery_Address_Id,
-        '99' AS Invoice_Address_Id,
-        A.Currency AS Currency,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        AS localamount,
+        a.net_curr_amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        0 AS cost,
+        'Parts' AS charge_type,
+        'IFS' AS source,
+        'Market' AS market_code,
+        b.association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        a.identity AS delivery_identity,
+        a.identity AS identity,
+        '99' AS delivery_address_id,
+        '99' AS invoice_address_id,
+        a.currency AS currency,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Invoice_Tab A
-        LEFT JOIN Kd_Currency_Rate_4 I ON A.Currency = I.Currency_Code AND
-                                          TO_CHAR(A.Invoice_Date,'MM/YYYY') = I.Valid_From
-        LEFT JOIN Kd_Currency_Rate_1 J ON A.Currency = J.Currency_Code AND
-                                          TO_CHAR(A.Invoice_Date,'MM/YYYY') = J.Valid_From,
-        Customer_Info_Tab B,
-        Cust_Ord_Customer_Tab C,Cust_Ord_Customer_Address_Tab D
-        LEFT JOIN Cust_Def_Com_Receiver_Tab E ON D.Customer_No = E.Customer_No,
-        Identity_Invoice_Info_Tab F
+        invoice_tab a
+        LEFT JOIN kd_currency_rate_4 i ON a.currency = i.currency_code AND
+                                          to_char(a.invoice_date,'MM/YYYY') = i.valid_from
+        LEFT JOIN kd_currency_rate_1 j ON a.currency = j.currency_code AND
+                                          to_char(a.invoice_date,'MM/YYYY') = j.valid_from,
+        customer_info_tab b,
+        cust_ord_customer_tab c,cust_ord_customer_address_tab d
+        LEFT JOIN cust_def_com_receiver_tab e ON d.customer_no = e.customer_no,
+        identity_invoice_info_tab f
     WHERE
-        A.Identity = B.Customer_Id AND
-        A.Identity = C.Customer_No AND
-        B.Customer_Id = C.Customer_No AND
-        A.Identity = D.Customer_No AND
-        B.Customer_Id = D.Customer_No AND
-        C.Customer_No = D.Customer_No AND
-        F.Identity = A.Identity AND
-        F.Company = '100' AND
-        Trunc(A.Invoice_Date) >= TO_DATE('01/01/2010','MM/DD/YYYY') AND
-        D.Addr_No = '99' AND
-        A.Series_Id IN (
+        a.identity = b.customer_id AND
+        a.identity = c.customer_no AND
+        b.customer_id = c.customer_no AND
+        a.identity = d.customer_no AND
+        b.customer_id = d.customer_no AND
+        c.customer_no = d.customer_no AND
+        f.identity = a.identity AND
+        f.company = '100' AND
+        trunc(a.invoice_date) >= TO_DATE('01/01/2010','MM/DD/YYYY') AND
+        d.addr_no = '99' AND
+        a.series_id IN (
             'CI',
             'II'
         ) AND
-        Invoice_Api.Finite_State_Decode__(A.Rowstate) != 'Cancelled' AND
-        A.Invoice_No IN (
+        invoice_api.finite_state_decode__(a.rowstate) != 'Cancelled' AND
+        a.invoice_no IN (
             'CD99004117-R',
             'CR015275',
             'CR537182',
@@ -1540,522 +1550,527 @@ Fixedamounts,
         )
     UNION ALL
     SELECT
-        DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
-        A.Series_Id || A.Invoice_No AS Invoice_Id,
-        TO_CHAR(B.Item_Id) AS Item_Id,
-        Trunc(A.D2) AS Invoicedate,
+        decode(c.association_no,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS site,
+        a.series_id || a.invoice_no AS invoice_id,
+        to_char(b.item_id) AS item_id,
+        trunc(a.d2) AS invoicedate,
         CASE
-                WHEN A.Series_Id = 'CR' AND
-                     B.N2 IS NULL THEN 0
-                WHEN A.Series_Id = 'CR' AND
-                     B.N2 IS NOT NULL THEN B.N2 *-1
-                ELSE B.N2
+                WHEN a.series_id = 'CR' AND
+                     b.n2 IS NULL THEN 0
+                WHEN a.series_id = 'CR' AND
+                     b.n2 IS NOT NULL THEN b.n2 *-1
+                ELSE b.n2
             END
-        AS Invoiced_Qty,
-        B.N4 AS Sale_Unit_Price,
-        B.N5 AS Discount,
-        A.Net_Curr_Amount,
-        B.Net_Curr_Amount + B.Vat_Curr_Amount AS Gross_Curr_Amount,
-        B.C6 AS Catalog_Desc,
-        C.Name AS Customer_Name,
-        B.C1 AS Order_No,
-        A.Delivery_Identity AS Customer_No,
-        D.Cust_Grp,
-        B.C5 AS Catalog_No,
-        ' ' AS Authorize_Code,
-        D.Salesman_Code,
-        ' ' AS Commission_Receiver,
-        E.District_Code,
-        E.Region_Code,
-        Trunc(A.Invoice_Date) AS Createdate,
-        ' ' AS Part_Product_Code,
-        ' ' AS Part_Product_Family,
-        ' ' AS Second_Commodity,
+        AS invoiced_qty,
+        b.n4 AS sale_unit_price,
+        b.n5 AS discount,
+        a.net_curr_amount,
+        b.net_curr_amount + b.vat_curr_amount AS gross_curr_amount,
+        b.c6 AS catalog_desc,
+        c.name AS customer_name,
+        b.c1 AS order_no,
+        a.delivery_identity AS customer_no,
+        d.cust_grp,
+        b.c5 AS catalog_no,
+        ' ' AS authorize_code,
+        d.salesman_code,
+        ' ' AS commission_receiver,
+        e.district_code,
+        e.region_code,
+        trunc(a.invoice_date) AS createdate,
+        ' ' AS part_product_code,
+        ' ' AS part_product_family,
+        ' ' AS second_commodity,
         CASE
-                WHEN TO_CHAR(A.D2,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(A.D2,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(A.D2,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(A.D2,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(A.D2,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(A.D2,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(A.D2,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(A.D2,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(A.D2,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(A.D2,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(A.D2,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(A.D2,'MM') = '12' THEN 'December'
+                WHEN to_char(a.d2,'MM') = '01' THEN 'January'
+                WHEN to_char(a.d2,'MM') = '02' THEN 'February'
+                WHEN to_char(a.d2,'MM') = '03' THEN 'March'
+                WHEN to_char(a.d2,'MM') = '04' THEN 'April'
+                WHEN to_char(a.d2,'MM') = '05' THEN 'May'
+                WHEN to_char(a.d2,'MM') = '06' THEN 'June'
+                WHEN to_char(a.d2,'MM') = '07' THEN 'July'
+                WHEN to_char(a.d2,'MM') = '08' THEN 'August'
+                WHEN to_char(a.d2,'MM') = '09' THEN 'September'
+                WHEN to_char(a.d2,'MM') = '10' THEN 'October'
+                WHEN to_char(a.d2,'MM') = '11' THEN 'November'
+                WHEN to_char(a.d2,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(A.D2,'MM') IN (
+                WHEN to_char(a.d2,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(A.D2,'MM') IN (
+                WHEN to_char(a.d2,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(A.D2,'MM') IN (
+                WHEN to_char(a.d2,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(A.D2,'MM') IN (
+                WHEN to_char(a.d2,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(A.D2,'MM') IN (
+                WHEN to_char(a.d2,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM A.D2)
-                WHEN TO_CHAR(A.D2,'MM') IN (
+                       || EXTRACT(YEAR FROM a.d2)
+                WHEN to_char(a.d2,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM A.D2)
-                WHEN TO_CHAR(A.D2,'MM') IN (
+                       || EXTRACT(YEAR FROM a.d2)
+                WHEN to_char(a.d2,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM A.D2)
-                WHEN TO_CHAR(A.D2,'MM') IN (
+                       || EXTRACT(YEAR FROM a.d2)
+                WHEN to_char(a.d2,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM A.D2)
+                       || EXTRACT(YEAR FROM a.d2)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(A.D2,'MM/YYYY') AS Invoicemthyr,
-        F.Group_Id,
-        'Freight' AS Type_Designation,
-        B.Identity AS Customer_No_Pay,
-        'Freight' AS Corporate_Form,
-        DECODE(A.Currency,'SEK', (B.Net_Curr_Amount * 0.13),'EUR', (B.Net_Curr_Amount * 0.13),B.Net_Curr_Amount) AS Fixedamounts,
+        AS invoiceqtryr,
+        to_char(a.d2,'MM/YYYY') AS invoicemthyr,
+        f.group_id,
+        'Freight' AS type_designation,
+        b.identity AS customer_no_pay,
+        'Freight' AS corporate_form,
+        decode(a.currency,'SEK', (b.net_curr_amount * 0.13),'EUR', (b.net_curr_amount * 0.13),b.net_curr_amount) AS fixedamounts,
         CASE
-                WHEN A.Currency = 'CAD' AND
-                     Trunc(A.D2) >= TO_DATE('03/01/2013','MM/DD/YYYY') THEN B.Net_Curr_Amount
-                WHEN A.Currency != 'USD' THEN B.Net_Curr_Amount * I.Currency_Rate
-                ELSE B.Net_Curr_Amount
+                WHEN a.currency = 'CAD' AND
+                     trunc(a.d2) >= TO_DATE('03/01/2013','MM/DD/YYYY') AND
+                     trunc(a.d2) <= TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN b.net_curr_amount      
+                WHEN a.currency = 'CAD' AND
+                     trunc(a.d2) > TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN b.net_curr_amount * coalesce(a.n1,a.curr_rate)
+                WHEN a.currency != 'USD' THEN b.net_curr_amount * i.currency_rate
+                ELSE b.net_curr_amount
             END
-        AS Allamounts,
+        AS allamounts,
         CASE
-                WHEN A.Currency IN (
+                WHEN a.currency IN (
                     'SEK',
                     'DKK'
-                ) THEN B.Net_Curr_Amount / J.Currency_Rate
-                ELSE B.Net_Curr_Amount
+                ) THEN b.net_curr_amount / j.currency_rate
+                ELSE b.net_curr_amount
             END
-        AS Localamount,
-        B.Net_Curr_Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        0 AS Cost,
-        'Freight' AS Charge_Type,
-        'IFS' AS Source,
-        'Market' AS Market_Code,
-        C.Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        A.Delivery_Identity,
-        A.Identity,
-        A.Delivery_Address_Id,
-        A.Invoice_Address_Id,
-        A.Currency,
-        A.N2 AS Rma_No,
-        N.Address1 AS Invoiceadd1,
-        N.Address2 AS Invoiceadd2,
-        N.City AS Invoicecity,
-        N.State AS Invoicestate,
-        N.Zip_Code AS Invoicezip,
-        Iso_Country_Api.DECODE(N.Country) AS Invoicecountry,
-        N.County AS Invoicecounty,
-        O.Address1 AS Delivadd1,
-        O.Address2 AS Delivadd2,
-        O.City AS Delivcity,
-        O.State AS Delivstate,
-        O.Zip_Code AS Delivzip,
-        Iso_Country_Api.DECODE(O.Country) AS Delivcountry,
-        O.County AS Delivcounty
+        AS localamount,
+        b.net_curr_amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        0 AS cost,
+        'Freight' AS charge_type,
+        'IFS' AS source,
+        'Market' AS market_code,
+        c.association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        a.delivery_identity,
+        a.identity,
+        a.delivery_address_id,
+        a.invoice_address_id,
+        a.currency,
+        a.n2 AS rma_no,
+        n.address1 AS invoiceadd1,
+        n.address2 AS invoiceadd2,
+        n.city AS invoicecity,
+        n.state AS invoicestate,
+        n.zip_code AS invoicezip,
+        iso_country_api.decode(n.country) AS invoicecountry,
+        n.county AS invoicecounty,
+        o.address1 AS delivadd1,
+        o.address2 AS delivadd2,
+        o.city AS delivcity,
+        o.state AS delivstate,
+        o.zip_code AS delivzip,
+        iso_country_api.decode(o.country) AS delivcountry,
+        o.county AS delivcounty
     FROM
-        Invoice_Tab A
-        LEFT JOIN Kd_Currency_Rate_4 I ON A.Currency = I.Currency_Code AND
-                                          TO_CHAR(A.D2,'MM/YYYY') = I.Valid_From
-        LEFT JOIN Kd_Currency_Rate_1 J ON A.Currency = J.Currency_Code AND
-                                          TO_CHAR(A.D2,'MM/YYYY') = J.Valid_From
-        LEFT JOIN Customer_Info_Address_Tab N ON A.Identity = N.Customer_Id AND
-                                                 A.Invoice_Address_Id = N.Address_Id
-        LEFT JOIN Customer_Info_Address_Tab O ON A.Identity = O.Customer_Id AND
-                                                 A.Delivery_Address_Id = O.Address_Id,Invoice_Item_Tab B
-        LEFT JOIN Identity_Invoice_Info_Tab F ON B.Company = F.Company AND
-                                                 B.Identity = F.Identity AND
-                                                 B.Party_Type = F.Party_Type,
-        Customer_Info_Tab C,
-        Cust_Ord_Customer_Tab D,
-        Cust_Ord_Customer_Address_Tab E
+        invoice_tab a
+        LEFT JOIN kd_currency_rate_4 i ON a.currency = i.currency_code AND
+                                          to_char(a.d2,'MM/YYYY') = i.valid_from
+        LEFT JOIN kd_currency_rate_1 j ON a.currency = j.currency_code AND
+                                          to_char(a.d2,'MM/YYYY') = j.valid_from
+        LEFT JOIN customer_info_address_tab n ON a.identity = n.customer_id AND
+                                                 a.invoice_address_id = n.address_id
+        LEFT JOIN customer_info_address_tab o ON a.identity = o.customer_id AND
+                                                 a.delivery_address_id = o.address_id,invoice_item_tab b
+        LEFT JOIN identity_invoice_info_tab f ON b.company = f.company AND
+                                                 b.identity = f.identity AND
+                                                 b.party_type = f.party_type,
+        customer_info_tab c,
+        cust_ord_customer_tab d,
+        cust_ord_customer_address_tab e
     WHERE
-        A.Invoice_Id = B.Invoice_Id AND
-        A.Delivery_Identity = C.Customer_Id AND
-        A.Delivery_Identity = D.Customer_No AND
-        C.Customer_Id = D.Customer_No AND
-        A.Delivery_Identity = E.Customer_No AND
-        C.Customer_Id = E.Customer_No AND
-        D.Customer_No = E.Customer_No AND
-        Trunc(A.Invoice_Date) >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
-        B.C5 != 'WAIVESHIPPING' AND
-        E.Addr_No = '99' AND
-        B.C11 IN (
+        a.invoice_id = b.invoice_id AND
+        a.delivery_identity = c.customer_id AND
+        a.delivery_identity = d.customer_no AND
+        c.customer_id = d.customer_no AND
+        a.delivery_identity = e.customer_no AND
+        c.customer_id = e.customer_no AND
+        d.customer_no = e.customer_no AND
+        trunc(a.invoice_date) >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
+        b.c5 != 'WAIVESHIPPING' AND
+        e.addr_no = '99' AND
+        b.c11 IN (
             'FREIGHT',
             'RESTOCK',
             'DOMFLATRATE'
         ) AND
-        C.Corporate_Form != 'KEY'
+        c.corporate_form != 'KEY'
     UNION ALL
     SELECT
-        '100' AS Site,
-        '0' AS Invoice_Id,
-        '1' AS Item_Id,
-        TO_DATE('01/01/9999','MM/DD/YYYY') AS Invoicedate,
-        0 AS Invoiced_Qty,
-        0 AS Sale_Unit_Price,
-        0 AS Discount,
-        0 AS Net_Curr_Amount,
-        0 AS Gross_Curr_Amount,
-        'Other' AS Catalog_Desc,
-        ' ' AS Customer_Name,
-        ' ' AS Order_No,
-        '0' AS Customer_No,
-        '0' AS Cust_Grp,
-        'Other' AS Catalog_No,
-        'Other' AS Authorize_Code,
-        ' ' AS Salesman_Code,
-        ' ' AS Commission_Receiver,
-        ' ' AS District_Code,
-        ' ' AS Region_Code,
-        TO_DATE('01/01/9999','MM/DD/YYYY') AS Createdate,
-        'OTHER' AS Part_Product_Code,
-        'OTHER' AS Part_Product_Family,
-        'OTHER' AS Second_Commodity,
-        ' ' AS Invoicemonth,
-        ' ' AS Invoiceqtr,
-        ' ' AS Invoiceqtryr,
-        ' ' AS Invoicemthyr,
-        ' ' AS Group_Id,
-        ' ' AS Type_Designation,
-        '0' AS Custome_No_Pay,
-        'DOMDIRLE' AS Corporate_Form,
-        0 AS Fixedamounts,
-        0 AS Allamounts,
-        0 AS Localamount,
-        0 AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        0 AS Cost,
-        'Parts' AS Charge_Type,
-        'IFS' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        ' ' AS Delivery_Identity,
-        ' ' AS Identity,
-        ' ' AS Delivery_Address_Id,
-        ' ' AS Invoice_Address_Id,
-        ' ' AS Currency,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        '100' AS site,
+        '0' AS invoice_id,
+        '1' AS item_id,
+        TO_DATE('01/01/9999','MM/DD/YYYY') AS invoicedate,
+        0 AS invoiced_qty,
+        0 AS sale_unit_price,
+        0 AS discount,
+        0 AS net_curr_amount,
+        0 AS gross_curr_amount,
+        'Other' AS catalog_desc,
+        ' ' AS customer_name,
+        ' ' AS order_no,
+        '0' AS customer_no,
+        '0' AS cust_grp,
+        'Other' AS catalog_no,
+        'Other' AS authorize_code,
+        ' ' AS salesman_code,
+        ' ' AS commission_receiver,
+        ' ' AS district_code,
+        ' ' AS region_code,
+        TO_DATE('01/01/9999','MM/DD/YYYY') AS createdate,
+        'OTHER' AS part_product_code,
+        'OTHER' AS part_product_family,
+        'OTHER' AS second_commodity,
+        ' ' AS invoicemonth,
+        ' ' AS invoiceqtr,
+        ' ' AS invoiceqtryr,
+        ' ' AS invoicemthyr,
+        ' ' AS group_id,
+        ' ' AS type_designation,
+        '0' AS custome_no_pay,
+        'DOMDIRLE' AS corporate_form,
+        0 AS fixedamounts,
+        0 AS allamounts,
+        0 AS localamount,
+        0 AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        0 AS cost,
+        'Parts' AS charge_type,
+        'IFS' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        ' ' AS delivery_identity,
+        ' ' AS identity,
+        ' ' AS delivery_address_id,
+        ' ' AS invoice_address_id,
+        ' ' AS currency,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Dual
+        dual
     UNION ALL
   --Dummy Record for Target Products
     SELECT
-        '100' AS Site,
-        '0' AS Invoice_Id,
-        '1' AS Item_Id,
-        TO_DATE('01/01/9999','MM/DD/YYYY') AS Invoicedate,
-        0 AS Invoiced_Qty,
-        0 AS Sale_Unit_Price,
-        0 AS Discount,
-        0 AS Net_Curr_Amount,
-        0 AS Gross_Curr_Amount,
-        'Other' AS Catalog_Desc,
-        ' ' AS Customer_Name,
-        ' ' AS Order_No,
-        '0' AS Customer_No,
-        '0' AS Cust_Grp,
-        'Other' AS Catalog_No,
-        'Other' AS Authorize_Code,
-        ' ' AS Salesman_Code,
-        ' ' AS Commission_Receiver,
-        ' ' AS District_Code,
-        ' ' AS Region_Code,
-        TO_DATE('01/01/9999','MM/DD/YYYY') AS Createdate,
-        'OTHER' AS Part_Product_Code,
-        'OTHER' AS Part_Product_Family,
-        'OTHER' AS Second_Commodity,
-        ' ' AS Invoicemonth,
-        ' ' AS Invoiceqtr,
-        ' ' AS Invoiceqtryr,
-        ' ' AS Invoicemthyr,
-        ' ' AS Group_Id,
-        ' ' AS Type_Designation,
-        '0' AS Customer_No_Pay,
-        'DOMDIRPR' AS Corporate_Form,
-        0 AS Fixedamounts,
-        0 AS Allamounts,
-        0 AS Localamount,
-        0 AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        0 AS Cost,
-        'Parts' AS Charge_Type,
-        'IFS' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        ' ' AS Delivery_Identity,
-        ' ' AS Identity,
-        ' ' AS Delivery_Address_Id,
-        ' ' AS Invoice_Address_Id,
-        ' ' AS Currency,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        '100' AS site,
+        '0' AS invoice_id,
+        '1' AS item_id,
+        TO_DATE('01/01/9999','MM/DD/YYYY') AS invoicedate,
+        0 AS invoiced_qty,
+        0 AS sale_unit_price,
+        0 AS discount,
+        0 AS net_curr_amount,
+        0 AS gross_curr_amount,
+        'Other' AS catalog_desc,
+        ' ' AS customer_name,
+        ' ' AS order_no,
+        '0' AS customer_no,
+        '0' AS cust_grp,
+        'Other' AS catalog_no,
+        'Other' AS authorize_code,
+        ' ' AS salesman_code,
+        ' ' AS commission_receiver,
+        ' ' AS district_code,
+        ' ' AS region_code,
+        TO_DATE('01/01/9999','MM/DD/YYYY') AS createdate,
+        'OTHER' AS part_product_code,
+        'OTHER' AS part_product_family,
+        'OTHER' AS second_commodity,
+        ' ' AS invoicemonth,
+        ' ' AS invoiceqtr,
+        ' ' AS invoiceqtryr,
+        ' ' AS invoicemthyr,
+        ' ' AS group_id,
+        ' ' AS type_designation,
+        '0' AS customer_no_pay,
+        'DOMDIRPR' AS corporate_form,
+        0 AS fixedamounts,
+        0 AS allamounts,
+        0 AS localamount,
+        0 AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        0 AS cost,
+        'Parts' AS charge_type,
+        'IFS' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        ' ' AS delivery_identity,
+        ' ' AS identity,
+        ' ' AS delivery_address_id,
+        ' ' AS invoice_address_id,
+        ' ' AS currency,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Dual
+        dual
     UNION ALL
     SELECT
-        DECODE(A.Company,'241','240',A.Company) AS Site,
-        B.Series_Id || B.Invoice_No AS Invoice_Id,
-        TO_CHAR(A.Item_Id) AS Item_Id,
-        Trunc(B.D2) AS Invoice_Date,
+        decode(a.company,'241','240',a.company) AS site,
+        b.series_id || b.invoice_no AS invoice_id,
+        to_char(a.item_id) AS item_id,
+        trunc(b.d2) AS invoice_date,
         CASE
-                WHEN B.Series_Id = 'CR' AND
-                     A.N2 IS NULL THEN 0
-                WHEN B.Series_Id = 'CR' AND
-                     A.N2 IS NOT NULL THEN A.N2 *-1
-                ELSE A.N2
+                WHEN b.series_id = 'CR' AND
+                     a.n2 IS NULL THEN 0
+                WHEN b.series_id = 'CR' AND
+                     a.n2 IS NOT NULL THEN a.n2 *-1
+                ELSE a.n2
             END
-        AS Invoiced_Qty,
-        A.N4 AS Sale_Unit_Price,
-        A.N5 AS Discount,
-        A.Net_Curr_Amount,
-        A.Net_Curr_Amount + A.Vat_Curr_Amount AS Gross_Curr_Amount,
-        C.Catalog_Desc,
-        Customer_Info_Api.Get_Name(B.Identity) AS Customer_Name,
-        A.C1 AS Order_No,
-        A.C13 AS Customer_No,
-        D.Cust_Grp,
-        A.C5,
-        Substr(B.C1,1,35) AS Authorize_Code,
-        D.Salesman_Code,
-        E.Commission_Receiver,
-        F.District_Code,
-        F.Region_Code,
-        Trunc(B.Creation_Date) AS Createdate,
-        DECODE(A.C5,G.Part_No,G.Part_Product_Code,'OTHER') AS Part_Product_Code,
-        DECODE(A.C5,G.Part_No,G.Part_Product_Family,'OTHER') AS Part_Product_Family,
-        DECODE(A.C5,G.Part_No,G.Second_Commodity,'OTHER') AS Second_Commodity,
+        AS invoiced_qty,
+        a.n4 AS sale_unit_price,
+        a.n5 AS discount,
+        a.net_curr_amount,
+        a.net_curr_amount + a.vat_curr_amount AS gross_curr_amount,
+        c.catalog_desc,
+        customer_info_api.get_name(b.identity) AS customer_name,
+        a.c1 AS order_no,
+        a.c13 AS customer_no,
+        d.cust_grp,
+        a.c5,
+        substr(b.c1,1,35) AS authorize_code,
+        d.salesman_code,
+        e.commission_receiver,
+        f.district_code,
+        f.region_code,
+        trunc(b.creation_date) AS createdate,
+        decode(a.c5,g.part_no,g.part_product_code,'OTHER') AS part_product_code,
+        decode(a.c5,g.part_no,g.part_product_family,'OTHER') AS part_product_family,
+        decode(a.c5,g.part_no,g.second_commodity,'OTHER') AS second_commodity,
         CASE
-                WHEN TO_CHAR(B.D2,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(B.D2,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(B.D2,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(B.D2,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(B.D2,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(B.D2,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(B.D2,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(B.D2,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(B.D2,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(B.D2,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(B.D2,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(B.D2,'MM') = '12' THEN 'December'
+                WHEN to_char(b.d2,'MM') = '01' THEN 'January'
+                WHEN to_char(b.d2,'MM') = '02' THEN 'February'
+                WHEN to_char(b.d2,'MM') = '03' THEN 'March'
+                WHEN to_char(b.d2,'MM') = '04' THEN 'April'
+                WHEN to_char(b.d2,'MM') = '05' THEN 'May'
+                WHEN to_char(b.d2,'MM') = '06' THEN 'June'
+                WHEN to_char(b.d2,'MM') = '07' THEN 'July'
+                WHEN to_char(b.d2,'MM') = '08' THEN 'August'
+                WHEN to_char(b.d2,'MM') = '09' THEN 'September'
+                WHEN to_char(b.d2,'MM') = '10' THEN 'October'
+                WHEN to_char(b.d2,'MM') = '11' THEN 'November'
+                WHEN to_char(b.d2,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                WHEN to_char(b.d2,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                WHEN to_char(b.d2,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                WHEN to_char(b.d2,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                WHEN to_char(b.d2,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                WHEN to_char(b.d2,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM B.D2)
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                       || EXTRACT(YEAR FROM b.d2)
+                WHEN to_char(b.d2,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM B.D2)
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                       || EXTRACT(YEAR FROM b.d2)
+                WHEN to_char(b.d2,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM B.D2)
-                WHEN TO_CHAR(B.D2,'MM') IN (
+                       || EXTRACT(YEAR FROM b.d2)
+                WHEN to_char(b.d2,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM B.D2)
+                       || EXTRACT(YEAR FROM b.d2)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(B.D2,'MM/YYYY') AS Invoicemthyr,
-        K.Group_Id AS Group_Id,
-        DECODE(A.C5,G.Part_No,G.Type_Designation,'Non-Target') AS Type_Designation,
-        A.Identity AS Customer_No_Pay,
-        DECODE(A.C1,'C99916','DOMDIR','ASIA') AS Corporate_Form,
-        A.Net_Curr_Amount AS Fixedamounts,
-        A.Net_Curr_Amount AS Allamounts,
-        A.Net_Curr_Amount AS Localamount,
-        A.Net_Curr_Amount AS Truelocalamt,
-        A.Vat_Dom_Amount,
-        A.Vat_Code,
+        AS invoiceqtryr,
+        to_char(b.d2,'MM/YYYY') AS invoicemthyr,
+        k.group_id AS group_id,
+        decode(a.c5,g.part_no,g.type_designation,'Non-Target') AS type_designation,
+        a.identity AS customer_no_pay,
+        decode(a.c1,'C99916','DOMDIR','ASIA') AS corporate_form,
+        a.net_curr_amount AS fixedamounts,
+        a.net_curr_amount AS allamounts,
+        a.net_curr_amount AS localamount,
+        a.net_curr_amount AS truelocalamt,
+        a.vat_dom_amount,
+        a.vat_code,
         CASE
-                WHEN A.C5 = K.Part_No THEN K.Inventory_Value
-                ELSE L.Inventory_Value * 1.4
+                WHEN a.c5 = k.part_no THEN k.inventory_value
+                ELSE l.inventory_value * 1.4
             END
-        AS Cost,
-        'Parts' AS Charge_Type,
-        'IFS' AS Source,
-        M.Market_Code,
-        H.Association_No,
-        B.Vat_Curr_Amount,
-        Payment_Term_Api.Get_Description(B.Company,B.Pay_Term_Id) AS Pay_Term_Description,
-        Substr(B.C1,1,35) AS Kdreference,
-        Substr(B.C2,1,30) AS Customerref,
-        TO_CHAR(B.D3,'MM/DD/YYYY') AS Deliverydate,
-        Substr(B.C3,1,35) AS Ship_Via,
-        B.Delivery_Identity,
-        B.Identity,
-        B.Delivery_Address_Id,
-        B.Invoice_Address_Id,
-        B.Currency,
-        B.N2 AS Rma_No,
-        N.Address1 AS Invoiceadd1,
-        N.Address2 AS Invoiceadd2,
-        N.City AS Invoicecity,
-        N.State AS Invoicestate,
-        N.Zip_Code AS Invoicezip,
-        Iso_Country_Api.DECODE(N.Country) AS Invoicecountry,
-        N.County AS Invoicecounty,
-        O.Address1 AS Delivadd1,
-        O.Address2 AS Delivadd2,
-        O.City AS Delivcity,
-        O.State AS Delivstate,
-        O.Zip_Code AS Delivzip,
-        Iso_Country_Api.DECODE(O.Country) AS Delivcountry,
-        O.County AS Delivcounty
+        AS cost,
+        'Parts' AS charge_type,
+        'IFS' AS source,
+        m.market_code,
+        h.association_no,
+        b.vat_curr_amount,
+        payment_term_api.get_description(b.company,b.pay_term_id) AS pay_term_description,
+        substr(b.c1,1,35) AS kdreference,
+        substr(b.c2,1,30) AS customerref,
+        to_char(b.d3,'MM/DD/YYYY') AS deliverydate,
+        substr(b.c3,1,35) AS ship_via,
+        b.delivery_identity,
+        b.identity,
+        b.delivery_address_id,
+        b.invoice_address_id,
+        b.currency,
+        b.n2 AS rma_no,
+        n.address1 AS invoiceadd1,
+        n.address2 AS invoiceadd2,
+        n.city AS invoicecity,
+        n.state AS invoicestate,
+        n.zip_code AS invoicezip,
+        iso_country_api.decode(n.country) AS invoicecountry,
+        n.county AS invoicecounty,
+        o.address1 AS delivadd1,
+        o.address2 AS delivadd2,
+        o.city AS delivcity,
+        o.state AS delivstate,
+        o.zip_code AS delivzip,
+        iso_country_api.decode(o.country) AS delivcountry,
+        o.county AS delivcounty
     FROM
-        Invoice_Item_Tab A
-        LEFT JOIN Sales_Part_Tab C ON A.C5 = C.Catalog_No AND
-                                      DECODE(A.Company,'241','240',A.Company) = C.Contract
-        LEFT JOIN Cust_Def_Com_Receiver_Tab E ON A.C13 = E.Customer_No
-        LEFT JOIN Inventory_Part_Tab G ON A.C5 = G.Part_No AND
-                                          DECODE(A.Company,'241','240',A.Company) = G.Contract
-        LEFT JOIN Kd_Cost_100 K ON A.C5 = K.Part_No
-        LEFT JOIN Kd_Cost_210 L ON A.C5 = L.Part_No
-        LEFT JOIN Customer_Order_Tab M ON A.C1 = M.Order_No
-        LEFT JOIN Identity_Invoice_Info_Tab K ON A.Company = K.Company AND
-                                                 A.Identity = K.Identity AND
-                                                 A.Party_Type = K.Party_Type,Invoice_Tab B
-        LEFT JOIN Customer_Info_Address_Tab N ON B.Identity = N.Customer_Id AND
-                                                 B.Invoice_Address_Id = N.Address_Id
-        LEFT JOIN Customer_Info_Address_Tab O ON B.Identity = O.Customer_Id AND
-                                                 B.Delivery_Address_Id = O.Address_Id,
-        Cust_Ord_Customer_Tab D,
-        Cust_Ord_Customer_Address_Tab F,
-        Customer_Info_Tab H
+        invoice_item_tab a
+        LEFT JOIN sales_part_tab c ON a.c5 = c.catalog_no AND
+                                      decode(a.company,'241','240',a.company) = c.contract
+        LEFT JOIN cust_def_com_receiver_tab e ON a.c13 = e.customer_no
+        LEFT JOIN inventory_part_tab g ON a.c5 = g.part_no AND
+                                          decode(a.company,'241','240',a.company) = g.contract
+        LEFT JOIN kd_cost_100 k ON a.c5 = k.part_no
+        LEFT JOIN kd_cost_210 l ON a.c5 = l.part_no
+        LEFT JOIN customer_order_tab m ON a.c1 = m.order_no
+        LEFT JOIN identity_invoice_info_tab k ON a.company = k.company AND
+                                                 a.identity = k.identity AND
+                                                 a.party_type = k.party_type,invoice_tab b
+        LEFT JOIN customer_info_address_tab n ON b.identity = n.customer_id AND
+                                                 b.invoice_address_id = n.address_id
+        LEFT JOIN customer_info_address_tab o ON b.identity = o.customer_id AND
+                                                 b.delivery_address_id = o.address_id,
+        cust_ord_customer_tab d,
+        cust_ord_customer_address_tab f,
+        customer_info_tab h
     WHERE
-        A.Invoice_Id = B.Invoice_Id AND
-        A.C11 IS NULL AND
-        A.C13 = D.Customer_No AND
-        B.Delivery_Identity = D.Customer_No AND
-        A.C13 = F.Customer_No AND
-        A.C13 = H.Customer_Id AND
-        H.Customer_Id = D.Customer_No AND
-        H.Customer_Id = F.Customer_No AND
-        B.Delivery_Identity = H.Customer_Id AND
-        B.Rowstate != 'Preliminary' AND
-        F.Addr_No = '99' AND
-        A.C1 IN (
+        a.invoice_id = b.invoice_id AND
+        a.c11 IS NULL AND
+        a.c13 = d.customer_no AND
+        b.delivery_identity = d.customer_no AND
+        a.c13 = f.customer_no AND
+        a.c13 = h.customer_id AND
+        h.customer_id = d.customer_no AND
+        h.customer_id = f.customer_no AND
+        b.delivery_identity = h.customer_id AND
+        b.rowstate != 'Preliminary' AND
+        f.addr_no = '99' AND
+        a.c1 IN (
             'C99894',
             'C99904',
             'C99913',
@@ -2065,680 +2080,690 @@ Fixedamounts,
             'K1351',
             'C99916'
         ) AND
-        Trunc(B.D2) >= TO_DATE('01/01/2010','MM/DD/YYYY')
+        trunc(b.d2) >= TO_DATE('01/01/2010','MM/DD/YYYY')
     UNION ALL
     SELECT
-        '240' AS Site,
-        A.Invoiceno AS Invoice_Id,
-        TO_CHAR(A.Itemid) AS Item_Id,
-        Trunc(A.Salesdate) AS Invoicedate,
-        A.Quantity AS Invoiced_Qty,
-        0 AS Sales_Unit_Price,
-        A.Discount,
-        0 AS Net_Curr_Amount,
-        0 AS Gross_Curr_Amount,
-        A.Partdescription AS Catalog_Desc,
-        A.Customername AS Customer_Name,
-        A.Ordernumber AS Order_No,
-        A.Customerid AS Customer_No,
-        ' ' AS Cust_Grp,
-        A.Salespartno AS Catalog_No,
-        ' ' AS Authorize_Code,
-        'CAD' AS Salesman_Code,
-        ' ' AS Commission_Receiver,
-        ' ' AS District_Code,
-        'FRA' AS Region_Code,
-        A.Salesdate AS Createdate,
-        'EGSW' AS Part_Product_Code,
-        'EG' AS Part_Product_Family,
-        ' ' AS Second_Commodity,
+        '240' AS site,
+        a.invoiceno AS invoice_id,
+        to_char(a.itemid) AS item_id,
+        trunc(a.salesdate) AS invoicedate,
+        a.quantity AS invoiced_qty,
+        0 AS sales_unit_price,
+        a.discount,
+        0 AS net_curr_amount,
+        0 AS gross_curr_amount,
+        a.partdescription AS catalog_desc,
+        a.customername AS customer_name,
+        a.ordernumber AS order_no,
+        a.customerid AS customer_no,
+        ' ' AS cust_grp,
+        a.salespartno AS catalog_no,
+        ' ' AS authorize_code,
+        'CAD' AS salesman_code,
+        ' ' AS commission_receiver,
+        ' ' AS district_code,
+        'FRA' AS region_code,
+        a.salesdate AS createdate,
+        'EGSW' AS part_product_code,
+        'EG' AS part_product_family,
+        ' ' AS second_commodity,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(A.Salesdate,'MM') = '12' THEN 'December'
+                WHEN to_char(a.salesdate,'MM') = '01' THEN 'January'
+                WHEN to_char(a.salesdate,'MM') = '02' THEN 'February'
+                WHEN to_char(a.salesdate,'MM') = '03' THEN 'March'
+                WHEN to_char(a.salesdate,'MM') = '04' THEN 'April'
+                WHEN to_char(a.salesdate,'MM') = '05' THEN 'May'
+                WHEN to_char(a.salesdate,'MM') = '06' THEN 'June'
+                WHEN to_char(a.salesdate,'MM') = '07' THEN 'July'
+                WHEN to_char(a.salesdate,'MM') = '08' THEN 'August'
+                WHEN to_char(a.salesdate,'MM') = '09' THEN 'September'
+                WHEN to_char(a.salesdate,'MM') = '10' THEN 'October'
+                WHEN to_char(a.salesdate,'MM') = '11' THEN 'November'
+                WHEN to_char(a.salesdate,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                WHEN to_char(a.salesdate,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
-                WHEN TO_CHAR(A.Salesdate,'MM') IN (
+                       || EXTRACT(YEAR FROM a.salesdate)
+                WHEN to_char(a.salesdate,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Salesdate)
+                       || EXTRACT(YEAR FROM a.salesdate)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(A.Salesdate,'MM/YYYY') AS Invoicemthyr,
-        ' ' AS Group_Id,
-        'Sub-Part' AS Type_Designation,
-        ' ' AS Customer_No_Pay,
-        'FRA' AS Corporate_Form,
-        A.Amount AS Fixedamounts,
-        A.Amount AS Allamounts,
-        A.Amount AS Localamount,
-        A.Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        0 AS Cost,
-        'Parts' AS Charge_Type,
-        'FRA' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        ' ' AS Delivery_Identity,
-        ' ' AS Identity,
-        ' ' AS Delivery_Address_Id,
-        ' ' AS Invoice_Address_Id,
-        'EUR' AS Currency,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        AS invoiceqtryr,
+        to_char(a.salesdate,'MM/YYYY') AS invoicemthyr,
+        ' ' AS group_id,
+        'Sub-Part' AS type_designation,
+        ' ' AS customer_no_pay,
+        'FRA' AS corporate_form,
+        a.amount AS fixedamounts,
+        a.amount AS allamounts,
+        a.amount AS localamount,
+        a.amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        0 AS cost,
+        'Parts' AS charge_type,
+        'FRA' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        ' ' AS delivery_identity,
+        ' ' AS identity,
+        ' ' AS delivery_address_id,
+        ' ' AS invoice_address_id,
+        'EUR' AS currency,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Srcadsalesorder A
+        srcadsalesorder a
     WHERE
-        A.Salesdate >= TO_DATE('01/01/2010','MM/DD/YYYY')
+        a.salesdate >= TO_DATE('01/01/2010','MM/DD/YYYY')
     UNION ALL
     SELECT DISTINCT
-        DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
-        R.Invoice_No AS Invoice_Id,
-        TO_CHAR(R.Row_No) AS Item_Id,
-        Trunc(R.Invoice_Date) AS Invoicedate,
-        R.Quantity AS Invoiced_Qty,
-        R.Price AS Sale_Unit_Price,
-        0 AS Discount,
-        R.Net_Curr_Amount,
-        0 Gross_Curr_Amount,
-        R.Description AS Catalog_Desc,
-        C.Name AS Customer_Name,
-        R.Order_No,
-        R.Customer_No,
-        D.Cust_Grp,
-        R.Object AS Catalog_No,
-        ' ' AS Authorize_Code,
-        D.Salesman_Code,
-        F.Commission_Receiver AS Commission_Receiver,
-        E.District_Code,
-        E.Region_Code,
-        Trunc(R.Order_Date) AS Create_Date,
-        DECODE(R.Object,B.Part_No,Upper(B.Part_Product_Code),'OTHER') AS Part_Product_Code,
-        DECODE(R.Object,B.Part_No,Upper(B.Part_Product_Family),'OTHER') AS Part_Product_Family,
-        DECODE(R.Object,B.Part_No,Upper(B.Second_Commodity),'OTHER') AS Second_Commodity,
+        decode(c.association_no,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS site,
+        r.invoice_no AS invoice_id,
+        to_char(r.row_no) AS item_id,
+        trunc(r.invoice_date) AS invoicedate,
+        r.quantity AS invoiced_qty,
+        r.price AS sale_unit_price,
+        0 AS discount,
+        r.net_curr_amount,
+        0 gross_curr_amount,
+        r.description AS catalog_desc,
+        c.name AS customer_name,
+        r.order_no,
+        r.customer_no,
+        d.cust_grp,
+        r.object AS catalog_no,
+        ' ' AS authorize_code,
+        d.salesman_code,
+        f.commission_receiver AS commission_receiver,
+        e.district_code,
+        e.region_code,
+        trunc(r.order_date) AS create_date,
+        decode(r.object,b.part_no,upper(b.part_product_code),'OTHER') AS part_product_code,
+        decode(r.object,b.part_no,upper(b.part_product_family),'OTHER') AS part_product_family,
+        decode(r.object,b.part_no,upper(b.second_commodity),'OTHER') AS second_commodity,
         CASE
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '12' THEN 'December'
+                WHEN to_char(r.invoice_date,'MM') = '01' THEN 'January'
+                WHEN to_char(r.invoice_date,'MM') = '02' THEN 'February'
+                WHEN to_char(r.invoice_date,'MM') = '03' THEN 'March'
+                WHEN to_char(r.invoice_date,'MM') = '04' THEN 'April'
+                WHEN to_char(r.invoice_date,'MM') = '05' THEN 'May'
+                WHEN to_char(r.invoice_date,'MM') = '06' THEN 'June'
+                WHEN to_char(r.invoice_date,'MM') = '07' THEN 'July'
+                WHEN to_char(r.invoice_date,'MM') = '08' THEN 'August'
+                WHEN to_char(r.invoice_date,'MM') = '09' THEN 'September'
+                WHEN to_char(r.invoice_date,'MM') = '10' THEN 'October'
+                WHEN to_char(r.invoice_date,'MM') = '11' THEN 'November'
+                WHEN to_char(r.invoice_date,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM R.Invoice_Date)
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM r.invoice_date)
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM R.Invoice_Date)
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM r.invoice_date)
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM R.Invoice_Date)
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM r.invoice_date)
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM R.Invoice_Date)
+                       || EXTRACT(YEAR FROM r.invoice_date)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(R.Invoice_Date,'MM/YYYY') AS Invoicemthyr,
-        K.Group_Id AS Group_Id,
-        DECODE(B.Type_Designation,NULL,'Target',B.Type_Designation) AS Type_Designation,
-        D.Customer_No_Pay,
-        C.Corporate_Form,
-        DECODE(R.Currency_Code,'SEK', (R.Net_Curr_Amount * 0.13),'EUR', (R.Net_Curr_Amount * 1.4),'DKK', (R.Net_Curr_Amount * 0.13),R.Net_Curr_Amount
-) AS Fixedamounts,
+        AS invoiceqtryr,
+        to_char(r.invoice_date,'MM/YYYY') AS invoicemthyr,
+        k.group_id AS group_id,
+        decode(b.type_designation,NULL,'Target',b.type_designation) AS type_designation,
+        d.customer_no_pay,
+        c.corporate_form,
+        decode(r.currency_code,'SEK', (r.net_curr_amount * 0.13),'EUR', (r.net_curr_amount * 1.4),'DKK', (r.net_curr_amount * 0.13),r.net_curr_amount
+) AS fixedamounts,
         CASE
-                WHEN R.Currency_Code = 'CAD' AND
-                     Trunc(R.Invoice_Date) >= TO_DATE('03/01/2013','MM/DD/YYYY') THEN R.Net_Curr_Amount
-                WHEN R.Currency_Code != 'USD' THEN R.Net_Curr_Amount * I.Currency_Rate
-                ELSE R.Net_Curr_Amount
+                WHEN r.currency_code = 'CAD' AND
+                     trunc(r.invoice_date) >= TO_DATE('03/01/2013','MM/DD/YYYY') AND
+                     trunc(r.invoice_date) <= TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN r.net_curr_amount
+                WHEN r.currency_code = 'CAD' AND
+                     trunc(r.invoice_date) > TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN r.net_curr_amount * r.rate_used
+                WHEN r.currency_code != 'USD' THEN r.net_curr_amount * i.currency_rate
+                ELSE r.net_curr_amount
             END
-        AS Allamounts,
+        AS allamounts,
         CASE
-                WHEN R.Currency_Code IN (
+                WHEN r.currency_code IN (
                     'SEK',
                     'DKK'
-                ) THEN R.Net_Curr_Amount / J.Currency_Rate
-                ELSE R.Net_Curr_Amount
+                ) THEN r.net_curr_amount / j.currency_rate
+                ELSE r.net_curr_amount
             END
-        AS Localamount,
-        R.Net_Curr_Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
+        AS localamount,
+        r.net_curr_amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
         CASE
-                WHEN R.Object = K.Part_No THEN K.Inventory_Value
-                ELSE L.Inventory_Value * 1.4
+                WHEN r.object = k.part_no THEN k.inventory_value
+                ELSE l.inventory_value * 1.4
             END
-        AS Cost,
-        'Parts' AS Charge_Type,
-        'IFS' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        R.Customer_No AS Delivery_Identity,
-        R.Customer_No AS Identity,
-        '99' AS Delivery_Address_Id,
-        '99' AS Invoice_Address_Id,
-        R.Currency_Code,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceoadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        AS cost,
+        'Parts' AS charge_type,
+        'IFS' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        r.customer_no AS delivery_identity,
+        r.customer_no AS identity,
+        '99' AS delivery_address_id,
+        '99' AS invoice_address_id,
+        r.currency_code,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceoadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Instant_Invoice_Rep R
-        LEFT JOIN Inventory_Part_Tab B ON R.Object = B.Part_No AND
-                                          B.Contract = '100'
-        LEFT JOIN Kd_Currency_Rate_4 I ON TO_CHAR(R.Invoice_Date,'MM/YYYY') = I.Valid_From AND
-                                          R.Currency_Code = I.Currency_Code
-        LEFT JOIN Kd_Currency_Rate_1 J ON TO_CHAR(R.Invoice_Date,'MM/YYYY') = J.Valid_From AND
-                                          R.Currency_Code = J.Currency_Code
-        LEFT JOIN Identity_Invoice_Info_Tab K ON R.Customer_No = K.Identity AND
-                                                 R.Company = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum K ON R.Object = K.Part_No AND
-                                                    K.Contract = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum L ON R.Object = K.Part_No AND
-                                                    K.Contract = '210',
-        Customer_Info_Tab C,
-        Cust_Ord_Customer_Tab D,Cust_Ord_Customer_Address_Tab E
-        LEFT JOIN Cust_Def_Com_Receiver_Tab F ON E.Customer_No = F.Customer_No
+        instant_invoice_rep r
+        LEFT JOIN inventory_part_tab b ON r.object = b.part_no AND
+                                          b.contract = '100'
+        LEFT JOIN kd_currency_rate_4 i ON to_char(r.invoice_date,'MM/YYYY') = i.valid_from AND
+                                          r.currency_code = i.currency_code
+        LEFT JOIN kd_currency_rate_1 j ON to_char(r.invoice_date,'MM/YYYY') = j.valid_from AND
+                                          r.currency_code = j.currency_code
+        LEFT JOIN identity_invoice_info_tab k ON r.customer_no = k.identity AND
+                                                 r.company = '100'
+        LEFT JOIN inventory_part_unit_cost_sum k ON r.object = k.part_no AND
+                                                    k.contract = '100'
+        LEFT JOIN inventory_part_unit_cost_sum l ON r.object = k.part_no AND
+                                                    k.contract = '210',
+        customer_info_tab c,
+        cust_ord_customer_tab d,cust_ord_customer_address_tab e
+        LEFT JOIN cust_def_com_receiver_tab f ON e.customer_no = f.customer_no
     WHERE
-        R.Customer_No = C.Customer_Id AND
-        R.Customer_No = D.Customer_No AND
-        C.Customer_Id = D.Customer_No AND
-        R.Customer_No = E.Customer_No AND
-        C.Customer_Id = E.Customer_No AND
-        D.Customer_No = E.Customer_No AND
-        R.Invoice_Date >= TO_DATE('08/03/2010','MM/DD/YYYY') AND
-        E.Addr_No = '99' AND
-        R.Row_Type = '1' AND
-        R.Object != 'FREIGHT' AND
-        R.Invoice_No NOT LIKE 'EI%' AND
-        C.Corporate_Form != 'KEY'
+        r.customer_no = c.customer_id AND
+        r.customer_no = d.customer_no AND
+        c.customer_id = d.customer_no AND
+        r.customer_no = e.customer_no AND
+        c.customer_id = e.customer_no AND
+        d.customer_no = e.customer_no AND
+        r.invoice_date >= TO_DATE('08/03/2010','MM/DD/YYYY') AND
+        e.addr_no = '99' AND
+        r.row_type = '1' AND
+        r.object != 'FREIGHT' AND
+        r.invoice_no NOT LIKE 'EI%' AND
+        c.corporate_form != 'KEY'
     UNION ALL
     SELECT DISTINCT
-        DECODE(C.Association_No,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS Site,
-        R.Invoice_No AS Invoice_Id,
-        TO_CHAR(R.Row_No) AS Item_Id,
-        Trunc(R.Invoice_Date) AS Invoicedate,
-        R.Quantity AS Invoiced_Qty,
-        R.Price AS Sale_Unit_Price,
-        0 AS Discount,
-        R.Net_Curr_Amount,
-        0 Gross_Curr_Amount,
-        R.Description AS Catalog_Desc,
-        C.Name AS Customer_Name,
-        R.Order_No,
-        R.Customer_No,
-        D.Cust_Grp,
-        R.Object AS Catalog_No,
-        ' ' AS Authorize_Code,
-        D.Salesman_Code,
-        ' ' AS Commission_Receiver,
-        E.District_Code,
-        E.Region_Code,
-        Trunc(R.Order_Date) AS Create_Date,
-        'Freight' AS Part_Product_Code,
-        'Freight' AS Part_Product_Family,
-        'Freight' AS Second_Commodity,
+        decode(c.association_no,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS site,
+        r.invoice_no AS invoice_id,
+        to_char(r.row_no) AS item_id,
+        trunc(r.invoice_date) AS invoicedate,
+        r.quantity AS invoiced_qty,
+        r.price AS sale_unit_price,
+        0 AS discount,
+        r.net_curr_amount,
+        0 gross_curr_amount,
+        r.description AS catalog_desc,
+        c.name AS customer_name,
+        r.order_no,
+        r.customer_no,
+        d.cust_grp,
+        r.object AS catalog_no,
+        ' ' AS authorize_code,
+        d.salesman_code,
+        ' ' AS commission_receiver,
+        e.district_code,
+        e.region_code,
+        trunc(r.order_date) AS create_date,
+        'Freight' AS part_product_code,
+        'Freight' AS part_product_family,
+        'Freight' AS second_commodity,
         CASE
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') = '12' THEN 'December'
+                WHEN to_char(r.invoice_date,'MM') = '01' THEN 'January'
+                WHEN to_char(r.invoice_date,'MM') = '02' THEN 'February'
+                WHEN to_char(r.invoice_date,'MM') = '03' THEN 'March'
+                WHEN to_char(r.invoice_date,'MM') = '04' THEN 'April'
+                WHEN to_char(r.invoice_date,'MM') = '05' THEN 'May'
+                WHEN to_char(r.invoice_date,'MM') = '06' THEN 'June'
+                WHEN to_char(r.invoice_date,'MM') = '07' THEN 'July'
+                WHEN to_char(r.invoice_date,'MM') = '08' THEN 'August'
+                WHEN to_char(r.invoice_date,'MM') = '09' THEN 'September'
+                WHEN to_char(r.invoice_date,'MM') = '10' THEN 'October'
+                WHEN to_char(r.invoice_date,'MM') = '11' THEN 'November'
+                WHEN to_char(r.invoice_date,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM R.Invoice_Date)
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM r.invoice_date)
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM R.Invoice_Date)
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM r.invoice_date)
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM R.Invoice_Date)
-                WHEN TO_CHAR(R.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM r.invoice_date)
+                WHEN to_char(r.invoice_date,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM R.Invoice_Date)
+                       || EXTRACT(YEAR FROM r.invoice_date)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(R.Invoice_Date,'MM/YYYY') AS Invoicemthyr,
-        K.Group_Id AS Group_Id,
-        'Freight' AS Type_Designation,
-        D.Customer_No_Pay,
-        'Freight' AS Corporate_Form,
-        DECODE(R.Currency_Code,'SEK', (R.Net_Curr_Amount * 0.13),'EUR', (R.Net_Curr_Amount * 1.4),'DKK', (R.Net_Curr_Amount * 0.13),R.Net_Curr_Amount
-) AS Fixedamounts,
+        AS invoiceqtryr,
+        to_char(r.invoice_date,'MM/YYYY') AS invoicemthyr,
+        k.group_id AS group_id,
+        'Freight' AS type_designation,
+        d.customer_no_pay,
+        'Freight' AS corporate_form,
+        decode(r.currency_code,'SEK', (r.net_curr_amount * 0.13),'EUR', (r.net_curr_amount * 1.4),'DKK', (r.net_curr_amount * 0.13),r.net_curr_amount
+) AS fixedamounts,
         CASE
-                WHEN R.Currency_Code = 'CAD' AND
-                     Trunc(R.Invoice_Date) >= TO_DATE('03/01/2013','MM/DD/YYYY') THEN R.Net_Curr_Amount
-                WHEN R.Currency_Code != 'USD' THEN R.Net_Curr_Amount * I.Currency_Rate
-                ELSE R.Net_Curr_Amount
+                WHEN r.currency_code = 'CAD' AND
+                     trunc(r.invoice_date) >= TO_DATE('03/01/2013','MM/DD/YYYY') AND
+                     trunc(r.invoice_date) <= TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN r.net_curr_amount
+                WHEN r.currency_code = 'CAD' AND
+                     trunc(r.invoice_date) > TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN r.net_curr_amount * r.rate_used
+                WHEN r.currency_code != 'USD' THEN r.net_curr_amount * i.currency_rate
+                ELSE r.net_curr_amount
             END
-        AS Allamounts,
+        AS allamounts,
         CASE
-                WHEN R.Currency_Code IN (
+                WHEN r.currency_code IN (
                     'SEK',
                     'DKK'
-                ) THEN R.Net_Curr_Amount / J.Currency_Rate
-                ELSE R.Net_Curr_Amount
+                ) THEN r.net_curr_amount / j.currency_rate
+                ELSE r.net_curr_amount
             END
-        AS Localamount,
-        R.Net_Curr_Amount AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        0 AS Cost,
-        'Freight' AS Charge_Type,
-        'IFS' AS Source,
-        'Market' AS Market_Code,
-        ' ' AS Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customerref,
-        ' ' AS Deliverydate,
-        ' ' AS Ship_Via,
-        R.Customer_No AS Delivery_Identity,
-        R.Customer_No AS Identity,
-        '99' AS Delivery_Address_Id,
-        '99' AS Invoice_Address_Id,
-        R.Currency_Code,
-        0 AS Rma_No,
-        ' ' AS Invoiceadd1,
-        ' ' AS Invoiceoadd2,
-        ' ' AS Invoicecity,
-        ' ' AS Invoicestate,
-        ' ' AS Invoicezip,
-        ' ' AS Invoicecountry,
-        ' ' AS Invoicecounty,
-        ' ' AS Delivadd1,
-        ' ' AS Delivadd2,
-        ' ' AS Delivcity,
-        ' ' AS Delivstate,
-        ' ' AS Delivzip,
-        ' ' AS Delivcountry,
-        ' ' AS Delivcounty
+        AS localamount,
+        r.net_curr_amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        0 AS cost,
+        'Freight' AS charge_type,
+        'IFS' AS source,
+        'Market' AS market_code,
+        ' ' AS association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        r.customer_no AS delivery_identity,
+        r.customer_no AS identity,
+        '99' AS delivery_address_id,
+        '99' AS invoice_address_id,
+        r.currency_code,
+        0 AS rma_no,
+        ' ' AS invoiceadd1,
+        ' ' AS invoiceoadd2,
+        ' ' AS invoicecity,
+        ' ' AS invoicestate,
+        ' ' AS invoicezip,
+        ' ' AS invoicecountry,
+        ' ' AS invoicecounty,
+        ' ' AS delivadd1,
+        ' ' AS delivadd2,
+        ' ' AS delivcity,
+        ' ' AS delivstate,
+        ' ' AS delivzip,
+        ' ' AS delivcountry,
+        ' ' AS delivcounty
     FROM
-        Instant_Invoice_Rep R
-        LEFT JOIN Inventory_Part_Tab B ON R.Object = B.Part_No AND
-                                          B.Contract = '100'
-        LEFT JOIN Kd_Currency_Rate_4 I ON TO_CHAR(R.Invoice_Date,'MM/YYYY') = I.Valid_From AND
-                                          R.Currency_Code = I.Currency_Code
-        LEFT JOIN Kd_Currency_Rate_1 J ON TO_CHAR(R.Invoice_Date,'MM/YYYY') = J.Valid_From AND
-                                          R.Currency_Code = J.Currency_Code
-        LEFT JOIN Identity_Invoice_Info_Tab K ON R.Customer_No = K.Identity AND
-                                                 R.Company = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum K ON R.Object = K.Part_No AND
-                                                    K.Contract = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum L ON R.Object = K.Part_No AND
-                                                    K.Contract = '210',
-        Customer_Info_Tab C,
-        Cust_Ord_Customer_Tab D,Cust_Ord_Customer_Address_Tab E
-        LEFT JOIN Cust_Def_Com_Receiver_Tab F ON E.Customer_No = F.Customer_No
+        instant_invoice_rep r
+        LEFT JOIN inventory_part_tab b ON r.object = b.part_no AND
+                                          b.contract = '100'
+        LEFT JOIN kd_currency_rate_4 i ON to_char(r.invoice_date,'MM/YYYY') = i.valid_from AND
+                                          r.currency_code = i.currency_code
+        LEFT JOIN kd_currency_rate_1 j ON to_char(r.invoice_date,'MM/YYYY') = j.valid_from AND
+                                          r.currency_code = j.currency_code
+        LEFT JOIN identity_invoice_info_tab k ON r.customer_no = k.identity AND
+                                                 r.company = '100'
+        LEFT JOIN inventory_part_unit_cost_sum k ON r.object = k.part_no AND
+                                                    k.contract = '100'
+        LEFT JOIN inventory_part_unit_cost_sum l ON r.object = k.part_no AND
+                                                    k.contract = '210',
+        customer_info_tab c,
+        cust_ord_customer_tab d,cust_ord_customer_address_tab e
+        LEFT JOIN cust_def_com_receiver_tab f ON e.customer_no = f.customer_no
     WHERE
-        R.Customer_No = C.Customer_Id AND
-        R.Customer_No = D.Customer_No AND
-        C.Customer_Id = D.Customer_No AND
-        R.Customer_No = E.Customer_No AND
-        C.Customer_Id = E.Customer_No AND
-        D.Customer_No = E.Customer_No AND
-        R.Invoice_Date >= TO_DATE('07/01/2010','MM/DD/YYYY') AND
-        E.Addr_No = '99' AND
-        R.Row_Type = '1' AND
-        R.Object = 'FREIGHT' AND
-        R.Invoice_No NOT LIKE 'EI%' AND
-        C.Corporate_Form != 'KEY'
+        r.customer_no = c.customer_id AND
+        r.customer_no = d.customer_no AND
+        c.customer_id = d.customer_no AND
+        r.customer_no = e.customer_no AND
+        c.customer_id = e.customer_no AND
+        d.customer_no = e.customer_no AND
+        r.invoice_date >= TO_DATE('07/01/2010','MM/DD/YYYY') AND
+        e.addr_no = '99' AND
+        r.row_type = '1' AND
+        r.object = 'FREIGHT' AND
+        r.invoice_no NOT LIKE 'EI%' AND
+        c.corporate_form != 'KEY'
     UNION ALL
     SELECT
-        '100' AS Site,
-        A.Invoice AS Invoice_Id,
-        TO_CHAR(A.Linenumber) AS Item_Id,
-        Trunc(A.Invoice_Date) Invoicedate,
-        A.Qty AS Invoiced_Qty,
-        A.Price AS Sales_Unit_Price,
-        A.Discount,
-        0 AS Net_Curr_Amount,
-        0 AS Gross_Curr_Amount,
-        Ip.Description AS Catalog_Desc,
-        C.Name AS Customer_Name,
-        A.Sales_Order AS Order_No,
-        A.Key_Code AS Customer_No,
-        D.Cust_Grp,
-        A.Product_Code AS Catalog_No,
-        A.Rowkey AS Authorize_Code,
-        D.Salesman_Code,
-        ' ' AS Commission_Receiver,
-        E.District_Code,
-        E.Region_Code,
-        Trunc(A.Order_Date) AS Create_Date,
-        DECODE(A.Product_Code,Ip.Part_No,Ip.Part_Product_Code,'OTHER') AS Part_Product_Code,
-        DECODE(A.Product_Code,Ip.Part_No,Ip.Part_Product_Family,'OTHER') AS Part_Product_Family,
-        DECODE(A.Product_Code,Ip.Part_No,Ip.Second_Commodity,'OTHER') AS Second_Commodity,
+        '100' AS site,
+        a.invoice AS invoice_id,
+        to_char(a.linenumber) AS item_id,
+        trunc(a.invoice_date) invoicedate,
+        a.qty AS invoiced_qty,
+        a.price AS sales_unit_price,
+        a.discount,
+        0 AS net_curr_amount,
+        0 AS gross_curr_amount,
+        ip.description AS catalog_desc,
+        c.name AS customer_name,
+        a.sales_order AS order_no,
+        a.key_code AS customer_no,
+        d.cust_grp,
+        a.product_code AS catalog_no,
+        a.rowkey AS authorize_code,
+        d.salesman_code,
+        ' ' AS commission_receiver,
+        e.district_code,
+        e.region_code,
+        trunc(a.order_date) AS create_date,
+        decode(a.product_code,ip.part_no,ip.part_product_code,'OTHER') AS part_product_code,
+        decode(a.product_code,ip.part_no,ip.part_product_family,'OTHER') AS part_product_family,
+        decode(a.product_code,ip.part_no,ip.second_commodity,'OTHER') AS second_commodity,
         CASE
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '01' THEN 'January'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '02' THEN 'February'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '03' THEN 'March'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '04' THEN 'April'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '05' THEN 'May'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '06' THEN 'June'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '07' THEN 'July'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '08' THEN 'August'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '09' THEN 'September'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '10' THEN 'October'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '11' THEN 'November'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') = '12' THEN 'December'
+                WHEN to_char(a.invoice_date,'MM') = '01' THEN 'January'
+                WHEN to_char(a.invoice_date,'MM') = '02' THEN 'February'
+                WHEN to_char(a.invoice_date,'MM') = '03' THEN 'March'
+                WHEN to_char(a.invoice_date,'MM') = '04' THEN 'April'
+                WHEN to_char(a.invoice_date,'MM') = '05' THEN 'May'
+                WHEN to_char(a.invoice_date,'MM') = '06' THEN 'June'
+                WHEN to_char(a.invoice_date,'MM') = '07' THEN 'July'
+                WHEN to_char(a.invoice_date,'MM') = '08' THEN 'August'
+                WHEN to_char(a.invoice_date,'MM') = '09' THEN 'September'
+                WHEN to_char(a.invoice_date,'MM') = '10' THEN 'October'
+                WHEN to_char(a.invoice_date,'MM') = '11' THEN 'November'
+                WHEN to_char(a.invoice_date,'MM') = '12' THEN 'December'
             END
-        AS Invoicemonth,
+        AS invoicemonth,
         CASE
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
             END
-        AS Invoiceqtr,
+        AS invoiceqtr,
         CASE
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '01',
                     '02',
                     '03'
                 ) THEN 'QTR1'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Invoice_Date)
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM a.invoice_date)
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '04',
                     '05',
                     '06'
                 ) THEN 'QTR2'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Invoice_Date)
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM a.invoice_date)
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '07',
                     '08',
                     '09'
                 ) THEN 'QTR3'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Invoice_Date)
-                WHEN TO_CHAR(A.Invoice_Date,'MM') IN (
+                       || EXTRACT(YEAR FROM a.invoice_date)
+                WHEN to_char(a.invoice_date,'MM') IN (
                     '10',
                     '11',
                     '12'
                 ) THEN 'QTR4'
                        || '/'
-                       || EXTRACT(YEAR FROM A.Invoice_Date)
+                       || EXTRACT(YEAR FROM a.invoice_date)
             END
-        AS Invoiceqtryr,
-        TO_CHAR(A.Invoice_Date,'MM/YYYY') AS Invoicemthyr,
-        ' ' AS Group_Id,
-        DECODE(A.Product_Code,Ip.Part_No,Ip.Type_Designation,'Non-Target') AS Type_Designation,
-        A.Key_Code AS Customer_No_Pay,
-        C.Corporate_Form,
-        A.Extensioncurrdisk AS Fixedamounts,
+        AS invoiceqtryr,
+        to_char(a.invoice_date,'MM/YYYY') AS invoicemthyr,
+        ' ' AS group_id,
+        decode(a.product_code,ip.part_no,ip.type_designation,'Non-Target') AS type_designation,
+        a.key_code AS customer_no_pay,
+        c.corporate_form,
+        a.extensioncurrdisk AS fixedamounts,
         CASE
-                WHEN A.Currencycode = 'CAD' AND
-                     Trunc(A.Invoice_Date) >= TO_DATE('03/01/2013','MM/DD/YYYY') THEN A.Extensioncurrdisk
-                WHEN A.Currencycode != 'USD' THEN A.Extensioncurrdisk * G.Currency_Rate
-                ELSE A.Extensioncurrdisk
+                WHEN a.currencycode = 'CAD' AND
+                     trunc(a.invoice_date) >= TO_DATE('03/01/2013','MM/DD/YYYY') THEN a.extensioncurrdisk
+                WHEN a.currencycode != 'USD' THEN a.extensioncurrdisk * g.currency_rate
+                ELSE a.extensioncurrdisk
             END
-        AS Allamounts,
-        A.Extensioncurrdisk AS Localamount,
-        A.Extensioncurrdisk AS Truelocalamt,
-        0 AS Vat_Dom_Amount,
-        ' ' AS Vat_Code,
-        Cs.Inventory_Value AS Cost,
-        'Parts' AS Charge_Type,
-        'SI' AS Source,
-        'Market' AS Market_Code,
-        C.Association_No,
-        0 AS Vat_Curr_Amount,
-        ' ' AS Pay_Term_Description,
-        ' ' AS Kdreference,
-        ' ' AS Customer_Ref,
-        TO_CHAR(A.Invoice_Date,'MM/DD/YYYY') AS Deliverydate,
-        ' ' AS Ship_Via,
-        A.Key_Code AS Delivery_Identity,
-        A.Key_Code AS Identity,
-        '99' AS Delivery_Address_Id,
-        '99' AS Invoice_Address_Id,
-        A.Currencycode AS Currency,
-        0 AS Rma_No,
-        Cis.Address1 AS Invoiceadd1,
-        Cis.Address2 AS Invoiceadd2,
-        Cis.City AS Invoicecity,
-        Cis.State AS Invoicestate,
-        Cis.Zip_Code AS Invoicezip,
-        Iso_Country_Api.DECODE(Cis.Country) AS Invoicecountry,
-        Cis.County AS Invoicecounty,
-        Cis.Address1 AS Delivadd1,
-        Cis.Address2 AS Delivadd2,
-        Cis.City AS Delivcity,
-        Cis.State AS Delivstate,
-        Cis.Zip_Code AS Delivzip,
-        Iso_Country_Api.DECODE(Cis.Country) AS Delivcountry,
-        Cis.County AS Delivcounty
+        AS allamounts,
+        a.extensioncurrdisk AS localamount,
+        a.extensioncurrdisk AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        cs.inventory_value AS cost,
+        'Parts' AS charge_type,
+        'SI' AS source,
+        'Market' AS market_code,
+        c.association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customer_ref,
+        to_char(a.invoice_date,'MM/DD/YYYY') AS deliverydate,
+        ' ' AS ship_via,
+        a.key_code AS delivery_identity,
+        a.key_code AS identity,
+        '99' AS delivery_address_id,
+        '99' AS invoice_address_id,
+        a.currencycode AS currency,
+        0 AS rma_no,
+        cis.address1 AS invoiceadd1,
+        cis.address2 AS invoiceadd2,
+        cis.city AS invoicecity,
+        cis.state AS invoicestate,
+        cis.zip_code AS invoicezip,
+        iso_country_api.decode(cis.country) AS invoicecountry,
+        cis.county AS invoicecounty,
+        cis.address1 AS delivadd1,
+        cis.address2 AS delivadd2,
+        cis.city AS delivcity,
+        cis.state AS delivstate,
+        cis.zip_code AS delivzip,
+        iso_country_api.decode(cis.country) AS delivcountry,
+        cis.county AS delivcounty
     FROM
-        Srinvoicessi A
-        LEFT JOIN Inventory_Part_Tab Ip ON A.Product_Code = Ip.Part_No AND
-                                           Ip.Contract = '100'
-        LEFT JOIN Inventory_Part_Unit_Cost_Sum Cs ON A.Product_Code = Cs.Part_No AND
-                                                     Cs.Contract = '100'
-        LEFT JOIN Customer_Info_Address_Tab Cis ON A.Key_Code = Cis.Customer_Id AND
-                                                   Cis.Address_Id = '99'
-        LEFT JOIN Identity_Invoice_Info_Tab F ON A.Key_Code = F.Identity AND
-                                                 F.Company = '100'
-        LEFT JOIN Kd_Currency_Rate_4 G ON A.Currencycode = G.Currency_Code AND
-                                          TO_CHAR(A.Invoice_Date,'MM/YYYY') = G.Valid_From,
-        Customer_Info_Tab C,
-        Cust_Ord_Customer_Tab D,
-        Cust_Ord_Customer_Address_Tab E
+        srinvoicessi a
+        LEFT JOIN inventory_part_tab ip ON a.product_code = ip.part_no AND
+                                           ip.contract = '100'
+        LEFT JOIN inventory_part_unit_cost_sum cs ON a.product_code = cs.part_no AND
+                                                     cs.contract = '100'
+        LEFT JOIN customer_info_address_tab cis ON a.key_code = cis.customer_id AND
+                                                   cis.address_id = '99'
+        LEFT JOIN identity_invoice_info_tab f ON a.key_code = f.identity AND
+                                                 f.company = '100'
+        LEFT JOIN kd_currency_rate_4 g ON a.currencycode = g.currency_code AND
+                                          to_char(a.invoice_date,'MM/YYYY') = g.valid_from,
+        customer_info_tab c,
+        cust_ord_customer_tab d,
+        cust_ord_customer_address_tab e
     WHERE
-        A.Key_Code = C.Customer_Id AND
-        A.Key_Code = D.Customer_No AND
-        A.Key_Code = E.Customer_No AND
-        C.Customer_Id = D.Customer_No AND
-        C.Customer_Id = E.Customer_No AND
-        D.Customer_No = E.Customer_No AND
-        Trunc(A.Invoice_Date) >= TO_DATE('01/01/2010','MM/DD/YYYY') AND
-        E.Addr_No = '99'
+        a.key_code = c.customer_id AND
+        a.key_code = d.customer_no AND
+        a.key_code = e.customer_no AND
+        c.customer_id = d.customer_no AND
+        c.customer_id = e.customer_no AND
+        d.customer_no = e.customer_no AND
+        trunc(a.invoice_date) >= TO_DATE('01/01/2010','MM/DD/YYYY') AND
+        e.addr_no = '99'
 UNION ALL
-    Select * From KD_PT_Sales_Data;
+    SELECT "SITE","INVOICE_ID","ITEM_ID","INVOICEDATE","INVOICED_QTY","SALE_UNIT_PRICE","DISCOUNT","NET_CURR_AMOUNT","GROSS_CURR_AMOUNT","CATALOG_DESC","CUSTOMER_NAME","ORDER_NO","CUSTOMER_NO","CUST_GRP","CATALOG_NO","AUTHORIZE_CODE","SALESMAN_CODE","COMMISSION_RECEIVER","DISTRICT_CODE","REGION_CODE","CREATEDATE","PART_PRODUCT_CODE","PART_PRODUCT_FAMILY","SECOND_COMMODITY","INVOICEMONTH","INVOICEQTR","INVOICEQTRYR","INVOICEMTHYR","GROUPID","TYPE_DESIGNATION","CUSTOMER_NO_PAY","CORPORATE_FORM","FIXEDAMOUNTS","ALLAMOUNTS","LOCALAMOUNT","TRUELOCALAMT","VAT_DOM_AMOUNT","VAT_CODE","COST","CHARGE_TYPE","SOURCE","MARKET_CODE","ASSOCIATION_NO","VAT_CURR_AMOUNT","PAY_TERM_DESCRIPTION","KD_REFERENCE","CUSTOMERREF","DELIVERY_DATE","SHIP_VIA","DELIVERY_IDENTITY","IDENTITY","DELIVERY_ADDRESS_ID","INVOICE_ADDRESS_ID","CURRENCY","RMA_NO","INVOICEADD1","INVOICEADD2","INVOICECITY","INVOICESTATE","INVOICEZIP","INVOICECOUTRY","INVOICECOUNTY","DELIVADD1","DELIVADD2","DELIVCITY","DELIVSTATE","DELIVZIP","DELIVCOUTRY","DELIVCOUNTY" FROM kd_pt_sales_data;

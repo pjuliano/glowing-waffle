@@ -6,6 +6,8 @@ SELECT
                 CASE 
                     WHEN svq.salesman_code IN ('001','002') 
                     THEN rconf.rep_code 
+                    WHEN svq.salesman_code = '226'
+                    THEN '759'
                     WHEN svq.end_date IS NOT NULL 
                     THEN rconf.rep_code
                     ELSE svq.salesman_code 

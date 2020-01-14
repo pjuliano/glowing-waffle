@@ -22,22 +22,22 @@ Where
   
 Union All
 --Section 2. Check if Salesman region is correct.
-Select 
-  C.Customer_Id,
-  'Address ' || F.Address_Id || ' should have a region code of ' || E.Region || '.'
-From 
-  Ifsapp.Customer_Info C,
-	Ifsapp.Cust_Ord_Customer_Ent D,
-	Ifsapp.Srrepquota E,
-	Ifsapp.Cust_Ord_Customer_Address_Ent F
-Where
-  C.Customer_Id = D.Customer_Id And
-  D.Salesman_Code = E.Repnumber And
-  C.Customer_Id = F.Customer_Id And
-  (E.Region != F.Region_Code Or F.Region_Code Is Null) And
-  D.Salesman_Code != '999' And
-  Customer_Info_Address_Api.Is_Valid(C.Customer_Id,F.Address_Id) = 'TRUE' And
-  C.Corporate_Form = 'DOMDIR'
+SELECT 
+                c.customer_id,
+                'Address ' || f.address_id || ' should have a region code of ' || coalesce(e.region,'?') || '.'
+FROM 
+                ifsapp.customer_info c
+                LEFT JOIN ifsapp.cust_ord_customer_ent d
+                    ON c.customer_id = d.customer_id
+                LEFT JOIN ifsapp.srrepquota e
+                    ON d.salesman_code = e.repnumber
+                LEFT JOIN ifsapp.cust_ord_customer_address_ent f
+                    ON c.customer_id = f.customer_id
+WHERE
+                (e.region != f.region_code OR f.region_code IS NULL) AND
+                d.salesman_code != '999' AND
+                customer_info_address_api.is_valid(c.customer_id,f.address_id) = 'TRUE' AND
+                c.corporate_form = 'DOMDIR'
 
 Union All
 --Check to see if there is a non-email in the email address field.
@@ -158,4 +158,141 @@ Where
   B.Expire_Date Is Null And
   A.Company = '100' And 
   C.Corporate_Form = 'DOMDIR' And
-  A.Identity Not In ('TEMPLATE','CATEMP','A35173','22008','28331','28621','29627');
+  A.Identity Not In ('TEMPLATE','CATEMP','A35173','22008','28331','28621','29627')
+  
+UNION ALL
+
+SELECT
+                customer_id,
+                'This customer is assigned to the KEY corporate form.'
+FROM
+                customer_info
+WHERE
+                corporate_form = 'KEY'
+                    AND customer_id NOT LIKE 'R%'
+                    AND UPPER(name) NOT LIKE '%KEYSTONE DENTAL%'
+                    AND customer_id NOT LIKE 'N%'
+                    AND customer_ID NOT IN 
+                        (
+                            'FR0107',
+                            'IT005242',
+                            'IT004877',
+                            '32488',
+                            'IT004838',
+                            '20047',
+                            'IT002310',
+                            'A24232',
+                            'IT005224',
+                            'IT004702',
+                            '20501',
+                            '21257',
+                            '22128',
+                            '27250',
+                            '28676',
+                            'IT005076',
+                            'DE33320',
+                            '5201',
+                            '28721',
+                            'IT005089',
+                            'DE33371',
+                            'DE33332',
+                            '29779',
+                            'FR0102',
+                            'SE1124',
+                            '4898',
+                            '3503',
+                            '2990',
+                            'IT002160',
+                            'FR0003SP',
+                            'FR0004SP',
+                            'FR0011SP',
+                            'FR0009SP',
+                            'IT003219',
+                            'DE33360',
+                            'DE33335',
+                            'DE33325',
+                            'DE33366',
+                            'IT005220',
+                            'IT002311',
+                            'FR0010SP',
+                            'FR0012SP',
+                            'FR0002SP',
+                            'FR0008SP',
+                            'FR0005SP',
+                            'IT002347',
+                            '30392',
+                            'IT005419',
+                            'DE67899',
+                            'IT003043',
+                            'IT004708',
+                            'DE35078',
+                            'DE33333',
+                            'DE33361',
+                            'IT005048',
+                            'IT004152',
+                            'DE33369',
+                            '16939',
+                            '30134',
+                            'DE33321',
+                            'IT003475',
+                            'DE33370',
+                            'DE33300',
+                            'DE33306',
+                            'DE35012',
+                            'IT003237',
+                            'IT005200',
+                            '4610',
+                            '6073',
+                            '16763',
+                            'B2747',
+                            '14224',
+                            'IT003687',
+                            '8773',
+                            '14276',
+                            '12032',
+                            '14925',
+                            'B2802',
+                            '14291',
+                            '14661',
+                            'B2783',
+                            '6223',
+                            '18638',
+                            'D49851',
+                            '4958',
+                            '30345',
+                            'D47986',
+                            'A13681',
+                            'DE35033',
+                            'DE11218',
+                            '5256',
+                            'B2743',
+                            '40000',
+                            'IT005199',
+                            'D47987',
+                            '21875',
+                            '21874',
+                            'B3081',
+                            'A12032',
+                            '32015',
+                            '2872',
+                            'A25206',
+                            '5399'
+                        )
+UNION ALL
+SELECT
+                customer_id,
+                'Customer has no default delivery address or the default address has expired.'
+FROM
+                kd_customers
+WHERE
+                deliv_address_id IS NULL   
+                    AND corporate_form = 'DOMDIR'   
+UNION ALL 
+SELECT
+                customer_id,
+                'Customer has no default billing address or the default address has expired.'
+FROM
+                kd_customers
+WHERE
+                address_id IS NULL   
+                    AND corporate_form = 'DOMDIR';

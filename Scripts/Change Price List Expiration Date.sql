@@ -18,7 +18,7 @@ Begin
     A_ := '';
     B_ := Cursor.Objid;
     C_ := Cursor.Objversion;
-    D_ := 'VALID_TO_DATE'||Chr(31)||'2020-01-31-00.00.00'||Chr(30);
+    D_ := 'VALID_TO_DATE'||Chr(31)||'2021-01-31-00.00.00'||Chr(30);
     E_ := 'DO';
     Ifsapp.Sales_Price_List_Api.Modify__( A_ , B_ , C_ , D_ , E_ );
   End Loop;

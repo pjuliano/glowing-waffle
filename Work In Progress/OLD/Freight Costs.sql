@@ -52,6 +52,7 @@ WHERE
                     AND sc.sales_market = 'NORAM'
                     AND invoice_id NOT LIKE 'CR%'
                     --AND invoice_id = 'CD1001924565'
+                    AND sc.invoice_date < to_date('12/01/2019','MM/DD/YYYY')
 
 ORDER BY
                 sc.invoice_date,

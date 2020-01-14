@@ -1,32 +1,31 @@
-Declare
-   A_   Varchar2(32000) := Null;     -- __lsResult
-   B_   Varchar2(32000) := Null;     -- __sObjid
-   C_   Varchar2(32000) := Null;     -- __lsObjversion
-   D_   Varchar2(32000) := Null;
-   E_   Varchar2(32000) := 'DO';     -- __sAction
-Begin
+DECLARE
+   a_   VARCHAR2(32000) := NULL;     -- __lsResult
+   b_   VARCHAR2(32000) := NULL;     -- __sObjid
+   c_   VARCHAR2(32000) := NULL;     -- __lsObjversion
+   d_   VARCHAR2(32000) := NULL;
+   e_   VARCHAR2(32000) := 'DO';     -- __sAction
+BEGIN
     
-    For Cur In (Select 
-                  A.Catalog_No,
-                  '100' As Site,
-                  Sales_Part_Api.Get_List_Price('100',A.Catalog_No) As Base_Price,
-                  '0' As Minimum_Qty,
-                  (To_Char(Sysdate,'YYYY-MM-DD') || '-00:00:00') As Valid_From_Date,
-                  A.Percentage_Offset,
-                  '0' As Amount_Offset,
-                  Sales_Part_Api.Get_List_Price('100',A.Catalog_No) * ((100 + A.Percentage_Offset)/100) As Sales_Price,
-                  '2' As Rounding,
-                  A.Price_List_No
-                From 
-                  Kd_Price_List_Upload A
-                Where
-                  A.Status Is Null)
-		Loop
-      Update Kd_Price_List_Upload A Set A.Status = 'FAILED' Where A.Catalog_No = Cur.Catalog_No And A.Price_List_No = Cur.Price_List_No;
-      Commit;
-		  D_ := 'CATALOG_NO' || Chr(31) || Cur.Catalog_No || Chr(30) || 'BASE_PRICE_SITE' || Chr(31) || Cur.Site || Chr(30) || 'BASE_PRICE' || Chr(31) || Cur.Base_Price || Chr(30) || 'MIN_QUANTITY' || Chr(31) || Cur.Minimum_Qty || Chr(30) || 'VALID_FROM_DATE' || Chr(31) || Cur.Valid_From_Date || Chr(30) || 'PERCENTAGE_OFFSET' || Chr(31) || Cur.Percentage_Offset || Chr(30) || 'AMOUNT_OFFSET' || Chr(31) || Cur.Amount_Offset || Chr(30) || 'SALES_PRICE' || Chr(31) || Cur.Sales_Price || Chr(30) || 'ROUNDING' || Chr(31) || Cur.Rounding || Chr(30) || 'BASE_PRICE' || Chr(31) || Cur.Base_Price || Chr(30) || 'PRICE_LIST_NO' || Chr(31) || Cur.Price_List_No || Chr(30) || '';
-	    Ifsapp.Sales_Price_List_Part_Api.New__( A_, B_, C_, D_, E_ );
-      Update KD_Price_List_Upload A Set A.Status = 'SUCCESS' Where A.CAtalog_No = Cur.Catalog_No;
-      Commit;
-	 End Loop;
-End;
+    FOR cur in 
+        (
+            SELECT
+                            catalog_no,
+                            '100' AS site,
+                            sales_part_api.get_list_price('100',catalog_no) AS base_price,
+                            '0' AS minimum_qty,
+                            (to_char(sysdate,'YYYY-MM-DD') || '-00:00:00') AS valid_from_date,
+                            '0' AS percentage_offset,
+                            '0' AS amount_offset,
+                            new_price AS sales_price,
+                            '2' AS rounding,
+                            price_list_no
+            FROM
+                            kd_pl_import_ext
+            WHERE
+                            new_price IS NOT NULL
+        )
+    LOOP
+        d_ := 'CATALOG_NO' || chr(31) || cur.catalog_no || chr(30) || 'BASE_PRICE_SITE' || chr(31) || cur.site || chr(30) || 'BASE_PRICE' || chr(31) || cur.base_price || chr(30) || 'MIN_QUANTITY' || chr(31) || cur.minimum_qty || chr(30) || 'VALID_FROM_DATE' || chr(31) || cur.valid_from_date || chr(30) || 'PERCENTAGE_OFFSET' || chr(31) || '0' || chr(30) || 'AMOUNT_OFFSET' || chr(31) || cur.amount_offset || chr(30) || 'SALES_PRICE' || chr(31) || cur.sales_price || chr(30) || 'ROUNDING' || chr(31) || cur.rounding || chr(30) || 'BASE_PRICE' || chr(31) || cur.base_price || chr(30) || 'PRICE_LIST_NO' || chr(31) || cur.price_list_no || chr(30) || '';
+        ifsapp.sales_price_list_part_api.new__( a_, b_, c_, d_, e_ );
+    END LOOP;
+END;

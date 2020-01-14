@@ -24,6 +24,7 @@ FROM
                         AND sc.order_ID NOT LIKE 'X%'
                         AND sc.order_currency = 'USD'
                         AND sc.corporate_form = 'DOMDIR'
+                        AND sc.invoice_association_no IS NULL
 GROUP BY
                 cpe.customer_id,
                 sc.invoice_customer_name,

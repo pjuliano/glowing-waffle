@@ -167,7 +167,9 @@ CREATE MATERIALIZED VIEW "IFSAPP"."KD_SALES_CUBE"
                             'EDU',
                             'DYNAC',
                             'RESTOCK',
-                            'COMPT'
+                            'COMPT',
+                            'MAGMA',
+                            'ED'
                         )
                     THEN 'KEYSTONE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN 
@@ -516,7 +518,9 @@ UNION ALL
                         'EDU',
                         'DYNAC',
                         'RESTOCK',
-                        'COMPT'
+                        'COMPT',
+                        'MAGMA',
+                        'ED'
                     )
                     THEN 'KEYSTONE'
                     WHEN coalesce(inventpart.part_product_family, salchar.charge_group, 'OTHER') IN (
@@ -870,7 +874,9 @@ UNION ALL
                         'EDU',
                         'DYNAC',
                         'RESTOCK',
-                        'COMPT'
+                        'COMPT',
+                        'MAGMA',
+                        'ED'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1146,7 +1152,9 @@ UNION ALL
                         'EDU',
                         'DYNAC',
                         'RESTOCK',
-                        'COMPT'
+                        'COMPT',
+                        'MAGMA',
+                        'ED'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1423,7 +1431,9 @@ UNION ALL
                         'EDU',
                         'DYNAC',
                         'RESTOCK',
-                        'COMPT'
+                        'COMPT',
+                        'MAGMA',
+                        'ED'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -1702,7 +1712,9 @@ UNION ALL
                         'EDU',
                         'DYNAC',
                         'RESTOCK',
-                        'COMPT'
+                        'COMPT',
+                        'MAGMA',
+                        'ED'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
@@ -2005,7 +2017,9 @@ UNION ALL
                         'EDU',
                         'DYNAC',
                         'RESTOCK',
-                        'COMPT'
+                        'COMPT',
+                        'MAGMA',
+                        'ED'
                     )
                     THEN 'KEYSTONE'
                     WHEN inventpart.part_product_family IN (
