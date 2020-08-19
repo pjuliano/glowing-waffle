@@ -20,6 +20,7 @@ Select
   Case When A.Invoice_ID LIke 'CR%' Then A.InvoiceDate Else B.Date_Entered End As Date_Entered,
   A.Invoice_Id,
   Sum(A.AllAmounts) As Total,
+  SUM(A.localamount) AS local_total,
   A.Invoicedate,
   Case When A.Source = 'SI' Then ' ' Else A.Authorize_Code End As Authorize_Code,
   A.Region_Code,
@@ -45,8 +46,8 @@ Select
   A.Delivadd2,
   A.Delivcity,
   A.Delivstate,
-  A.Delivzip,
-  Max(A.Item_ID) As Total_Lines
+  A.Delivzip
+  --Max(A.Item_ID) As Total_Lines
 
 From
   Kd_Sales_Data_Request A Left Join Customer_Order B On

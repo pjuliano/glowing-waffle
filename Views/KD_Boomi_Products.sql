@@ -28,5 +28,32 @@ From
       A.Part_No = C.Part_No
 Where
   A.Contract = '100'
-Order By
-  A.Catalog_No
+
+UNION ALL
+
+SELECT
+                contract,
+                charge_type,
+                charge_type_desc,
+                'Financing',
+                'Financing',
+                sales_unit_meas,
+                'Active part',
+                'true',
+                NULL,
+                NULL,
+                0,
+                1,
+                sales_unit_meas,
+                'Financing',
+                'Financing',
+                'Financing',
+                'Financing',
+                0            
+FROM
+                sales_charge_type
+WHERE
+                contract = '100'
+                    AND charge_type IN ('FIN12','FIN18','FIN24')
+ORDER BY 
+                2

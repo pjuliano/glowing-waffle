@@ -1,4 +1,4 @@
-create or replace view kd_sales_data AS
+CREATE OR REPLACE VIEW kd_sales_data AS
   SELECT
         decode(a.company,'241','240',a.company) AS site,
         b.series_id || b.invoice_no AS invoice_id,
@@ -203,6 +203,197 @@ create or replace view kd_sales_data AS
         f.addr_no = '99' AND
         trunc(b.d2) >= TO_DATE('01/01/2008','MM/DD/YYYY')
     UNION ALL
+    SELECT
+        decode(c.association_no,'DE','220','SE','230','FR','240','IT','210','EU','100','100') AS site,
+        a.series_id || a.invoice_no AS invoice_id,
+        to_char(b.item_id) AS item_id,
+        trunc(a.d2) AS invoicedate,
+        CASE
+                WHEN a.series_id = 'CR' AND
+                     b.n2 IS NULL THEN 0
+                WHEN a.series_id = 'CR' AND
+                     b.n2 IS NOT NULL THEN b.n2 *-1
+                ELSE b.n2
+            END
+        AS invoiced_qty,
+        b.n4 AS sale_unit_price,
+        b.n5 AS discount,
+        a.net_curr_amount,
+        b.net_curr_amount + b.vat_curr_amount AS gross_curr_amount,
+        b.c6 AS catalog_desc,
+        c.name AS customer_name,
+        b.c1 AS order_no,
+        a.delivery_identity AS customer_no,
+        d.cust_grp,
+        b.c5 AS catalog_no,
+        ' ' AS authorize_code,
+        d.salesman_code,
+        ' ' AS commission_receiver,
+        e.district_code,
+        e.region_code,
+        trunc(a.invoice_date) AS createdate,
+        ' ' AS part_product_code,
+        ' ' AS part_product_family,
+        ' ' AS second_commodity,
+        CASE
+                WHEN to_char(a.d2,'MM') = '01' THEN 'January'
+                WHEN to_char(a.d2,'MM') = '02' THEN 'February'
+                WHEN to_char(a.d2,'MM') = '03' THEN 'March'
+                WHEN to_char(a.d2,'MM') = '04' THEN 'April'
+                WHEN to_char(a.d2,'MM') = '05' THEN 'May'
+                WHEN to_char(a.d2,'MM') = '06' THEN 'June'
+                WHEN to_char(a.d2,'MM') = '07' THEN 'July'
+                WHEN to_char(a.d2,'MM') = '08' THEN 'August'
+                WHEN to_char(a.d2,'MM') = '09' THEN 'September'
+                WHEN to_char(a.d2,'MM') = '10' THEN 'October'
+                WHEN to_char(a.d2,'MM') = '11' THEN 'November'
+                WHEN to_char(a.d2,'MM') = '12' THEN 'December'
+            END
+        AS invoicemonth,
+        CASE
+                WHEN to_char(a.d2,'MM') IN (
+                    '01',
+                    '02',
+                    '03'
+                ) THEN 'QTR1'
+                WHEN to_char(a.d2,'MM') IN (
+                    '04',
+                    '05',
+                    '06'
+                ) THEN 'QTR2'
+                WHEN to_char(a.d2,'MM') IN (
+                    '07',
+                    '08',
+                    '09'
+                ) THEN 'QTR3'
+                WHEN to_char(a.d2,'MM') IN (
+                    '10',
+                    '11',
+                    '12'
+                ) THEN 'QTR4'
+            END
+        AS invoiceqtr,
+        CASE
+                WHEN to_char(a.d2,'MM') IN (
+                    '01',
+                    '02',
+                    '03'
+                ) THEN 'QTR1'
+                       || '/'
+                       || EXTRACT(YEAR FROM a.d2)
+                WHEN to_char(a.d2,'MM') IN (
+                    '04',
+                    '05',
+                    '06'
+                ) THEN 'QTR2'
+                       || '/'
+                       || EXTRACT(YEAR FROM a.d2)
+                WHEN to_char(a.d2,'MM') IN (
+                    '07',
+                    '08',
+                    '09'
+                ) THEN 'QTR3'
+                       || '/'
+                       || EXTRACT(YEAR FROM a.d2)
+                WHEN to_char(a.d2,'MM') IN (
+                    '10',
+                    '11',
+                    '12'
+                ) THEN 'QTR4'
+                       || '/'
+                       || EXTRACT(YEAR FROM a.d2)
+            END
+        AS invoiceqtryr,
+        to_char(a.d2,'MM/YYYY') AS invoicemthyr,
+        f.group_id,
+        'Financing' AS type_designation,
+        b.identity AS customer_no_pay,
+        'Financing' AS corporate_form,
+        decode(a.currency,'SEK', (b.net_curr_amount * 0.13),'EUR', (b.net_curr_amount * 0.13),b.net_curr_amount) AS fixedamounts,
+        CASE
+                WHEN a.currency = 'CAD' AND
+                     trunc(a.d2) >= TO_DATE('03/01/2013','MM/DD/YYYY') AND
+                     trunc(a.d2) <= TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN b.net_curr_amount      
+                WHEN a.currency = 'CAD' AND
+                     trunc(a.d2) > TO_DATE('12/16/2019','MM/DD/YYYY')
+                THEN b.net_curr_amount * coalesce(a.n1,a.curr_rate)
+                WHEN a.currency != 'USD' THEN b.net_curr_amount * i.currency_rate
+                ELSE b.net_curr_amount
+            END
+        AS allamounts,
+        CASE
+                WHEN a.currency IN (
+                    'SEK',
+                    'DKK'
+                ) THEN b.net_curr_amount / j.currency_rate
+                ELSE b.net_curr_amount
+            END
+        AS localamount,
+        b.net_curr_amount AS truelocalamt,
+        0 AS vat_dom_amount,
+        ' ' AS vat_code,
+        0 AS cost,
+        'Financing' AS charge_type,
+        'IFS' AS source,
+        'Financing' AS market_code,
+        c.association_no,
+        0 AS vat_curr_amount,
+        ' ' AS pay_term_description,
+        ' ' AS kdreference,
+        ' ' AS customerref,
+        ' ' AS deliverydate,
+        ' ' AS ship_via,
+        a.delivery_identity,
+        a.identity,
+        a.delivery_address_id,
+        a.invoice_address_id,
+        a.currency,
+        a.n2 AS rma_no,
+        n.address1 AS invoiceadd1,
+        n.address2 AS invoiceadd2,
+        n.city AS invoicecity,
+        n.state AS invoicestate,
+        n.zip_code AS invoicezip,
+        iso_country_api.decode(n.country) AS invoicecountry,
+        n.county AS invoicecounty,
+        o.address1 AS delivadd1,
+        o.address2 AS delivadd2,
+        o.city AS delivcity,
+        o.state AS delivstate,
+        o.zip_code AS delivzip,
+        iso_country_api.decode(o.country) AS delivcountry,
+        o.county AS delivcounty
+    FROM
+        invoice_tab a
+        LEFT JOIN kd_currency_rate_4 i ON a.currency = i.currency_code AND
+                                          to_char(a.d2,'MM/YYYY') = i.valid_from
+        LEFT JOIN kd_currency_rate_1 j ON a.currency = j.currency_code AND
+                                          to_char(a.d2,'MM/YYYY') = j.valid_from
+        LEFT JOIN customer_info_address_tab n ON a.identity = n.customer_id AND
+                                                 a.invoice_address_id = n.address_id
+        LEFT JOIN customer_info_address_tab o ON a.identity = o.customer_id AND
+                                                 a.delivery_address_id = o.address_id,invoice_item_tab b
+        LEFT JOIN identity_invoice_info_tab f ON b.company = f.company AND
+                                                 b.identity = f.identity AND
+                                                 b.party_type = f.party_type,
+        customer_info_tab c,
+        cust_ord_customer_tab d,
+        cust_ord_customer_address_tab e
+    WHERE
+        a.invoice_id = b.invoice_id AND
+        a.delivery_identity = c.customer_id AND
+        a.delivery_identity = d.customer_no AND
+        c.customer_id = d.customer_no AND
+        a.delivery_identity = e.customer_no AND
+        c.customer_id = e.customer_no AND
+        d.customer_no = e.customer_no AND
+        trunc(a.invoice_date) >= TO_DATE('01/01/2008','MM/DD/YYYY') AND
+        b.c5 != 'WAIVESHIPPING' AND
+        e.addr_no = '99' AND
+        b.c11 = 'FINANCING' AND
+        c.corporate_form != 'KEY'
+UNION ALL
     SELECT
         '220' AS site,
         a.invoiceno AS invoice_id,

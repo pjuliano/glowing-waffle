@@ -18,4 +18,6 @@ and
 order by
    rj.job_name;
 
-alter system kill session '1056,64769';
+alter system kill session '1063,44405';
+
+select * from v$session_longops

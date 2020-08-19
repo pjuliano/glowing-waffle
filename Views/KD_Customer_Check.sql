@@ -19,7 +19,28 @@ Where
                 A.Customer_Id = Z.Customer_Id And
                 Z.Address_Id = '99') And
   A.Corporate_Form = 'DOMDIR'
+  AND cust_ord_customer_api.get_date_del(a.customer_id) IS NULL
   
+UNION ALL
+--Check if Order Address Info tab is blank.
+SELECT
+                cia.customer_id,
+                'Address ' || cia.address_id || ' does not have any Order Address Info.'
+FROM
+                customer_info_address cia
+WHERE
+                NOT EXISTS 
+                    (
+                        SELECT 
+                                        NULL 
+                        FROM 
+                                        cust_ord_customer_address_ent 
+                        WHERE 
+                                        customer_id = cia.customer_id 
+                                            AND address_id = cia.address_id
+                    )
+                    AND kd_get_corporate_form(customer_id) = 'DOMDIR'
+  AND cust_ord_customer_api.get_date_del(cia.customer_id) IS NULL
 Union All
 --Section 2. Check if Salesman region is correct.
 SELECT 
@@ -37,7 +58,9 @@ WHERE
                 (e.region != f.region_code OR f.region_code IS NULL) AND
                 d.salesman_code != '999' AND
                 customer_info_address_api.is_valid(c.customer_id,f.address_id) = 'TRUE' AND
-                c.corporate_form = 'DOMDIR'
+                c.corporate_form = 'DOMDIR' AND
+                c.customer_id != 'TEMPLATE'AND 
+                cust_ord_customer_api.get_date_del(c.customer_id) IS NULL
 
 Union All
 --Check to see if there is a non-email in the email address field.
@@ -58,6 +81,7 @@ Where
   A.Value Like '#39;' Or
   A.Value Like '%:%' Or A.Value Like '%,%' Or A.Value Like '%/%' Or A.Value like '%''%') And
   A.Value Not Like '%@%.___;%@%' 
+  AND cust_ord_customer_api.get_date_del(customer_id) IS NULL
 
 Union All
 --Section 3. Check if Commission Receiver is NULL.
@@ -73,7 +97,7 @@ Where
   G.Customer_Id Not In ('CATEMP','TEMPLATE','5593','A29830') And
   Cust_Ord_Customer_Api.Get_Salesman_Code(G.Customer_Id) != '999' And
   Cust_Ord_Customer_Api.Get_Salesman_Code(G.Customer_ID) != '318'
-
+AND cust_ord_customer_api.get_date_del(customer_id) IS NULL
 
 Union All
 --Check if Commission Receiver is correct.
@@ -90,31 +114,8 @@ Where
   J.Customer_No = L.Customer_Id And
 	K.Rep_Id = L.Salesman_Code And
 	K.Is_Rep_Id != J.Commission_Receiver And
-  Cust_Ord_Customer_Api.Get_Salesman_Code(I.Customer_ID) != '318' And
-  I.Customer_Id Not In ('A27982','8563','D34057','A35979','1306','D44059',
-'A35515',
-'A46437',
-'15606',
-'A26924',
-'15836',
-'6958',
-'A76355',
-'7756',
-'4393',
-'A23551',
-'17941',
-'A48357',
-'15499',
-'17085',
-'12868',
-'5494',
-'A35987',
-'13567',
-'A35979',
-'8563',
-'A27982',
-'3055')
-
+  Cust_Ord_Customer_Api.Get_Salesman_Code(I.Customer_ID) != '318'
+AND cust_ord_customer_api.get_date_del(i.customer_id) IS NULL
 Union All
 --Check if someone used 317.
 Select 
@@ -125,10 +126,10 @@ From
 	Cust_Ord_Customer_Ent N
 Where 
   M.Customer_Id = N.Customer_Id And
-  Upper(Ifsapp.Person_Info_Api.Get_Name(N.Salesman_Code)) Like 'DO NOT%' And
-	M.Customer_Id Not In ('TEMPLATE','INTL','FRTEMP','SETEMP','DETEMP','ITTEMP','BETEMP','CATEMP','UKTEMP') And
-  M.Customer_Id Not Like 'DE%'
-  
+  (Upper(Ifsapp.Person_Info_Api.Get_Name(N.Salesman_Code)) Like 'DO NOT%' OR N.Salesman_Code = '*')
+  And M.Customer_Id Not In ('TEMPLATE','INTL','FRTEMP','SETEMP','DETEMP','ITTEMP','BETEMP','CATEMP','UKTEMP') 
+  And M.Customer_Id Not Like 'DE%'
+  AND cust_ord_customer_api.get_date_del(m.customer_id) IS NULL
 Union All
 --Check to make sure there actually is a salesman code.
 Select 
@@ -142,7 +143,7 @@ Where
   Upper(Ifsapp.Person_Info_Api.Get_Name(N.Salesman_Code)) Is Null And
 	M.Customer_Id Not In ('TEMPLATE','INTL','FRTEMP','SETEMP','DETEMP','ITTEMP','BETEMP','CATEMP','UKTEMP') And
   M.Customer_Id Not Like 'DE%' And M.Customer_Id Not Like 'FR%' And M.Customer_Id Not Like 'IT%' 
-  
+  AND cust_ord_customer_api.get_date_del(m.customer_id) IS NULL
 Union All
 --Check to see if there is an AR Contact on the account.
 Select
@@ -159,7 +160,7 @@ Where
   A.Company = '100' And 
   C.Corporate_Form = 'DOMDIR' And
   A.Identity Not In ('TEMPLATE','CATEMP','A35173','22008','28331','28621','29627')
-  
+  AND cust_ord_customer_api.get_date_del(a.identity) IS NULL
 UNION ALL
 
 SELECT
@@ -278,6 +279,7 @@ WHERE
                             'A25206',
                             '5399'
                         )
+    AND cust_ord_customer_api.get_date_del(customer_id) IS NULL
 UNION ALL
 SELECT
                 customer_id,
@@ -287,6 +289,7 @@ FROM
 WHERE
                 deliv_address_id IS NULL   
                     AND corporate_form = 'DOMDIR'   
+                AND cust_ord_customer_api.get_date_del(customer_id) IS NULL
 UNION ALL 
 SELECT
                 customer_id,
@@ -295,4 +298,5 @@ FROM
                 kd_customers
 WHERE
                 address_id IS NULL   
-                    AND corporate_form = 'DOMDIR';
+                    AND corporate_form = 'DOMDIR'
+                    AND cust_ord_customer_api.get_date_del(customer_id) IS NULL;
